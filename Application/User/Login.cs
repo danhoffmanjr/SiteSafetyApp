@@ -44,7 +44,7 @@ namespace PikeSafetyWebApp.Application.User
             public async Task<UserDto> Handle(Query request, CancellationToken cancellationToken)
             {
                 var user = await userManager.FindByEmailAsync(request.Email);
-                if (user == null) throw new RestException(HttpStatusCode.Unauthorized, new { error = "Email or password is invalid." });
+                if (user == null) throw new RestException(HttpStatusCode.NotFound, new { error = "User not found. Check email address and try again." });
                 if (!user.EmailConfirmed) throw new RestException(HttpStatusCode.BadRequest, new { email = "Email is not confirmed." });
 
                 var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);

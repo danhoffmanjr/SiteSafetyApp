@@ -4,7 +4,7 @@ using MySql.Data.EntityFrameworkCore.Metadata;
 
 namespace PikeSafetyWebApp.Migrations
 {
-    public partial class EntityModelUpdates : Migration
+    public partial class SchemaCreation : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

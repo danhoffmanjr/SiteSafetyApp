@@ -17,14 +17,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.4"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.4"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.20"/>
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1"/>
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.2.4"/>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.4"/>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.4"/>
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.1"/>
@@ -39,6 +37,12 @@
     <Content Remove="package-lock.json"/>
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**"/>
     <None Include="$(SpaRoot)**"/>
+    <None Include="clientapp\node_modules\moment\LICENSE"/>
+    <None Include="clientapp\node_modules\moment\LICENSE"/>
+    <None Include="clientapp\node_modules\moment\src\lib\utils\abs-floor.js"/>
+    <None Include="clientapp\node_modules\moment\src\lib\utils\abs-floor.js"/>
+    <None Include="clientapp\node_modules\moment\src\lib\utils\abs-ceil.js"/>
+    <None Include="clientapp\node_modules\moment\src\lib\utils\abs-ceil.js"/>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DTO\"/>
