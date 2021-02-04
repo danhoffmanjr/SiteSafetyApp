@@ -82,7 +82,7 @@ const AssignSiteToUserForm: React.FC<IProps> = ({ user, companyId }) => {
 
   const handleSiteChange = (value: ISelectOptions) => {
     if (value !== null) {
-      setSiteIdValue(parseInt(value.value));
+      setSiteIdValue(parseInt(value.value.toString()));
     } else {
       setValue("siteId", undefined);
     }

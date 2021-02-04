@@ -88,7 +88,7 @@ const AssignUserToSiteForm: React.FC<IProps> = ({ site }) => {
 
   const handleUserChange = (value: ISelectOptions) => {
     if (value !== undefined || value !== null) {
-      setUserIdValue(value.value);
+      setUserIdValue(value.value.toString());
     } else {
       setValue("userId", undefined);
     }

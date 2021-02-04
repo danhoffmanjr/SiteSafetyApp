@@ -57,7 +57,7 @@ const EditSiteForm: React.FC<IProps> = ({ site, companyOptions }) => {
 
   const handleCompanyChange = (option: ISelectOptions) => {
     if (option !== null) {
-      setCompanyIdValue(parseInt(option.value));
+      setCompanyIdValue(parseInt(option.value.toString()));
     }
   };
 

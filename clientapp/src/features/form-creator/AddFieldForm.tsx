@@ -17,7 +17,7 @@ const AddFieldForm: React.FC<IProps> = ({ onAddField }) => {
   const rootStore = useContext(RootStoreContext);
   const { fieldTypeOptions, isRequiredOptions } = rootStore.formStore;
 
-  const [fieldType, setFieldType] = useState<string>();
+  const [fieldType, setFieldType] = useState<any>();
   const [isRequired, setIsRequired] = useState<boolean>();
   const showOptions = fieldType !== "Checkbox" && fieldType !== "Dropdown";
 

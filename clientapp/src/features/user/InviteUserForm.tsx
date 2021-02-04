@@ -63,7 +63,7 @@ const InviteUserForm: React.FC<IProps> = ({ roleOptions, companyOptions }) => {
 
   const handleCompanyChange = (value: ISelectOptions) => {
     if (value !== null) {
-      let id = parseInt(value.value);
+      let id = parseInt(value.value.toString());
       let options = getSiteOptionsByCompanyId(id);
       setSiteOptions(options);
       setValue("siteId", null);
@@ -75,7 +75,7 @@ const InviteUserForm: React.FC<IProps> = ({ roleOptions, companyOptions }) => {
 
   const handleRoleChange = (value: ISelectOptions) => {
     if (value !== null) {
-      setRoleValue(value.value);
+      setRoleValue(value.value.toString());
     } else {
       setRoleValue("");
     }
@@ -83,7 +83,7 @@ const InviteUserForm: React.FC<IProps> = ({ roleOptions, companyOptions }) => {
 
   const handleSiteChange = (value: ISelectOptions) => {
     if (value !== null) {
-      setSiteIdValue(parseInt(value.value));
+      setSiteIdValue(parseInt(value.value.toString()));
     } else {
       setValue("siteId", null);
     }

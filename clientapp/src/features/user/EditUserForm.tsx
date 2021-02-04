@@ -84,7 +84,7 @@ const EditUserForm: React.FC<IProps> = ({ profile, companyOptions, roleOptions }
   const handleCompanyChange = (option: ValueType<ISelectOptions>) => {
     setSelectedCompanyOption(option);
     if (option !== null) {
-      let id: number = parseInt(getOptionValue("value", option as ISelectOptions));
+      let id: number = parseInt(getOptionValue("value", option as ISelectOptions).toString());
       setCompanyId(id);
     }
   };
@@ -92,7 +92,7 @@ const EditUserForm: React.FC<IProps> = ({ profile, companyOptions, roleOptions }
   const handleRoleChange = (option: ValueType<ISelectOptions>) => {
     setSelectedRoleOption(option);
     if (option !== null) {
-      setRole(getOptionValue("value", option as ISelectOptions));
+      setRole(getOptionValue("value", option as ISelectOptions).toString());
     }
   };
 

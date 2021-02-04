@@ -1,9 +1,11 @@
-import React, { useContext, useState } from "react";
-import { Control, useFieldArray, useForm, useWatch } from "react-hook-form";
+import React, { ChangeEvent, useContext, useEffect, useState } from "react";
+import { Control, Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { Button, Checkbox, Form, Header, Icon, Menu, Segment, Select, TextArea } from "semantic-ui-react";
 import ErrorMessage from "../../app/common/form/ErrorMessage";
 import { AxiosResponse } from "axios";
 import { RootStoreContext } from "../../app/stores/rootStore";
+import ReactSelect from "react-select";
+import { ISelectOptions } from "../../app/models/reactSelectOptions";
 
 const CreateTemplateForm = () => {
   const rootStore = useContext(RootStoreContext);
@@ -12,15 +14,15 @@ const CreateTemplateForm = () => {
   const [showAddFieldsForm, setShowAddFieldsForm] = useState(true);
   const [submitErrors, setSubmitErrors] = useState<AxiosResponse>();
 
-  const { handleSubmit, register, errors, formState, control } = useForm({
-    mode: "all",
+  const { handleSubmit, register, watch, errors, formState, control, setValue } = useForm({
+    mode: "onBlur",
     reValidateMode: "onChange",
     defaultValues: {
-      name: "",
+      title: "",
       fields: [
         {
-          name: "",
           type: "",
+          name: "",
           placeholder: "",
           options: "",
           isRequired: true,
@@ -36,7 +38,7 @@ const CreateTemplateForm = () => {
 
   const { isDirty, isSubmitting } = formState;
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: { title: string; fields: { type: string; name: string; placeholder: string; options: string; isRequired: boolean }[] }) => {
     console.log(values);
   };
 
@@ -44,13 +46,12 @@ const CreateTemplateForm = () => {
     setShowAddFieldsForm(!showAddFieldsForm);
   };
 
-  const styles = {
-    hide: {
-      display: "none !important",
-    },
-    show: {
-      display: "inherit",
-    },
+  const handleTypeChange = (name: string, option: ISelectOptions) => {
+    if (option !== null) {
+      console.log("Name:", name);
+      console.log("Value:", option.value);
+      setValue(name, option.value);
+    }
   };
 
   // move to common store as an action
@@ -64,8 +65,8 @@ const CreateTemplateForm = () => {
   };
 
   // create HOC from this
-  const Fields = ({ control }: { control: Control<{ name: string; fields: { name: string; type: string; placeholder: string; options: string; isRequired: boolean }[] }> }) => {
-    const fields = useWatch<{ name: string; type: string; placeholder: string; options: string; isRequired: boolean }[]>({
+  const Fields = ({ control }: { control: Control<{ title: string; fields: { type: string; name: string; placeholder: string; options: string; isRequired: boolean }[] }> }) => {
+    const fields = useWatch<{ type: string; name: string; placeholder: string; options: string; isRequired: boolean }[]>({
       control,
       name: `fields`,
     });
@@ -116,40 +117,56 @@ const CreateTemplateForm = () => {
 
   return (
     <Segment>
-      <Header as="h3">Create Form Template</Header>
+      <Header as="h3">Create Form Type</Header>
       <Form onSubmit={handleSubmit(onSubmit)} error>
-        <Form.Field className={errors.name !== undefined ? "error field" : "field"}>
-          <label>Template Name</label>
+        <Form.Field className={errors.title !== undefined ? "error field" : "field"}>
+          <label>Form Title</label>
           <input
             type="text"
-            name="name"
-            placeholder="Form Template Name"
-            aria-invalid={errors.name !== undefined}
+            name="title"
+            placeholder="Form Title"
+            aria-invalid={errors.title !== undefined}
             ref={register({
-              required: "Template Name is Required*",
+              required: "Form Title is Required*",
             })}
           />
-          {errors.name && (
-            <div className="ui pointing above prompt label" id="form-input-name-error-message" role="alert" aria-atomic="true">
-              {errors.name.message}
+          {errors.title && (
+            <div className="ui pointing above prompt label" id="form-input-title-error-message" role="alert" aria-atomic="true">
+              {errors.title.message}
             </div>
           )}
         </Form.Field>
         <Form.Field className={errors.fields !== undefined ? "error field" : "field"} style={{ marginBottom: 0 }}>
-          <label>{errors.fields !== undefined ? "Form Fields (Please fix the highlighted errors below)" : "Form Fields"}</label>
+          <label>{errors.fields !== undefined ? "Form Fields - ERRORS: Please fix the errors indicated below" : "Form Fields"}</label>
         </Form.Field>
         <Menu stackable attached="top" style={{ marginTop: 0 }}>
           <Menu.Item onClick={toggleForm}>
             <Icon name="list" /> Manage Fields
           </Menu.Item>
         </Menu>
-
-        <Segment attached styles={showAddFieldsForm ? styles.show : styles.hide}>
+        <Segment attached>
           {fields.map(({ id, type, name, placeholder, options, isRequired }, index) => (
             <Form.Group key={id} widths="equal">
               <Form.Field className={errors.fields && errors.fields[index]?.type?.message !== undefined ? "error field" : "field"}>
                 <label>{errors.fields && errors.fields[index]?.type?.message !== undefined ? errors.fields[index]?.type?.message : "Type"}</label>
-                <select
+                <Controller
+                  control={control}
+                  name={`fields[${index}].type`}
+                  rules={{ required: "Type is Required*" }} // Rules is not working, not sure why?
+                  render={({ onChange, value, name }) => (
+                    <ReactSelect
+                      options={fieldTypeOptions}
+                      onChange={(value) => {
+                        onChange(value);
+                        setValue(name, value.value);
+                      }}
+                      value={value?.value}
+                      name={name}
+                      isClearable={false}
+                    />
+                  )}
+                />
+                {/* <select
                   name={`fields[${index}].type`}
                   ref={register({
                     required: "Type is Required*",
@@ -159,11 +176,11 @@ const CreateTemplateForm = () => {
                   aria-invalid={errors.fields && errors.fields[index]?.type?.message !== undefined}
                 >
                   <option value={undefined}></option>
-                  <option value="Checkbox">Checkbox</option>
                   <option value="Dropdown">Dropdown</option>
                   <option value="Text">Text</option>
                   <option value="Textarea">Textarea</option>
-                </select>
+                  <option value="Checkbox">Checkbox</option>
+                </select> */}
               </Form.Field>
               <Form.Field className={errors.fields && errors.fields[index]?.name?.message !== undefined ? "error field" : "field"}>
                 <label>{errors.fields && errors.fields[index]?.name?.message !== undefined ? errors.fields[index]?.name?.message : "Name"}</label>
@@ -191,22 +208,40 @@ const CreateTemplateForm = () => {
                   defaultValue={placeholder}
                 />
               </Form.Field>
-              <Form.Field className={errors.fields && errors.fields[index]?.options?.message !== undefined ? "error field" : "field"}>
-                <label>{errors.fields && errors.fields[index]?.options?.message !== undefined ? errors.fields[index]?.options?.message : "Options"}</label>
+              <Form.Field className={errors.fields && errors.fields[index]?.options?.message !== undefined ? "error field" : "field"} disabled={watch(`fields[${index}].type`) !== "Dropdown"}>
+                <label>{errors.fields && errors.fields[index]?.options?.message !== undefined ? errors.fields[index]?.options?.message : "Dropdown Options"}</label>
                 <input
                   type="text"
                   name={`fields[${index}].options`}
                   placeholder="Comma separated list"
                   aria-invalid={errors.fields && errors.fields[index]?.options?.message !== undefined}
-                  ref={register({
-                    required: "Options are Required*",
-                  })}
                   defaultValue={options}
+                  ref={register({
+                    required: { value: watch(`fields[${index}].type`) === "Dropdown", message: "Options are Required*" },
+                  })}
                 />
               </Form.Field>
               <Form.Field className={errors.fields && errors.fields[index]?.isRequired?.message !== undefined ? "error field" : "field"}>
                 <label>{errors.fields && errors.fields[index]?.isRequired?.message !== undefined ? errors.fields[index]?.isRequired?.message : "Is Required"}</label>
-                <select
+                <Controller
+                  control={control}
+                  name={`fields[${index}].isRequired`}
+                  rules={{ required: "Is Required is Required*" }} // Rules is not working, not sure why?
+                  render={({ onChange, value, name }) => (
+                    <ReactSelect
+                      options={isRequiredOptions}
+                      onChange={(value) => {
+                        onChange(value);
+                        setValue(name, value.value);
+                      }}
+                      value={value?.value}
+                      name={name}
+                      defaultValue={{ label: "Yes", value: 1 }}
+                      isClearable={false}
+                    />
+                  )}
+                />
+                {/* <select
                   name={`fields[${index}].isRequired`}
                   ref={register({
                     required: "Is Required is Required*",
@@ -217,7 +252,7 @@ const CreateTemplateForm = () => {
                 >
                   <option value={1}>Yes</option>
                   <option value={0}>No</option>
-                </select>
+                </select> */}
               </Form.Field>
               <Form.Field width={1}>
                 <label>&nbsp;</label>
@@ -227,13 +262,11 @@ const CreateTemplateForm = () => {
               </Form.Field>
             </Form.Group>
           ))}
-
           <Button type="button" color="blue" content="Add Field" onClick={() => append({ name: "", type: "", placeholder: "", options: "", isRequired: true })} />
         </Segment>
-
         {(fields.length > 0 && (
           <Segment attached>
-            <label>Template Preview</label>
+            <label>Form Preview</label>
 
             <Fields control={control} />
           </Segment>
@@ -244,7 +277,7 @@ const CreateTemplateForm = () => {
             </p>
           </Segment>
         )}
-        <Button color="green" content="Create" disabled={!isDirty} loading={isSubmitting} style={{ marginTop: "1em" }} />
+        <Button color="green" content="Create Form" type="submit" disabled={!isDirty} loading={isSubmitting} style={{ marginTop: "1em" }} />
         {submitErrors && <ErrorMessage error={submitErrors!} />}
       </Form>
     </Segment>
