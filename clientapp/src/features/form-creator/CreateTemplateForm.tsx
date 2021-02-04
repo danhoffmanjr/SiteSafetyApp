@@ -1,11 +1,11 @@
 import React, { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Control, Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
-import { Button, Checkbox, Form, Header, Icon, Menu, Segment, Select, TextArea } from "semantic-ui-react";
+import { Button, Checkbox, Form, Grid, Header, Icon, Menu, Segment, Select, TextArea } from "semantic-ui-react";
 import ErrorMessage from "../../app/common/form/ErrorMessage";
 import { AxiosResponse } from "axios";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import ReactSelect from "react-select";
-import { ISelectOptions } from "../../app/models/reactSelectOptions";
+import "./CreateTemplateForm.scss";
 
 const CreateTemplateForm = () => {
   const rootStore = useContext(RootStoreContext);
@@ -46,14 +46,6 @@ const CreateTemplateForm = () => {
     setShowAddFieldsForm(!showAddFieldsForm);
   };
 
-  const handleTypeChange = (name: string, option: ISelectOptions) => {
-    if (option !== null) {
-      console.log("Name:", name);
-      console.log("Value:", option.value);
-      setValue(name, option.value);
-    }
-  };
-
   // move to common store as an action
   const createDropdownOptions = (options: string) => {
     let optionsArray = options.split(",");
@@ -71,52 +63,60 @@ const CreateTemplateForm = () => {
       name: `fields`,
     });
     return (
-      <div>
+      <>
         {fields?.map((field, index) => {
           if (field.type === "Text") {
             return (
-              <Form.Field key={index} className="field" fluid="true">
-                <label>{field.name}</label>
-                <input type="text" name={field.name} placeholder={field.placeholder} />
-              </Form.Field>
+              <Grid.Column>
+                <Form.Field key={index} className="field" fluid="true">
+                  <label>{field.name}</label>
+                  <input type="text" name={field.name} placeholder={field.placeholder} />
+                </Form.Field>
+              </Grid.Column>
             );
           }
 
           if (field.type === "Dropdown") {
             let options = createDropdownOptions(field.options);
             return (
-              <Form.Field key={index} className="field" fluid="true">
-                <label>{field.name}</label>
-                <Select placeholder={field.placeholder} options={options} />
-              </Form.Field>
+              <Grid.Column>
+                <Form.Field key={index} className="field" fluid="true">
+                  <label>{field.name}</label>
+                  <Select placeholder={field.placeholder} options={options} />
+                </Form.Field>
+              </Grid.Column>
             );
           }
 
           if (field.type === "Textarea") {
             return (
-              <Form.Field key={index} className="field" fluid="true">
-                <label>{field.name}</label>
-                <TextArea name={field.name} placeholder={field.placeholder} />
-              </Form.Field>
+              <Grid.Column>
+                <Form.Field key={index} className="field" fluid="true">
+                  <label>{field.name}</label>
+                  <TextArea name={field.name} placeholder={field.placeholder} />
+                </Form.Field>
+              </Grid.Column>
             );
           }
 
           if (field.type === "Checkbox") {
             return (
-              <Form.Field key={index} className="field" fluid="true">
-                <Checkbox name={field.name} placeholder={field.placeholder} label={field.name} />
-              </Form.Field>
+              <Grid.Column>
+                <Form.Field key={index} className="field" fluid="true">
+                  <Checkbox name={field.name} placeholder={field.placeholder} label={field.name} />
+                </Form.Field>
+              </Grid.Column>
             );
           }
 
           return false;
         })}
-      </div>
+      </>
     );
   };
 
   return (
-    <Segment>
+    <Segment style={{ marginBottom: "2em" }}>
       <Header as="h3">Create Form Type</Header>
       <Form onSubmit={handleSubmit(onSubmit)} error>
         <Form.Field className={errors.title !== undefined ? "error field" : "field"}>
@@ -140,11 +140,18 @@ const CreateTemplateForm = () => {
           <label>{errors.fields !== undefined ? "Form Fields - ERRORS: Please fix the errors indicated below" : "Form Fields"}</label>
         </Form.Field>
         <Menu stackable attached="top" style={{ marginTop: 0 }}>
-          <Menu.Item onClick={toggleForm}>
+          <Menu.Item>
             <Icon name="list" /> Manage Fields
           </Menu.Item>
+          <Menu.Item onClick={toggleForm}>
+            {showAddFieldsForm ? <Icon name="eye slash outline" /> : <Icon name="eye" />}
+            {showAddFieldsForm ? "Hide" : "Show"}
+          </Menu.Item>
+          <Menu.Item position="right">
+            <Button color="green" content="Create Form" type="submit" disabled={!isDirty} loading={isSubmitting} />
+          </Menu.Item>
         </Menu>
-        <Segment attached>
+        <Segment attached className={showAddFieldsForm ? "show" : "hide"}>
           {fields.map(({ id, type, name, placeholder, options, isRequired }, index) => (
             <Form.Group key={id} widths="equal">
               <Form.Field className={errors.fields && errors.fields[index]?.type?.message !== undefined ? "error field" : "field"}>
@@ -152,7 +159,7 @@ const CreateTemplateForm = () => {
                 <Controller
                   control={control}
                   name={`fields[${index}].type`}
-                  rules={{ required: "Type is Required*" }} // Rules is not working, not sure why?
+                  rules={{ required: "Type is Required*" }}
                   render={({ onChange, value, name }) => (
                     <ReactSelect
                       options={fieldTypeOptions}
@@ -163,6 +170,7 @@ const CreateTemplateForm = () => {
                       value={value?.value}
                       name={name}
                       isClearable={false}
+                      autoFocus={true}
                     />
                   )}
                 />
@@ -226,7 +234,7 @@ const CreateTemplateForm = () => {
                 <Controller
                   control={control}
                   name={`fields[${index}].isRequired`}
-                  rules={{ required: "Is Required is Required*" }} // Rules is not working, not sure why?
+                  rules={{ required: "Is Required is Required*" }}
                   render={({ onChange, value, name }) => (
                     <ReactSelect
                       options={isRequiredOptions}
@@ -257,29 +265,42 @@ const CreateTemplateForm = () => {
               <Form.Field width={1}>
                 <label>&nbsp;</label>
                 <Button icon onClick={() => remove(index)}>
-                  <Icon color="red" name="trash" />
+                  <Icon color="red" name="trash alternate" />
                 </Button>
               </Form.Field>
             </Form.Group>
           ))}
           <Button type="button" color="blue" content="Add Field" onClick={() => append({ name: "", type: "", placeholder: "", options: "", isRequired: true })} />
         </Segment>
-        {(fields.length > 0 && (
-          <Segment attached>
-            <label>Form Preview</label>
-
-            <Fields control={control} />
-          </Segment>
-        )) || (
-          <Segment attached>
-            <p>
-              No fields. Click the <em>Add Field</em> button above.
-            </p>
-          </Segment>
-        )}
-        <Button color="green" content="Create Form" type="submit" disabled={!isDirty} loading={isSubmitting} style={{ marginTop: "1em" }} />
         {submitErrors && <ErrorMessage error={submitErrors!} />}
       </Form>
+      {(fields.length > 0 && (
+        <>
+          <Menu stackable attached="top" inverted style={{ backgroundColor: "#696969", border: "1px solid #696969" }}>
+            <Menu.Item color="grey">
+              <Icon name="wordpress forms" size="large" /> Form Preview
+            </Menu.Item>
+          </Menu>
+          <Segment attached="bottom" inverted style={{ backgroundColor: "#808080", border: "1px solid #808080" }}>
+            <Form inverted>
+              <Grid stackable columns={3}>
+                <Fields control={control} />
+              </Grid>
+            </Form>
+          </Segment>
+        </>
+      )) || (
+        <>
+          <Menu stackable>
+            <Menu.Item>
+              <Icon name="wordpress forms" size="large" /> Form Preview
+            </Menu.Item>
+            <Menu.Item>
+              <strong style={{ color: "red" }}>No fields to show.</strong>&nbsp; Add fields in the Manage Fields section above.
+            </Menu.Item>
+          </Menu>
+        </>
+      )}
     </Segment>
   );
 };
