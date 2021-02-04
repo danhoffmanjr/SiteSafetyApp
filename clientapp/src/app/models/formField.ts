@@ -1,10 +1,10 @@
-import { IFormFieldValidation } from "./formFieldValidation";
-
 export interface IFormField {
     type: string;
     name: string;
     placeholder: string;
-    options: string[];
+    options: string[] | null;
     value: string | number | boolean | null;
-    validation: IFormFieldValidation;
+    isRequired: boolean;
+    minLength?: number;
+    maxLength?: number;
 }
