@@ -1,6 +1,6 @@
-import { IFormField } from "./formField";
+import { IFormFieldType } from "./formFieldType";
 
 export interface IFormTemplate {
-    name: string;
-    fields: IFormField[];
+    title: string;
+    fields: IFormFieldType[];
 }

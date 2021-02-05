@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Control, Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { Button, Checkbox, Form, Grid, Header, Icon, Menu, Segment, Select, TextArea } from "semantic-ui-react";
 import ErrorMessage from "../../app/common/form/ErrorMessage";
@@ -6,16 +6,19 @@ import { AxiosResponse } from "axios";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import ReactSelect from "react-select";
 import "./CreateTemplateForm.scss";
+import { IFormFieldType } from "../../app/models/formFieldType";
+import { IFormTemplate } from "../../app/models/formTemplate";
+import { observer } from "mobx-react-lite";
 
 const CreateTemplateForm = () => {
   const rootStore = useContext(RootStoreContext);
-  const { fieldTypeOptions, isRequiredOptions } = rootStore.formStore; // change optins list to work with Semantic-UI select components
+  const { fieldTypeOptions, isRequiredOptions } = rootStore.formStore;
 
   const [showAddFieldsForm, setShowAddFieldsForm] = useState(true);
   const [submitErrors, setSubmitErrors] = useState<AxiosResponse>();
 
-  const { handleSubmit, register, watch, errors, formState, control, setValue } = useForm({
-    mode: "onBlur",
+  const { handleSubmit, register, watch, errors, formState, control, setValue } = useForm<IFormTemplate>({
+    mode: "onSubmit",
     reValidateMode: "onChange",
     defaultValues: {
       title: "",
@@ -25,7 +28,7 @@ const CreateTemplateForm = () => {
           name: "",
           placeholder: "",
           options: "",
-          isRequired: true,
+          isRequired: 1,
         },
       ],
     },
@@ -38,7 +41,7 @@ const CreateTemplateForm = () => {
 
   const { isDirty, isSubmitting } = formState;
 
-  const onSubmit = (values: { title: string; fields: { type: string; name: string; placeholder: string; options: string; isRequired: boolean }[] }) => {
+  const onSubmit = (values: IFormTemplate) => {
     console.log(values);
   };
 
@@ -57,17 +60,18 @@ const CreateTemplateForm = () => {
   };
 
   // create HOC from this
-  const Fields = ({ control }: { control: Control<{ title: string; fields: { type: string; name: string; placeholder: string; options: string; isRequired: boolean }[] }> }) => {
-    const fields = useWatch<{ type: string; name: string; placeholder: string; options: string; isRequired: boolean }[]>({
+  const Fields = ({ control }: { control: Control<IFormTemplate> }) => {
+    const fieldArray = useWatch<IFormFieldType[]>({
       control,
       name: `fields`,
+      defaultValue: [{ type: "Text", name: "[Name]", placeholder: "[Placeholder]", options: "", isRequired: 1 }],
     });
     return (
       <>
-        {fields?.map((field, index) => {
+        {fieldArray?.map((field, index) => {
           if (field.type === "Text") {
             return (
-              <Grid.Column>
+              <Grid.Column key={index}>
                 <Form.Field key={index} className="field" fluid="true">
                   <label>{field.name}</label>
                   <input type="text" name={field.name} placeholder={field.placeholder} />
@@ -79,7 +83,7 @@ const CreateTemplateForm = () => {
           if (field.type === "Dropdown") {
             let options = createDropdownOptions(field.options);
             return (
-              <Grid.Column>
+              <Grid.Column key={index}>
                 <Form.Field key={index} className="field" fluid="true">
                   <label>{field.name}</label>
                   <Select placeholder={field.placeholder} options={options} />
@@ -90,7 +94,7 @@ const CreateTemplateForm = () => {
 
           if (field.type === "Textarea") {
             return (
-              <Grid.Column>
+              <Grid.Column key={index}>
                 <Form.Field key={index} className="field" fluid="true">
                   <label>{field.name}</label>
                   <TextArea name={field.name} placeholder={field.placeholder} />
@@ -101,7 +105,7 @@ const CreateTemplateForm = () => {
 
           if (field.type === "Checkbox") {
             return (
-              <Grid.Column>
+              <Grid.Column key={index}>
                 <Form.Field key={index} className="field" fluid="true">
                   <Checkbox name={field.name} placeholder={field.placeholder} label={field.name} />
                 </Form.Field>
@@ -144,6 +148,7 @@ const CreateTemplateForm = () => {
             <Icon name="list" /> Manage Fields
           </Menu.Item>
           <Menu.Item onClick={toggleForm}>
+            {/* This doesn't work with useWatch. When hidden (removed from DOM) only the default field is rendered in preview */}
             {showAddFieldsForm ? <Icon name="eye slash outline" /> : <Icon name="eye" />}
             {showAddFieldsForm ? "Hide" : "Show"}
           </Menu.Item>
@@ -159,6 +164,7 @@ const CreateTemplateForm = () => {
                 <Controller
                   control={control}
                   name={`fields[${index}].type`}
+                  defaultValue={isRequired}
                   rules={{ required: "Type is Required*" }}
                   render={({ onChange, value, name }) => (
                     <ReactSelect
@@ -244,7 +250,6 @@ const CreateTemplateForm = () => {
                       }}
                       value={value?.value}
                       name={name}
-                      defaultValue={{ label: "Yes", value: 1 }}
                       isClearable={false}
                     />
                   )}
@@ -270,7 +275,7 @@ const CreateTemplateForm = () => {
               </Form.Field>
             </Form.Group>
           ))}
-          <Button type="button" color="blue" content="Add Field" onClick={() => append({ name: "", type: "", placeholder: "", options: "", isRequired: true })} />
+          <Button type="button" color="blue" content="Add Field" onClick={() => append({ type: "Text", name: "", placeholder: "", options: "", isRequired: "" }, true)} />
         </Segment>
         {submitErrors && <ErrorMessage error={submitErrors!} />}
       </Form>
@@ -305,4 +310,4 @@ const CreateTemplateForm = () => {
   );
 };
 
-export default CreateTemplateForm;
+export default observer(CreateTemplateForm);

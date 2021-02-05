@@ -10,10 +10,10 @@ export default class FormStore {
     }
 
   @observable fieldTypeOptions: ISelectOptions[] = [
-    { value: `Checkbox`, label: `Checkbox` },
-    { value: `Dropdown`, label: `Dropdown` },
     { value: `Text`, label: `Text` },
-    { value: `Textarea`, label: `Textarea` }
+    { value: `Dropdown`, label: `Dropdown` },
+    { value: `Checkbox`, label: `Checkbox` },
+    { value: `Textarea`, label: `Textarea` },
   ];
 
   @observable isRequiredOptions: ISelectOptions[] = [
@@ -21,15 +21,16 @@ export default class FormStore {
       { value: 0, label: `No` }
   ];
 
-  @observable typeOptions: {value: string, text: string}[] = [
-    { value: "Dropdown", text: "Dropdown" },
-    { value: "Text", text: "Text" },
-    { value: "Textarea", text: "Textarea" },
-    { value: "Checkbox", text: "Checkbox" },
-  ];
+  // for semantic-ui react Select component
+  // @observable typeOptions: {value: string, text: string}[] = [
+  //   { value: "Dropdown", text: "Dropdown" },
+  //   { value: "Text", text: "Text" },
+  //   { value: "Textarea", text: "Textarea" },
+  //   { value: "Checkbox", text: "Checkbox" },
+  // ];
 
-//   @observable isRequiredOptions: {value: number, text: string}[] = [
-//     { value: 1, text: `Yes` },
-//     { value: 0, text: `No` }
-// ];
+  //   @observable isRequiredOptions: {value: number, text: string}[] = [
+  //     { value: 1, text: `Yes` },
+  //     { value: 0, text: `No` }
+  // ];
 }
