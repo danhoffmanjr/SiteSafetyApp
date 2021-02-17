@@ -18,7 +18,7 @@ const CreateTemplateForm = () => {
   const [submitErrors, setSubmitErrors] = useState<AxiosResponse>();
 
   const { handleSubmit, register, watch, errors, formState, control, setValue } = useForm<IFormTemplate>({
-    mode: "onSubmit",
+    mode: "all",
     reValidateMode: "onChange",
     defaultValues: {
       title: "",
@@ -148,7 +148,7 @@ const CreateTemplateForm = () => {
             <Icon name="list" /> Manage Fields
           </Menu.Item>
           <Menu.Item onClick={toggleForm}>
-            {/* This doesn't work with useWatch. When hidden (removed from DOM) only the default field is rendered in preview */}
+            {/* This doesn't work with useWatch. When hidden (removed from DOM) only the default field is rendered in preview. It's an issue with useFieldArray hook (see line 37) */}
             {showAddFieldsForm ? <Icon name="eye slash outline" /> : <Icon name="eye" />}
             {showAddFieldsForm ? "Hide" : "Show"}
           </Menu.Item>
@@ -180,21 +180,6 @@ const CreateTemplateForm = () => {
                     />
                   )}
                 />
-                {/* <select
-                  name={`fields[${index}].type`}
-                  ref={register({
-                    required: "Type is Required*",
-                  })}
-                  placeholder="Field Type"
-                  defaultValue={type}
-                  aria-invalid={errors.fields && errors.fields[index]?.type?.message !== undefined}
-                >
-                  <option value={undefined}></option>
-                  <option value="Dropdown">Dropdown</option>
-                  <option value="Text">Text</option>
-                  <option value="Textarea">Textarea</option>
-                  <option value="Checkbox">Checkbox</option>
-                </select> */}
               </Form.Field>
               <Form.Field className={errors.fields && errors.fields[index]?.name?.message !== undefined ? "error field" : "field"}>
                 <label>{errors.fields && errors.fields[index]?.name?.message !== undefined ? errors.fields[index]?.name?.message : "Name"}</label>
@@ -254,18 +239,6 @@ const CreateTemplateForm = () => {
                     />
                   )}
                 />
-                {/* <select
-                  name={`fields[${index}].isRequired`}
-                  ref={register({
-                    required: "Is Required is Required*",
-                  })}
-                  placeholder="Is Required"
-                  defaultValue={isRequired}
-                  aria-invalid={errors.fields && errors.fields[index]?.isRequired?.message !== undefined}
-                >
-                  <option value={1}>Yes</option>
-                  <option value={0}>No</option>
-                </select> */}
               </Form.Field>
               <Form.Field width={1}>
                 <label>&nbsp;</label>
@@ -275,7 +248,7 @@ const CreateTemplateForm = () => {
               </Form.Field>
             </Form.Group>
           ))}
-          <Button type="button" color="blue" content="Add Field" onClick={() => append({ type: "Text", name: "", placeholder: "", options: "", isRequired: "" }, true)} />
+          <Button type="button" color="blue" content="Add Field" onClick={() => append({ type: "Text", name: "", placeholder: "", options: "", isRequired: 1 }, true)} />
         </Segment>
         {submitErrors && <ErrorMessage error={submitErrors!} />}
       </Form>
