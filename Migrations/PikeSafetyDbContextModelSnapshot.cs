@@ -361,17 +361,20 @@ namespace PikeSafetyWebApp.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime");
 
-                    b.Property<string>("FormDetails")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FormType")
-                        .HasColumnType("text");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsComplete")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ReportFields")
+                        .HasColumnType("text");
+
+                    b.Property<long>("ReportFormTypeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ReportType")
+                        .HasColumnType("text");
 
                     b.Property<long>("SiteId")
                         .HasColumnType("bigint");
@@ -389,9 +392,83 @@ namespace PikeSafetyWebApp.Migrations
 
                     b.HasIndex("AppUserId");
 
+                    b.HasIndex("ReportFormTypeId");
+
                     b.HasIndex("SiteId");
 
                     b.ToTable("Reports");
+                });
+
+            modelBuilder.Entity("PikeSafetyWebApp.Models.ReportFormType", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Fields")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ReportTypes");
+                });
+
+            modelBuilder.Entity("PikeSafetyWebApp.Models.ReportImage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("varbinary(4000)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<long>("ReportId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReportId");
+
+                    b.ToTable("ReportImage");
                 });
 
             modelBuilder.Entity("PikeSafetyWebApp.Models.Site", b =>
@@ -518,9 +595,24 @@ namespace PikeSafetyWebApp.Migrations
                         .WithMany("Reports")
                         .HasForeignKey("AppUserId");
 
+                    b.HasOne("PikeSafetyWebApp.Models.ReportFormType", null)
+                        .WithMany("Reports")
+                        .HasForeignKey("ReportFormTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PikeSafetyWebApp.Models.Site", null)
                         .WithMany("Reports")
                         .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PikeSafetyWebApp.Models.ReportImage", b =>
+                {
+                    b.HasOne("PikeSafetyWebApp.Models.Report", null)
+                        .WithMany("Images")
+                        .HasForeignKey("ReportId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

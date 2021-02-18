@@ -93,7 +93,7 @@ const CreateForm = ({
         <Form.Field className={errors.fields !== undefined ? "error field" : "field"} style={{ marginBottom: 0 }}>
           <label>{errors.fields !== undefined ? "Form Fields - ERRORS: Please fix the errors indicated below" : "Form Fields"}</label>
         </Form.Field>
-        <Menu stackable attached="top" style={{ marginTop: 0 }}>
+        <Menu stackable attached="top" style={{ marginTop: 0 }} size="small">
           <Menu.Item>
             <Icon name="list" /> Manage Fields
           </Menu.Item>
@@ -101,9 +101,9 @@ const CreateForm = ({
             {showAddFieldsForm ? <Icon name="eye slash outline" /> : <Icon name="eye" />}
             {showAddFieldsForm ? "Hide" : "Show"}
           </Menu.Item>
-          <Menu.Item position="right">
-            <Button color="green" content="Create Form" type="submit" disabled={!isDirty} loading={isSubmitting} />
-          </Menu.Item>
+          {/* <Menu.Item onClick={() => addField()} position="right">
+            <Button type="button" color="blue" content="Add Field" onClick={() => addField()} />
+          </Menu.Item> */}
         </Menu>
         <Segment attached className={showAddFieldsForm ? "show" : "hide"}>
           {fieldIds.map((id) => (
@@ -202,12 +202,19 @@ const CreateForm = ({
               </Form.Field>
             </Form.Group>
           ))}
-          <Button type="button" color="blue" content="Add Field" onClick={() => addField()} />
         </Segment>
+        <Menu stackable attached="bottom" style={{ marginTop: 0 }} size="small">
+          <Menu.Item>
+            <Button type="button" color="blue" content="Add Field" onClick={() => addField()} />
+          </Menu.Item>
+          <Menu.Item position="right">
+            <Button type="submit" color="green" content="Create Form" disabled={!isDirty} loading={isSubmitting} />
+          </Menu.Item>
+        </Menu>
         {submitErrors && <ErrorMessage error={submitErrors!} />}
       </Form>
       {(fieldIds.length > 0 && <FormBuilder control={control} />) || (
-        <Menu stackable>
+        <Menu stackable size="small">
           <Menu.Item>
             <Icon name="wordpress forms" size="large" /> Form Preview
           </Menu.Item>

@@ -14,6 +14,7 @@ namespace PikeSafetyWebApp.Data
         public virtual DbSet<ActiveStorageAttachments> ActiveStorageAttachments { get; set; }
         public virtual DbSet<ActiveStorageBlobs> ActiveStorageBlobs { get; set; }
         public virtual DbSet<Company> Companies { get; set; }
+        public virtual DbSet<ReportFormType> ReportTypes { get; set; }
         public virtual DbSet<Report> Reports { get; set; }
         public virtual DbSet<Site> Sites { get; set; }
         public virtual DbSet<UserSite> UserSites { get; set; }

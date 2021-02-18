@@ -527,24 +527,145 @@ namespace PikeSafetyWebApp.Data
             var DghoffmanUser = await userManager.FindByEmailAsync("dghoffman@gmail.com");
             var CdmorganUser = await userManager.FindByEmailAsync("cdmorg9430@gmail.com");
 
+            if (!context.ReportTypes.Any())
+            {
+                var reportTypes = new List<ReportFormType>
+                {
+                    new ReportFormType
+                    {
+                        Id = 1,
+                        Title = "New User",
+                        Fields = JsonSerializer.Serialize(new List<FormField>
+                            {
+                                new FormField
+                                {
+                                    Type = "Dropdown",
+                                    Name = "Title",
+                                    Placeholder = "Select Title",
+                                    Options = "Mr, Mrs, Ms, Miss",
+                                    Required = false
+                                },
+                                new FormField
+                                {
+                                    Type = "Text",
+                                    Name = "First Name",
+                                    Placeholder = "Input first name",
+                                    Options = "",
+                                    Required = true,
+                                },
+                                new FormField
+                                {
+                                    Type = "Text",
+                                    Name = "Last Name",
+                                    Placeholder = "Input last name",
+                                    Options = "",
+                                    Required = true,
+                                },
+                                new FormField
+                                {
+                                    Type = "Radio",
+                                    Name = "Gender",
+                                    Placeholder = "",
+                                    Options = "Male, Female, Both",
+                                    Required = true,
+                                },
+                                new FormField
+                                {
+                                    Type = "Textarea",
+                                    Name = "Comments",
+                                    Placeholder = "Add comments...",
+                                    Options = "",
+                                    Required = false,
+                                },
+                                new FormField
+                                {
+                                    Type = "Checkbox",
+                                    Name = "Acknowledgment",
+                                    Placeholder = "I agree to the Terms of Service",
+                                    Options = "",
+                                    Required = true,
+                                },
+                            }
+                        ),
+                        CreatedOn = DateTime.UtcNow,
+                        CreatedBy = DghoffmanUser.Id,
+                        UpdatedOn = null,
+                        UpdatedBy = null,
+                        IsActive = true
+                    }
+                };
+
+                await context.ReportTypes.AddRangeAsync(reportTypes);
+                await context.SaveChangesAsync();
+            }
+
             if (!context.Reports.Any())
             {
                 var reports = new List<Report>
                 {
                     new Report
                     {
-                        Title = "Report Title 1",
-                        FormType = "Form Type 1",
-                        FormDetails = JsonSerializer.Serialize(new {
-                            fields = new List<Object>
+                        Title = "New User",
+                        ReportType = "New User",
+                        ReportFormTypeId = 1,
+                        ReportFields = JsonSerializer.Serialize(new List<ReportField>
                             {
-                                new {name = "field name 1", placeholder = "Placeholder 1 text", type = "select", required = true, options = new List<string> {"Option 1", "Option 2", "Option 3"}, value = "Option 1"},
-                                new {name = "field name 2", placeholder = "Placeholder 2 text", type = "text", required = true, value = "field 2 value"},
-                                new {name = "field name 3", placeholder = "Placeholder 3 text", type = "text-area", required = true, value = "field 3 value"},
-                                new {name = "field name 4", placeholder = "Placeholder 4 text", type = "checkbox", required = true, value = "field 4 value"},
-                                new {name = "field name 5", placeholder = "Placeholder 5 text", type = "radio", required = true, options = new List<string> {"Option 1", "Option 2", "Option 3"}, value = "Option 3"},
+                                new ReportField
+                                {
+                                    Type = "Dropdown",
+                                    Name = "Title",
+                                    Placeholder = "Select Title",
+                                    Options = "Mr, Mrs, Ms, Miss",
+                                    Required = false,
+                                    Value = "Mr"
+                                },
+                                new ReportField
+                                {
+                                    Type = "Text",
+                                    Name = "First Name",
+                                    Placeholder = "Input first name",
+                                    Options = "",
+                                    Required = true,
+                                    Value = "Tester"
+                                },
+                                new ReportField
+                                {
+                                    Type = "Text",
+                                    Name = "Last Name",
+                                    Placeholder = "Input last name",
+                                    Options = "",
+                                    Required = true,
+                                    Value = "McTesterface"
+                                },
+                                new ReportField
+                                {
+                                    Type = "Radio",
+                                    Name = "Gender",
+                                    Placeholder = "",
+                                    Options = "Male, Female, Both",
+                                    Required = true,
+                                    Value = "Male"
+                                },
+                                new ReportField
+                                {
+                                    Type = "Textarea",
+                                    Name = "Comments",
+                                    Placeholder = "Add comments...",
+                                    Options = "",
+                                    Required = false,
+                                    Value = "McTesterfaces Rule!"
+                                },
+                                new ReportField
+                                {
+                                    Type = "Checkbox",
+                                    Name = "Acknowledgment",
+                                    Placeholder = "I agree to the Terms of Service",
+                                    Options = "",
+                                    Required = true,
+                                    Value = "true"
+                                },
                             }
-                        }),
+                        ),
                         IsComplete = false,
                         CompanyId = ChafinHomeBuildersId,
                         SiteId = StonewaterCreekSiteId,
@@ -553,53 +674,7 @@ namespace PikeSafetyWebApp.Data
                         UpdatedOn = null,
                         UpdatedBy = null,
                         IsActive = true
-                    },
-                    new Report
-                    {
-                        Title = "Report Title 2",
-                        FormType = "Form Type 2",
-                        FormDetails = JsonSerializer.Serialize(new {
-                            fields = new List<Object>
-                            {
-                                new {name = "field name 1", placeholder = "Placeholder 1 text", type = "select", required = true, options = new List<string> {"Option 1", "Option 2", "Option 3"}, value = "Option 1"},
-                                new {name = "field name 2", placeholder = "Placeholder 2 text", type = "text", required = true, value = "field 2 value"},
-                                new {name = "field name 3", placeholder = "Placeholder 3 text", type = "text-area", required = true, value = "field 3 value"},
-                                new {name = "field name 4", placeholder = "Placeholder 4 text", type = "checkbox", required = true, value = "field 4 value"},
-                                new {name = "field name 5", placeholder = "Placeholder 5 text", type = "radio", required = true, options = new List<string> {"Option 1", "Option 2", "Option 3"}, value = "Option 3"},
-                            }
-                        }),
-                        IsComplete = false,
-                        CompanyId = ChafinHomeBuildersId,
-                        SiteId = StonewaterCreekSiteId,
-                        CreatedOn = DateTime.UtcNow,
-                        CreatedBy = DghoffmanUser.Id,
-                        UpdatedOn = null,
-                        UpdatedBy = null,
-                        IsActive = true
-                    },
-                    new Report
-                    {
-                        Title = "Report Title 3",
-                        FormType = "Form Type 1",
-                        FormDetails = JsonSerializer.Serialize(new {
-                            fields = new List<Object>
-                            {
-                                new {name = "field name 1", placeholder = "Placeholder 1 text", type = "select", required = true, options = new List<string> {"Option 1", "Option 2", "Option 3"}, value = "Option 1"},
-                                new {name = "field name 2", placeholder = "Placeholder 2 text", type = "text", required = true, value = "field 2 value"},
-                                new {name = "field name 3", placeholder = "Placeholder 3 text", type = "text-area", required = true, value = "field 3 value"},
-                                new {name = "field name 4", placeholder = "Placeholder 4 text", type = "checkbox", required = true, value = "field 4 value"},
-                                new {name = "field name 5", placeholder = "Placeholder 5 text", type = "radio", required = true, options = new List<string> {"Option 1", "Option 2", "Option 3"}, value = "Option 3"},
-                            }
-                        }),
-                        IsComplete = false,
-                        CompanyId = ChafinHomeBuildersId,
-                        SiteId = JamesonGlenSiteId,
-                        CreatedOn = DateTime.UtcNow,
-                        CreatedBy = CdmorganUser.Id,
-                        UpdatedOn = null,
-                        UpdatedBy = null,
-                        IsActive = true
-                    },
+                    }
                 };
 
                 await context.Reports.AddRangeAsync(reports);

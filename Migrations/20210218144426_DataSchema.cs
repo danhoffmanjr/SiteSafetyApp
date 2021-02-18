@@ -4,7 +4,7 @@ using MySql.Data.EntityFrameworkCore.Metadata;
 
 namespace PikeSafetyWebApp.Migrations
 {
-    public partial class SchemaCreation : Migration
+    public partial class DataSchema : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -84,6 +84,25 @@ namespace PikeSafetyWebApp.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Companies", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReportTypes",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    UpdatedOn = table.Column<DateTime>(nullable: true),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    UpdatedBy = table.Column<string>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
+                    Title = table.Column<string>(nullable: true),
+                    Fields = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReportTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -267,12 +286,13 @@ namespace PikeSafetyWebApp.Migrations
                     CreatedBy = table.Column<string>(nullable: true),
                     UpdatedBy = table.Column<string>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false),
+                    ReportFormTypeId = table.Column<long>(nullable: false),
+                    ReportType = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true),
-                    FormType = table.Column<string>(nullable: true),
-                    FormDetails = table.Column<string>(nullable: true),
-                    IsComplete = table.Column<bool>(nullable: false),
+                    ReportFields = table.Column<string>(nullable: true),
                     CompanyId = table.Column<long>(nullable: false),
                     SiteId = table.Column<long>(nullable: false),
+                    IsComplete = table.Column<bool>(nullable: false),
                     AppUserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -284,6 +304,12 @@ namespace PikeSafetyWebApp.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Reports_ReportTypes_ReportFormTypeId",
+                        column: x => x.ReportFormTypeId,
+                        principalTable: "ReportTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reports_Sites_SiteId",
                         column: x => x.SiteId,
@@ -312,6 +338,33 @@ namespace PikeSafetyWebApp.Migrations
                         name: "FK_UserSites_Sites_SiteId",
                         column: x => x.SiteId,
                         principalTable: "Sites",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReportImage",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    CreatedOn = table.Column<DateTime>(nullable: false),
+                    UpdatedOn = table.Column<DateTime>(nullable: true),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    UpdatedBy = table.Column<string>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
+                    ReportId = table.Column<long>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    ImageData = table.Column<byte[]>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReportImage", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ReportImage_Reports_ReportId",
+                        column: x => x.ReportId,
+                        principalTable: "Reports",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -359,9 +412,19 @@ namespace PikeSafetyWebApp.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ReportImage_ReportId",
+                table: "ReportImage",
+                column: "ReportId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reports_AppUserId",
                 table: "Reports",
                 column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reports_ReportFormTypeId",
+                table: "Reports",
+                column: "ReportFormTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reports_SiteId",
@@ -403,7 +466,7 @@ namespace PikeSafetyWebApp.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Reports");
+                name: "ReportImage");
 
             migrationBuilder.DropTable(
                 name: "UserSites");
@@ -412,7 +475,13 @@ namespace PikeSafetyWebApp.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "Reports");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "ReportTypes");
 
             migrationBuilder.DropTable(
                 name: "Sites");

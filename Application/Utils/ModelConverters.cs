@@ -111,8 +111,8 @@ namespace PikeSafetyWebApp.Application.Utils
             {
                 Id = report.Id,
                 Title = report.Title,
-                FormType = report.FormType,
-                FormDetails = report.FormDetails,
+                FormType = report.ReportType,
+                FormDetails = report.ReportFields,
                 IsComplete = report.IsComplete,
                 CompanyId = report.CompanyId,
                 CompanyName = companyService.GetCompanyNameByIdAsync(report.CompanyId).Result,

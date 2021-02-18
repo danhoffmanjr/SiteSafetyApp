@@ -2,7 +2,7 @@ import React from "react";
 import { Control, useWatch } from "react-hook-form";
 import { IFormTemplate } from "../../app/models/formTemplate";
 import { IFormFieldType } from "../../app/models/formFieldType";
-import { Button, Checkbox, Form, Grid, Header, Icon, Menu, Segment, Select, TextArea } from "semantic-ui-react";
+import { Checkbox, Form, Grid, Icon, Menu, Segment, Select, TextArea } from "semantic-ui-react";
 
 const FormBuilder = ({ control }: { control: Control<IFormTemplate> }) => {
   const fieldArray = useWatch<IFormFieldType[]>({
@@ -23,7 +23,7 @@ const FormBuilder = ({ control }: { control: Control<IFormTemplate> }) => {
 
   return (
     <>
-      <Menu stackable attached="top" inverted style={{ backgroundColor: "#696969", border: "1px solid #696969" }}>
+      <Menu stackable attached="top" inverted style={{ backgroundColor: "#696969", border: "1px solid #696969" }} size="small">
         <Menu.Item color="grey">
           <Icon name="wordpress forms" size="large" /> Form Preview
         </Menu.Item>
@@ -33,7 +33,10 @@ const FormBuilder = ({ control }: { control: Control<IFormTemplate> }) => {
           <Grid stackable columns={3}>
             {/* <div>{JSON.stringify(fieldArray)}</div> */}
             {fieldArray.map((field, index) => {
-              if (field.type === "Text") {
+              if (field === undefined) return false;
+              if (field && field.type === undefined) return false;
+
+              if (field.type && field.type === "Text") {
                 return (
                   <Grid.Column key={index}>
                     <Form.Field key={index} className="field" fluid="true">
@@ -44,7 +47,7 @@ const FormBuilder = ({ control }: { control: Control<IFormTemplate> }) => {
                 );
               }
 
-              if (field.type === "Dropdown") {
+              if (field.type && field.type === "Dropdown") {
                 let options = createDropdownOptions(field.options);
                 return (
                   <Grid.Column key={index}>
@@ -56,7 +59,7 @@ const FormBuilder = ({ control }: { control: Control<IFormTemplate> }) => {
                 );
               }
 
-              if (field.type === "Textarea") {
+              if (field.type && field.type === "Textarea") {
                 return (
                   <Grid.Column key={index}>
                     <Form.Field key={index} className="field" fluid="true">
@@ -67,7 +70,7 @@ const FormBuilder = ({ control }: { control: Control<IFormTemplate> }) => {
                 );
               }
 
-              if (field.type === "Checkbox") {
+              if (field.type && field.type === "Checkbox") {
                 return (
                   <Grid.Column key={index}>
                     <Form.Field key={index} className="field" fluid="true">
