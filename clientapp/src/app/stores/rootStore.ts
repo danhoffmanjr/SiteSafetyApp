@@ -3,6 +3,7 @@ import { createContext } from 'react';
 import CommonStore from './commonStore';
 import CompanyStore from './companyStore';
 import FormStore from './formStore';
+import ImageStore from './imageStore';
 import ModalStore from './modalStore';
 import ReportStore from './reportStore';
 import SiteStore from './siteStore';
@@ -18,6 +19,7 @@ export class RootStore {
     companyStore: CompanyStore;
     siteStore: SiteStore;
     formStore: FormStore;
+    imageStore: ImageStore;
 
     constructor() {
         this.reportStore = new ReportStore(this);
@@ -27,6 +29,7 @@ export class RootStore {
         this.companyStore = new CompanyStore(this);
         this.siteStore = new SiteStore(this);
         this.formStore = new FormStore(this);
+        this.imageStore = new ImageStore(this);
     }
 }
 

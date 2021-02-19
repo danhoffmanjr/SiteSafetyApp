@@ -1,25 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Control, useWatch } from "react-hook-form";
 import { IFormTemplate } from "../../app/models/formTemplate";
 import { IFormFieldType } from "../../app/models/formFieldType";
-import { Checkbox, Form, Grid, Icon, Menu, Segment, Select, TextArea } from "semantic-ui-react";
+import { Button, Checkbox, Form, Grid, Header, Icon, Image, Label, Menu, Segment, Select, TextArea } from "semantic-ui-react";
+import ImageUploader from "../../app/common/imageUpload/ImageUploader";
+import { RootStoreContext } from "../../app/stores/rootStore";
+import { observer } from "mobx-react-lite";
 
 const FormBuilder = ({ control }: { control: Control<IFormTemplate> }) => {
+  const rootStore = useContext(RootStoreContext);
+  const { createDropdownOptions } = rootStore.formStore;
+  const { removeImage, imageRegistry } = rootStore.imageStore;
+
   const fieldArray = useWatch<IFormFieldType[]>({
     control,
     name: `fields`,
     defaultValue: [{ type: "", name: "[Name]", placeholder: "[Placeholder]", options: "", isRequired: 1 }],
   });
-
-  // move to common store as an action
-  const createDropdownOptions = (options: string) => {
-    let optionsArray = options.split(",");
-    let dropdownOptions: { key: string; value: string; text: string }[] = [];
-    optionsArray.map((option, index) => {
-      dropdownOptions.push({ key: `${index}`, value: `${option}`, text: `${option}` });
-    });
-    return dropdownOptions;
-  };
 
   return (
     <>
@@ -80,6 +77,34 @@ const FormBuilder = ({ control }: { control: Control<IFormTemplate> }) => {
                 );
               }
 
+              if (field.type && field.type === "ImageUploader") {
+                return (
+                  <Grid.Column key={index} width={16}>
+                    <Form.Field className="field" fluid="true">
+                      <label>{field.name ? field.name : "[Field Name]"}</label>
+                      <Segment attached="top" style={{ marginTop: 0 }}>
+                        <ImageUploader />
+                      </Segment>
+                      <Segment attached="bottom">
+                        <Header sub color="blue" content="Images:" />
+                        <div style={{ display: "flex", justifyContent: "flex-start", flexWrap: "wrap" }}>
+                          {imageRegistry &&
+                            imageRegistry.size > 0 &&
+                            Array.from(imageRegistry).map((blob) => (
+                              <Segment style={{ padding: 0, margin: "0 1em 1em 0 " }}>
+                                <Image src={URL.createObjectURL(blob[1])} alt={blob[0]} style={{ maxHeight: 100 }} />
+                                <Button fluid compact size="mini" attached="bottom" onClick={() => removeImage(blob[0])}>
+                                  Remove
+                                </Button>
+                              </Segment>
+                            ))}
+                        </div>
+                      </Segment>
+                    </Form.Field>
+                  </Grid.Column>
+                );
+              }
+
               return false;
             })}
           </Grid>
@@ -89,4 +114,4 @@ const FormBuilder = ({ control }: { control: Control<IFormTemplate> }) => {
   );
 };
 
-export default FormBuilder;
+export default observer(FormBuilder);

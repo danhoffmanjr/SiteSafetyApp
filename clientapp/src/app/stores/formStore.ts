@@ -1,4 +1,4 @@
-import { observable } from "mobx";
+import { action, observable } from "mobx";
 import { ISelectOptions } from "../models/reactSelectOptions";
 import { RootStore } from "./rootStore";
 
@@ -14,6 +14,7 @@ export default class FormStore {
     { value: `Dropdown`, label: `Dropdown` },
     { value: `Checkbox`, label: `Checkbox` },
     { value: `Textarea`, label: `Textarea` },
+    { value: `ImageUploader`, label: `Image Uploader` },
   ];
 
   @observable isRequiredOptions: ISelectOptions[] = [
@@ -21,16 +22,12 @@ export default class FormStore {
       { value: 0, label: `No` }
   ];
 
-  // for semantic-ui react Select component
-  // @observable typeOptions: {value: string, text: string}[] = [
-  //   { value: "Dropdown", text: "Dropdown" },
-  //   { value: "Text", text: "Text" },
-  //   { value: "Textarea", text: "Textarea" },
-  //   { value: "Checkbox", text: "Checkbox" },
-  // ];
-
-  //   @observable isRequiredOptions: {value: number, text: string}[] = [
-  //     { value: 1, text: `Yes` },
-  //     { value: 0, text: `No` }
-  // ];
+  @action createDropdownOptions = (options: string) => {
+    let optionsArray = options.split(",");
+    let dropdownOptions: { key: string; value: string; text: string }[] = [];
+    optionsArray.map((option, index) => {
+      dropdownOptions.push({ key: `${index}`, value: `${option}`, text: `${option}` });
+    });
+    return dropdownOptions;
+  };
 }

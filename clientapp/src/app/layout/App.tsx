@@ -7,7 +7,6 @@ import AppMenu from "../../features/app-menu/AppMenu";
 import CompaniesPage from "../../features/companies/CompaniesPage";
 import CreateCompanyForm from "../../features/companies/CreateCompanyForm";
 import CreateForm from "../../features/form-creator/CreateForm";
-import CreateTemplateForm from "../../features/form-creator/CreateTemplateForm";
 import HomePage from "../../features/home/HomePage";
 import CreateReportForm from "../../features/reports/CreateReportForm";
 import ReportDetailsPage from "../../features/reports/ReportDetailsPage";
@@ -76,8 +75,7 @@ const App: React.FC<RouteComponentProps> = ({ location, match, history, children
           <Route path="/users/resetPassword" component={PasswordResetForm} />
           <Route path="/users/verifyEmailChange" component={ConfirmEmail} />
           <Route path="/profiles/:username" component={ProfilePage} />
-          <Route path="/forms/create" component={CreateTemplateForm} />
-          <Route path="/forms2/create" component={CreateForm} />
+          <Route path="/report-type/create" component={CreateForm} />
           <Route exact path="/access-denied" component={AccessDenied} />
           <Route component={NotFound} />
         </Switch>
