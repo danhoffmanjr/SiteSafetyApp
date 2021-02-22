@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace PikeSafetyWebApp.Models
 {
-    public class ReportFormType : DbMetadata
+    public class ReportType : DbMetadata
     {
         public long Id { get; set; }
         public string Title { get; set; }

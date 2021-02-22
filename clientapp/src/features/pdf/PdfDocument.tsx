@@ -49,7 +49,8 @@ const styles = StyleSheet.create({
 });
 
 const PdfDocument: React.FC<IProps> = ({ report }) => {
-  const [fields, setFields] = useState(JSON.parse(report?.formDetails));
+  console.log("Report: ", report);
+  const [fields, setFields] = useState(report?.reportFields);
   return (
     <Document>
       <Page size="LETTER">
@@ -62,7 +63,7 @@ const PdfDocument: React.FC<IProps> = ({ report }) => {
             </View>
             <View style={styles.fields}>
               {fields
-                ? fields.fields.map((field: any) => {
+                ? fields.map((field: any) => {
                     return (
                       <View key={field.name} style={styles.field}>
                         <Text style={styles.fieldName}>{field.name}:</Text>

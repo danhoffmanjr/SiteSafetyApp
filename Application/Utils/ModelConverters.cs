@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
+using PikeSafetyApp.Application.ReportImages;
 using PikeSafetyWebApp.Application.Interfaces;
 using PikeSafetyWebApp.Application.Reports;
 using PikeSafetyWebApp.Application.Sites;
@@ -107,12 +108,15 @@ namespace PikeSafetyWebApp.Application.Utils
 
         public ReportDto ReportToReportDto(Report report)
         {
+            var fields = JsonSerializer.Deserialize<List<ReportField>>(report.ReportFields);
+
             return new ReportDto
             {
                 Id = report.Id,
+                ReportTypeId = report.ReportTypeId,
+                ReportType = report.ReportType,
                 Title = report.Title,
-                FormType = report.ReportType,
-                FormDetails = report.ReportFields,
+                ReportFields = fields,
                 IsComplete = report.IsComplete,
                 CompanyId = report.CompanyId,
                 CompanyName = companyService.GetCompanyNameByIdAsync(report.CompanyId).Result,
@@ -122,7 +126,22 @@ namespace PikeSafetyWebApp.Application.Utils
                 CreatedOn = report.CreatedOn,
                 UpdatedBy = report.UpdatedBy,
                 UpdatedOn = report.UpdatedOn,
-                IsActive = report.IsActive
+                IsActive = report.IsActive,
+                Images = report.Images?.ToList().ConvertAll(new Converter<ReportImage, ReportImageDto>(ReportImageToReportImageDto))
+            };
+        }
+
+        public ReportImageDto ReportImageToReportImageDto(ReportImage image)
+        {
+            return new ReportImageDto
+            {
+                Id = image.Id,
+                ReportId = image.ReportId,
+                FileName = image.FileName,
+                FileType = image.FileType,
+                Description = image.Description,
+                Size = image.Size,
+                ImageDataUrl = image.ImageDataUrl
             };
         }
     }

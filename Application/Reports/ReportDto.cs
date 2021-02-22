@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using PikeSafetyApp.Application.ReportImages;
+using PikeSafetyWebApp.Models;
 
 namespace PikeSafetyWebApp.Application.Reports
 {
@@ -6,8 +9,10 @@ namespace PikeSafetyWebApp.Application.Reports
     {
         public long Id { get; set; }
         public string Title { get; set; }
-        public string FormType { get; set; }
-        public string FormDetails { get; set; }
+        public string ReportType { get; set; }
+        public long ReportTypeId { get; set; }
+        public ICollection<ReportField> ReportFields { get; set; }
+        public ICollection<ReportImageDto> Images { get; set; }
         public bool IsComplete { get; set; }
         public long CompanyId { get; set; }
         public string CompanyName { get; set; }

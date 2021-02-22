@@ -60,6 +60,11 @@ const AppMenu = () => {
                           Users
                         </NavLink>
                       </NavItem>
+                      <NavItem>
+                        <NavLink tag={link} to="/report-type/create">
+                          Forms
+                        </NavLink>
+                      </NavItem>
                     </>
                   )}
                 </ul>

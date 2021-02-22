@@ -59,7 +59,7 @@ const ReportsTable: React.FC<IProps> = ({ reports }) => {
               <Fragment key={rowIndex}>
                 <Table.Row key={rowIndex}>
                   <Table.Cell>{report.title}</Table.Cell>
-                  <Table.Cell>{report.formType}</Table.Cell>
+                  <Table.Cell>{report.reportType}</Table.Cell>
                   <Table.Cell>{report.companyName}</Table.Cell>
                   <Table.Cell>{report.siteName}</Table.Cell>
                   <Table.Cell>{report.createdBy}</Table.Cell>

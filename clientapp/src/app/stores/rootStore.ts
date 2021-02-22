@@ -2,7 +2,7 @@ import { configure } from 'mobx';
 import { createContext } from 'react';
 import CommonStore from './commonStore';
 import CompanyStore from './companyStore';
-import FormStore from './formStore';
+import ReportTypeStore from './reportTypeStore';
 import ImageStore from './imageStore';
 import ModalStore from './modalStore';
 import ReportStore from './reportStore';
@@ -18,7 +18,7 @@ export class RootStore {
     modalStore: ModalStore;
     companyStore: CompanyStore;
     siteStore: SiteStore;
-    formStore: FormStore;
+    reportTypeStore: ReportTypeStore;
     imageStore: ImageStore;
 
     constructor() {
@@ -28,7 +28,7 @@ export class RootStore {
         this.modalStore = new ModalStore(this);
         this.companyStore = new CompanyStore(this);
         this.siteStore = new SiteStore(this);
-        this.formStore = new FormStore(this);
+        this.reportTypeStore = new ReportTypeStore(this);
         this.imageStore = new ImageStore(this);
     }
 }

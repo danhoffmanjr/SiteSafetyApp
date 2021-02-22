@@ -1,22 +1,27 @@
 import React, { useContext } from "react";
 import { Control, useWatch } from "react-hook-form";
-import { IFormTemplate } from "../../app/models/formTemplate";
-import { IFormFieldType } from "../../app/models/formFieldType";
+import { IReportType } from "../../app/models/reportType";
+import { IReportTypeField } from "../../app/models/reportTypeField";
 import { Button, Checkbox, Form, Grid, Header, Icon, Image, Label, Menu, Segment, Select, TextArea } from "semantic-ui-react";
 import ImageUploader from "../../app/common/imageUpload/ImageUploader";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import { observer } from "mobx-react-lite";
 
-const FormBuilder = ({ control }: { control: Control<IFormTemplate> }) => {
+const FormBuilder = ({ control }: { control: Control<IReportType> }) => {
   const rootStore = useContext(RootStoreContext);
-  const { createDropdownOptions } = rootStore.formStore;
-  const { removeImage, imageRegistry } = rootStore.imageStore;
+  const { createDropdownOptions, fieldTypes } = rootStore.reportTypeStore;
+  const { removeImage, removeAllImages, imageRegistry } = rootStore.imageStore;
 
-  const fieldArray = useWatch<IFormFieldType[]>({
+  const fieldArray = useWatch<IReportTypeField[]>({
     control,
     name: `fields`,
     defaultValue: [{ type: "", name: "[Name]", placeholder: "[Placeholder]", options: "", isRequired: 1 }],
   });
+
+  const handleRemoveImage = (url: string, key: string) => {
+    URL.revokeObjectURL(url);
+    removeImage(key);
+  };
 
   return (
     <>
@@ -31,9 +36,9 @@ const FormBuilder = ({ control }: { control: Control<IFormTemplate> }) => {
             {/* <div>{JSON.stringify(fieldArray)}</div> */}
             {fieldArray.map((field, index) => {
               if (field === undefined) return false;
-              if (field && field.type === undefined) return false;
+              if (field?.type === undefined) return false;
 
-              if (field.type && field.type === "Text") {
+              if (field?.type === fieldTypes.Text.name) {
                 return (
                   <Grid.Column key={index}>
                     <Form.Field key={index} className="field" fluid="true">
@@ -86,18 +91,31 @@ const FormBuilder = ({ control }: { control: Control<IFormTemplate> }) => {
                         <ImageUploader />
                       </Segment>
                       <Segment attached="bottom">
-                        <Header sub color="blue" content="Images:" />
+                        <Header sub color="blue">
+                          Images:{" "}
+                          {imageRegistry && imageRegistry.size > 1 && (
+                            <Button compact size="mini" onClick={removeAllImages}>
+                              Remove All
+                            </Button>
+                          )}
+                        </Header>
+
                         <div style={{ display: "flex", justifyContent: "flex-start", flexWrap: "wrap" }}>
                           {imageRegistry &&
                             imageRegistry.size > 0 &&
-                            Array.from(imageRegistry).map((blob) => (
-                              <Segment style={{ padding: 0, margin: "0 1em 1em 0 " }}>
-                                <Image src={URL.createObjectURL(blob[1])} alt={blob[0]} style={{ maxHeight: 100 }} />
-                                <Button fluid compact size="mini" attached="bottom" onClick={() => removeImage(blob[0])}>
-                                  Remove
-                                </Button>
-                              </Segment>
-                            ))}
+                            Array.from(imageRegistry).map((blob) => {
+                              let imageUrl = URL.createObjectURL(blob[1]);
+                              let imageKey = blob[0];
+                              console.log("Blob: ", blob[1]);
+                              return (
+                                <Segment key={imageKey} style={{ padding: 0, margin: "0.5em 1em 0.5em 0 " }}>
+                                  <Image src={imageUrl} alt={imageKey} style={{ maxHeight: 100 }} />
+                                  <Button fluid compact size="mini" attached="bottom" onClick={() => handleRemoveImage(imageUrl, imageKey)}>
+                                    Remove
+                                  </Button>
+                                </Segment>
+                              );
+                            })}
                         </div>
                       </Segment>
                     </Form.Field>

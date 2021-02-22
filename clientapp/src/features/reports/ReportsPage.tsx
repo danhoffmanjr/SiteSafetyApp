@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { Grid, Header, Icon, Menu, Segment } from "semantic-ui-react";
+import { Grid, Header, Icon, Image, Menu, Segment } from "semantic-ui-react";
 import { search } from "../../app/common/utils/search";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { IReport } from "../../app/models/report";
@@ -60,11 +60,12 @@ const ReportsPage = () => {
         {showForm && (
           <Segment attached>
             <CreateReportForm />
+            {/* {data?.[0].imageDtos.map((image) => <Image src={image.imageDataUrl} alt={image.Name} style={{ maxHeight: 200 }} />)} */}
           </Segment>
         )}
         <Segment attached="bottom">
           {(data[0] && (
-            <ReportsTable reports={data.filter((report) => search<IReport>(report, ["title", "formType", "companyName", "siteName", "createdBy", "createdOn", "isComplete"], query))} />
+            <ReportsTable reports={data.filter((report) => search<IReport>(report, ["title", "reportType", "companyName", "siteName", "createdBy", "createdOn", "isComplete"], query))} />
           )) || <p>NO REPORTS</p>}
         </Segment>
       </div>

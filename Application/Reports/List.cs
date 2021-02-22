@@ -36,14 +36,15 @@ namespace PikeSafetyWebApp.Application.Reports
             public async Task<List<ReportDto>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var roles = await context.Roles.ToListAsync(); //needed for nested data relationships, still faster than lazy loading.
+                var images = await context.ReportImages.ToListAsync(); //needed for nested data relationships, still faster than lazy loading.
                 var currentUser = await context.Users.Where(x => x.Id == userAccessor.GetCurrentUserId()).Include(x => x.UserRoles).FirstOrDefaultAsync();
                 var userRole = currentUser.UserRoles.First().Role.Name;
                 var recordsForRole = new Dictionary<string, Func<Task<List<Report>>>>();
-                recordsForRole[PikeSafetyWebApp.Models.RoleNames.Admin] = async () => { return await context.Reports.ToListAsync(); };
-                recordsForRole[PikeSafetyWebApp.Models.RoleNames.Inspector] = async () => { return await context.Reports.Where(x => x.CreatedBy == currentUser.Id).ToListAsync(); };
-                recordsForRole[PikeSafetyWebApp.Models.RoleNames.AreaManager] = async () => { return await context.Reports.Where(x => x.CompanyId == currentUser.CompanyId).ToListAsync(); };
-                recordsForRole[PikeSafetyWebApp.Models.RoleNames.ConstructionSupervisor] = async () => { return await context.Reports.Where(x => x.CompanyId == currentUser.CompanyId).ToListAsync(); };
-                recordsForRole[PikeSafetyWebApp.Models.RoleNames.Executive] = async () => { return await context.Reports.Where(x => x.CompanyId == currentUser.CompanyId).ToListAsync(); };
+                recordsForRole[PikeSafetyWebApp.Models.RoleNames.Admin] = async () => { return await context.Reports.Include(x => x.Images).ToListAsync(); };
+                recordsForRole[PikeSafetyWebApp.Models.RoleNames.Inspector] = async () => { return await context.Reports.Where(x => x.CreatedBy == currentUser.Id).Include(x => x.Images).ToListAsync(); };
+                recordsForRole[PikeSafetyWebApp.Models.RoleNames.AreaManager] = async () => { return await context.Reports.Where(x => x.CompanyId == currentUser.CompanyId).Include(x => x.Images).ToListAsync(); };
+                recordsForRole[PikeSafetyWebApp.Models.RoleNames.ConstructionSupervisor] = async () => { return await context.Reports.Where(x => x.CompanyId == currentUser.CompanyId).Include(x => x.Images).ToListAsync(); };
+                recordsForRole[PikeSafetyWebApp.Models.RoleNames.Executive] = async () => { return await context.Reports.Where(x => x.CompanyId == currentUser.CompanyId).Include(x => x.Images).ToListAsync(); };
 
                 List<Report> records = await recordsForRole[userRole]?.Invoke();
 

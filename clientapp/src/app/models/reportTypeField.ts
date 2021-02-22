@@ -1,4 +1,4 @@
-export interface IFormFieldType { 
+export interface IReportTypeField { 
     type: string; 
     name: string; 
     placeholder: string; 

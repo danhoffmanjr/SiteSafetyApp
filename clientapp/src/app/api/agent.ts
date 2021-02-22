@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { IReport } from '../models/report';
 import { IUser } from '../models/user';
 import { IUserFormValues } from '../models/userFormValues';
@@ -13,6 +13,7 @@ import { ISiteFormValues } from '../models/siteFormValues';
 import { IUserSiteFormValues } from '../models/userSiteFormValues';
 import { IEditUserFormValues } from '../models/editUserFormValues';
 import { IProfileFormValues } from '../models/profileFormValues';
+import { IReportImage } from '../models/reportImage';
 
 
 
@@ -69,9 +70,21 @@ const Reports = {
   delete: (id: string) => requests.delete(`/reports/${id}`)
 };
 
+const ReportImages = {
+  upload: (filename: string, image: Blob) => {
+    let formData = new FormData();
+    formData.append('File', image);
+    formData.append('FileName', filename);
+    return axios.post<IReportImage>("/api/reportImages", formData, {
+      headers: {'Content-Type': 'multipart/form-data', 'Authorization': `Bearer ${localStorage.getItem("ps-token")}`}
+    })
+  }
+};
+
 export default {
     User,
     Reports,
+    ReportImages,
     Companies,
     Sites
 }

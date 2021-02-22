@@ -1,8 +1,12 @@
+import { IReportField } from "./reportField";
+import { IReportImage } from "./reportImage";
+
 export interface IReport {
     id: number;
     title: string;
-    formType: string;
-    formDetails: string;
+    reportType: string;
+    reportTypeId: number;
+    reportFields: IReportField[];
     companyId: number;
     companyName: string;
     siteId: number;
@@ -13,4 +17,5 @@ export interface IReport {
     updatedOn: Date;
     isComplete: boolean;
     isActive: boolean;
+    images: IReportImage[];
 }

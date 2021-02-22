@@ -529,9 +529,9 @@ namespace PikeSafetyWebApp.Data
 
             if (!context.ReportTypes.Any())
             {
-                var reportTypes = new List<ReportFormType>
+                var reportTypes = new List<ReportType>
                 {
-                    new ReportFormType
+                    new ReportType
                     {
                         Id = 1,
                         Title = "New User",
@@ -607,7 +607,7 @@ namespace PikeSafetyWebApp.Data
                     {
                         Title = "New User",
                         ReportType = "New User",
-                        ReportFormTypeId = 1,
+                        ReportTypeId = 1,
                         ReportFields = JsonSerializer.Serialize(new List<ReportField>
                             {
                                 new ReportField

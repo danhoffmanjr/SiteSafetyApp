@@ -7,14 +7,17 @@ import ImageDropzone from "./ImageDropzone";
 
 const ImageUploader = () => {
   const rootStore = useContext(RootStoreContext);
-  const { addImage, imageRegistry } = rootStore.imageStore;
+  const { addImage, imageRegistry, uploadImage } = rootStore.imageStore;
 
   const [files, setFiles] = useState<any[]>([]);
   const [cropper, setCropper] = useState<Cropper>();
 
   function onCrop() {
     if (cropper) {
-      cropper.getCroppedCanvas().toBlob((blob) => addImage(files[0].name, blob!));
+      cropper.getCroppedCanvas().toBlob((blob) => {
+        uploadImage(files[0].name, blob!);
+        addImage(files[0].name, blob!);
+      });
       setFiles([]);
     }
   }

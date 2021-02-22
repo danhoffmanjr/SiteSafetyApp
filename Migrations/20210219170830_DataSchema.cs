@@ -286,7 +286,7 @@ namespace PikeSafetyWebApp.Migrations
                     CreatedBy = table.Column<string>(nullable: true),
                     UpdatedBy = table.Column<string>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false),
-                    ReportFormTypeId = table.Column<long>(nullable: false),
+                    ReportTypeId = table.Column<long>(nullable: false),
                     ReportType = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true),
                     ReportFields = table.Column<string>(nullable: true),
@@ -305,8 +305,8 @@ namespace PikeSafetyWebApp.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Reports_ReportTypes_ReportFormTypeId",
-                        column: x => x.ReportFormTypeId,
+                        name: "FK_Reports_ReportTypes_ReportTypeId",
+                        column: x => x.ReportTypeId,
                         principalTable: "ReportTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -343,7 +343,7 @@ namespace PikeSafetyWebApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ReportImage",
+                name: "ReportImages",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
@@ -354,15 +354,17 @@ namespace PikeSafetyWebApp.Migrations
                     UpdatedBy = table.Column<string>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false),
                     ReportId = table.Column<long>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
+                    FileName = table.Column<string>(nullable: true),
+                    FileType = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
+                    Size = table.Column<long>(nullable: false),
                     ImageData = table.Column<byte[]>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReportImage", x => x.Id);
+                    table.PrimaryKey("PK_ReportImages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ReportImage_Reports_ReportId",
+                        name: "FK_ReportImages_Reports_ReportId",
                         column: x => x.ReportId,
                         principalTable: "Reports",
                         principalColumn: "Id",
@@ -412,8 +414,8 @@ namespace PikeSafetyWebApp.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReportImage_ReportId",
-                table: "ReportImage",
+                name: "IX_ReportImages_ReportId",
+                table: "ReportImages",
                 column: "ReportId");
 
             migrationBuilder.CreateIndex(
@@ -422,9 +424,9 @@ namespace PikeSafetyWebApp.Migrations
                 column: "AppUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reports_ReportFormTypeId",
+                name: "IX_Reports_ReportTypeId",
                 table: "Reports",
-                column: "ReportFormTypeId");
+                column: "ReportTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reports_SiteId",
@@ -466,7 +468,7 @@ namespace PikeSafetyWebApp.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "ReportImage");
+                name: "ReportImages");
 
             migrationBuilder.DropTable(
                 name: "UserSites");

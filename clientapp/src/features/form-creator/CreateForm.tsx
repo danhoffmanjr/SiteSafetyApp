@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import React, { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { IFormTemplate } from "../../app/models/formTemplate";
+import { IReportType } from "../../app/models/reportType";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import { Button, Form, Header, Icon, Menu, Segment } from "semantic-ui-react";
 import ReactSelect from "react-select";
@@ -12,17 +12,18 @@ import FormBuilder from "./FormBuilder";
 
 const CreateForm = ({
   startingState = {
+    id: 0,
     title: "",
     fields: [{ type: "", name: "", placeholder: "", options: "", isRequired: 1 }],
   },
 }) => {
   const rootStore = useContext(RootStoreContext);
-  const { fieldTypeOptions, isRequiredOptions } = rootStore.formStore;
+  const { fieldTypeOptions, isRequiredOptions, fieldTypes } = rootStore.reportTypeStore;
 
   const [showAddFieldsForm, setShowAddFieldsForm] = useState(true);
   const [submitErrors, setSubmitErrors] = useState<AxiosResponse>();
 
-  const { handleSubmit, register, watch, errors, formState, control, setValue } = useForm<IFormTemplate>({
+  const { handleSubmit, register, watch, errors, formState, control, setValue } = useForm<IReportType>({
     mode: "all",
     reValidateMode: "onChange",
     defaultValues: startingState,
@@ -43,7 +44,7 @@ const CreateForm = ({
     setFieldIds(fieldIdArray);
   };
 
-  const onSubmit = (data: IFormTemplate) => {
+  const onSubmit = (data: IReportType) => {
     console.log({
       ...data,
       fields: Object.values(data.fields),
@@ -66,6 +67,10 @@ const CreateForm = ({
 
   const toggleForm = () => {
     setShowAddFieldsForm(!showAddFieldsForm);
+  };
+
+  const getFieldType = (name: string) => {
+    return name as keyof typeof fieldTypes;
   };
 
   return (
@@ -101,9 +106,6 @@ const CreateForm = ({
             {showAddFieldsForm ? <Icon name="eye slash outline" /> : <Icon name="eye" />}
             {showAddFieldsForm ? "Hide" : "Show"}
           </Menu.Item>
-          {/* <Menu.Item onClick={() => addField()} position="right">
-            <Button type="button" color="blue" content="Add Field" onClick={() => addField()} />
-          </Menu.Item> */}
         </Menu>
         <Segment attached className={showAddFieldsForm ? "show" : "hide"}>
           {fieldIds.map((id) => (
@@ -143,7 +145,10 @@ const CreateForm = ({
                   })}
                 />
               </Form.Field>
-              <Form.Field className={errors.fields && errors.fields[parseInt(id)]?.placeholder?.message !== undefined ? "error field" : "field"}>
+              <Form.Field
+                className={errors.fields && errors.fields[parseInt(id)]?.placeholder?.message !== undefined ? "error field" : "field"}
+                disabled={!fieldTypes[getFieldType(watch(`fields[${id}].type`, "Text"))].requiresPlaceholder}
+              >
                 <label>{errors.fields && errors.fields[parseInt(id)]?.placeholder?.message !== undefined ? errors.fields[parseInt(id)]?.placeholder?.message : "Placeholder"}</label>
                 <input
                   type="text"
@@ -152,13 +157,13 @@ const CreateForm = ({
                   defaultValue=""
                   aria-invalid={errors.fields && errors.fields[parseInt(id)]?.placeholder?.message !== undefined}
                   ref={register({
-                    required: "Placeholder is Required*",
+                    required: { value: fieldTypes[getFieldType(watch(`fields[${id}].type`, "Text"))].requiresPlaceholder, message: "Placeholder is Required*" },
                   })}
                 />
               </Form.Field>
               <Form.Field
                 className={errors.fields && errors.fields[parseInt(id)]?.options?.message !== undefined ? "error field" : "field"}
-                disabled={watch(`fields[${parseInt(id)}].type`) !== "Dropdown"}
+                disabled={!fieldTypes[getFieldType(watch(`fields[${id}].type`, "Text"))].requiresOptions}
               >
                 <label>{errors.fields && errors.fields[parseInt(id)]?.options?.message !== undefined ? errors.fields[parseInt(id)]?.options?.message : "Dropdown Options"}</label>
                 <input
@@ -168,7 +173,7 @@ const CreateForm = ({
                   defaultValue=""
                   aria-invalid={errors.fields && errors.fields[parseInt(id)]?.options?.message !== undefined}
                   ref={register({
-                    required: { value: watch(`fields[${id}].type`) === "Dropdown", message: "Options are Required*" },
+                    required: { value: fieldTypes[getFieldType(watch(`fields[${id}].type`, "Text"))].requiresOptions, message: "Options are Required*" },
                   })}
                 />
               </Form.Field>

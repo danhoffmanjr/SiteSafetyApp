@@ -9,7 +9,7 @@ using PikeSafetyWebApp.Data;
 namespace PikeSafetyWebApp.Migrations
 {
     [DbContext(typeof(PikeSafetyDbContext))]
-    [Migration("20210218144426_DataSchema")]
+    [Migration("20210219170830_DataSchema")]
     partial class DataSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -372,11 +372,11 @@ namespace PikeSafetyWebApp.Migrations
                     b.Property<string>("ReportFields")
                         .HasColumnType("text");
 
-                    b.Property<long>("ReportFormTypeId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("ReportType")
                         .HasColumnType("text");
+
+                    b.Property<long>("ReportTypeId")
+                        .HasColumnType("bigint");
 
                     b.Property<long>("SiteId")
                         .HasColumnType("bigint");
@@ -394,14 +394,60 @@ namespace PikeSafetyWebApp.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.HasIndex("ReportFormTypeId");
+                    b.HasIndex("ReportTypeId");
 
                     b.HasIndex("SiteId");
 
                     b.ToTable("Reports");
                 });
 
-            modelBuilder.Entity("PikeSafetyWebApp.Models.ReportFormType", b =>
+            modelBuilder.Entity("PikeSafetyWebApp.Models.ReportImage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FileType")
+                        .HasColumnType("text");
+
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("MEDIUMBLOB");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("ReportId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("datetime");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReportId");
+
+                    b.ToTable("ReportImages");
+                });
+
+            modelBuilder.Entity("PikeSafetyWebApp.Models.ReportType", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -431,46 +477,6 @@ namespace PikeSafetyWebApp.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ReportTypes");
-                });
-
-            modelBuilder.Entity("PikeSafetyWebApp.Models.ReportImage", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<byte[]>("ImageData")
-                        .HasColumnType("varbinary(4000)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<long>("ReportId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReportId");
-
-                    b.ToTable("ReportImage");
                 });
 
             modelBuilder.Entity("PikeSafetyWebApp.Models.Site", b =>
@@ -597,9 +603,9 @@ namespace PikeSafetyWebApp.Migrations
                         .WithMany("Reports")
                         .HasForeignKey("AppUserId");
 
-                    b.HasOne("PikeSafetyWebApp.Models.ReportFormType", null)
+                    b.HasOne("PikeSafetyWebApp.Models.ReportType", null)
                         .WithMany("Reports")
-                        .HasForeignKey("ReportFormTypeId")
+                        .HasForeignKey("ReportTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
