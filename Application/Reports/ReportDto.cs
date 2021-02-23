@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using PikeSafetyApp.Application.ReportImages;
+using PikeSafetyWebApp.Application.ReportImages;
 using PikeSafetyWebApp.Models;
 
 namespace PikeSafetyWebApp.Application.Reports

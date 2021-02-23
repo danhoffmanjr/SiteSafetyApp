@@ -535,9 +535,9 @@ namespace PikeSafetyWebApp.Data
                     {
                         Id = 1,
                         Title = "New User",
-                        Fields = JsonSerializer.Serialize(new List<FormField>
+                        Fields = JsonSerializer.Serialize(new List<ReportTypeField>
                             {
-                                new FormField
+                                new ReportTypeField
                                 {
                                     Type = "Dropdown",
                                     Name = "Title",
@@ -545,7 +545,7 @@ namespace PikeSafetyWebApp.Data
                                     Options = "Mr, Mrs, Ms, Miss",
                                     Required = false
                                 },
-                                new FormField
+                                new ReportTypeField
                                 {
                                     Type = "Text",
                                     Name = "First Name",
@@ -553,7 +553,7 @@ namespace PikeSafetyWebApp.Data
                                     Options = "",
                                     Required = true,
                                 },
-                                new FormField
+                                new ReportTypeField
                                 {
                                     Type = "Text",
                                     Name = "Last Name",
@@ -561,7 +561,7 @@ namespace PikeSafetyWebApp.Data
                                     Options = "",
                                     Required = true,
                                 },
-                                new FormField
+                                new ReportTypeField
                                 {
                                     Type = "Radio",
                                     Name = "Gender",
@@ -569,7 +569,7 @@ namespace PikeSafetyWebApp.Data
                                     Options = "Male, Female, Both",
                                     Required = true,
                                 },
-                                new FormField
+                                new ReportTypeField
                                 {
                                     Type = "Textarea",
                                     Name = "Comments",
@@ -577,7 +577,7 @@ namespace PikeSafetyWebApp.Data
                                     Options = "",
                                     Required = false,
                                 },
-                                new FormField
+                                new ReportTypeField
                                 {
                                     Type = "Checkbox",
                                     Name = "Acknowledgment",
@@ -605,7 +605,7 @@ namespace PikeSafetyWebApp.Data
                 {
                     new Report
                     {
-                        Title = "New User",
+                        Title = "Add McTesteface",
                         ReportType = "New User",
                         ReportTypeId = 1,
                         ReportFields = JsonSerializer.Serialize(new List<ReportField>

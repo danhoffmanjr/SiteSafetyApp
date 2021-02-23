@@ -2,20 +2,21 @@ import React, { useContext } from "react";
 import { Control, useWatch } from "react-hook-form";
 import { IReportType } from "../../app/models/reportType";
 import { IReportTypeField } from "../../app/models/reportTypeField";
-import { Button, Checkbox, Form, Grid, Header, Icon, Image, Label, Menu, Segment, Select, TextArea } from "semantic-ui-react";
+import { Button, Checkbox, Form, Grid, Header, Icon, Image, Menu, Segment, Select, TextArea } from "semantic-ui-react";
 import ImageUploader from "../../app/common/imageUpload/ImageUploader";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import { observer } from "mobx-react-lite";
+import { FormBuilderFieldType } from "./FormBuilderFieldType";
 
 const FormBuilder = ({ control }: { control: Control<IReportType> }) => {
   const rootStore = useContext(RootStoreContext);
   const { createDropdownOptions, fieldTypes } = rootStore.reportTypeStore;
   const { removeImage, removeAllImages, imageRegistry } = rootStore.imageStore;
 
-  const fieldArray = useWatch<IReportTypeField[]>({
+  const fieldArray = useWatch<FormBuilderFieldType[]>({
     control,
     name: `fields`,
-    defaultValue: [{ type: "", name: "[Name]", placeholder: "[Placeholder]", options: "", isRequired: 1 }],
+    defaultValue: [{ Type: "", Name: "[Name]", Placeholder: "[Placeholder]", Options: "", Required: true }],
   });
 
   const handleRemoveImage = (url: string, key: string) => {
@@ -33,60 +34,59 @@ const FormBuilder = ({ control }: { control: Control<IReportType> }) => {
       <Segment attached="bottom" inverted style={{ backgroundColor: "#808080", border: "1px solid #808080" }}>
         <Form inverted>
           <Grid stackable columns={3}>
-            {/* <div>{JSON.stringify(fieldArray)}</div> */}
             {fieldArray.map((field, index) => {
               if (field === undefined) return false;
-              if (field?.type === undefined) return false;
+              if (field?.Type === undefined) return false;
 
-              if (field?.type === fieldTypes.Text.name) {
+              if (field?.Type === fieldTypes.Text.name) {
                 return (
                   <Grid.Column key={index}>
                     <Form.Field key={index} className="field" fluid="true">
-                      <label>{field.name ? field.name : "[Field Name]"}</label>
-                      <input type="text" name={field.name} placeholder={field.placeholder ? field.placeholder : "[input placeholder text]"} />
+                      <label>{field.Name ? field.Name : "[Field Name]"}</label>
+                      <input type="text" name={field.Name} placeholder={field.Placeholder ? field.Placeholder : "[input placeholder text]"} />
                     </Form.Field>
                   </Grid.Column>
                 );
               }
 
-              if (field.type && field.type === "Dropdown") {
-                let options = createDropdownOptions(field.options);
+              if (field.Type && field.Type === "Dropdown") {
+                let options = createDropdownOptions(field.Options);
                 return (
                   <Grid.Column key={index}>
                     <Form.Field key={index} className="field" fluid="true">
-                      <label>{field.name ? field.name : "[Field Name]"}</label>
-                      <Select placeholder={field.placeholder ? field.placeholder : "[dropdown placeholder text]"} options={options} />
+                      <label>{field.Name ? field.Name : "[Field Name]"}</label>
+                      <Select placeholder={field.Placeholder ? field.Placeholder : "[dropdown placeholder text]"} options={options} />
                     </Form.Field>
                   </Grid.Column>
                 );
               }
 
-              if (field.type && field.type === "Textarea") {
+              if (field.Type && field.Type === "Textarea") {
                 return (
                   <Grid.Column key={index}>
                     <Form.Field key={index} className="field" fluid="true">
-                      <label>{field.name ? field.name : "[Field Name]"}</label>
-                      <TextArea name={field.name} placeholder={field.placeholder ? field.placeholder : "[textarea placeholder text]"} />
+                      <label>{field.Name ? field.Name : "[Field Name]"}</label>
+                      <TextArea name={field.Name} placeholder={field.Placeholder ? field.Placeholder : "[textarea placeholder text]"} />
                     </Form.Field>
                   </Grid.Column>
                 );
               }
 
-              if (field.type && field.type === "Checkbox") {
+              if (field.Type && field.Type === "Checkbox") {
                 return (
                   <Grid.Column key={index}>
                     <Form.Field key={index} className="field" fluid="true">
-                      <Checkbox name={field.name} label={field.placeholder ? field.placeholder : "[checkbox content = placeholder text]"} />
+                      <Checkbox name={field.Name} label={field.Placeholder ? field.Placeholder : "[checkbox content = placeholder text]"} />
                     </Form.Field>
                   </Grid.Column>
                 );
               }
 
-              if (field.type && field.type === "ImageUploader") {
+              if (field.Type && field.Type === "ImageUploader") {
                 return (
                   <Grid.Column key={index} width={16}>
                     <Form.Field className="field" fluid="true">
-                      <label>{field.name ? field.name : "[Field Name]"}</label>
+                      <label>{field.Name ? field.Name : "[Field Name]"}</label>
                       <Segment attached="top" style={{ marginTop: 0 }}>
                         <ImageUploader />
                       </Segment>

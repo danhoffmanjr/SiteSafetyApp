@@ -9,7 +9,7 @@ using PikeSafetyWebApp.Data;
 namespace PikeSafetyWebApp.Migrations
 {
     [DbContext(typeof(PikeSafetyDbContext))]
-    [Migration("20210219170830_DataSchema")]
+    [Migration("20210222185100_DataSchema")]
     partial class DataSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

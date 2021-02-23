@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
-using PikeSafetyApp.Application.ReportImages;
+using PikeSafetyWebApp.Application.ReportImages;
+using PikeSafetyWebApp.Application.ReportTypes;
 using PikeSafetyWebApp.Application.Interfaces;
 using PikeSafetyWebApp.Application.Reports;
 using PikeSafetyWebApp.Application.Sites;
@@ -143,6 +144,25 @@ namespace PikeSafetyWebApp.Application.Utils
                 Size = image.Size,
                 ImageDataUrl = image.ImageDataUrl
             };
+        }
+
+        public ReportTypeDto ReportTypeToReportTypeDto(ReportType type)
+        {
+            var fields = JsonSerializer.Deserialize<List<ReportTypeField>>(type.Fields);
+
+            var reportTypeDto = new ReportTypeDto
+            {
+                Id = type.Id,
+                Title = type.Title,
+                Fields = fields,
+                CreatedBy = type.CreatedBy,
+                CreatedOn = type.CreatedOn,
+                UpdatedBy = type.UpdatedBy,
+                UpdatedOn = type.UpdatedOn,
+                IsActive = type.IsActive
+            };
+
+            return reportTypeDto;
         }
     }
 }

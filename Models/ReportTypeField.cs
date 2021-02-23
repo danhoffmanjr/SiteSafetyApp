@@ -1,6 +1,6 @@
 namespace PikeSafetyWebApp.Models
 {
-    public class FormField
+    public class ReportTypeField
     {
         public string Type { get; set; }
         public string Name { get; set; }

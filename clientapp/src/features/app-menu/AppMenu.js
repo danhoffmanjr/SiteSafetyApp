@@ -1,17 +1,27 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink, Container } from "reactstrap";
-import { Link, NavLink as link } from "react-router-dom";
+import { Link, NavLink as link, useHistory } from "react-router-dom";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import "./app-menu.css";
 import { observer } from "mobx-react-lite";
 import { Item, Dropdown, Label, Icon } from "semantic-ui-react";
+import { useLocation } from "react-router-dom";
 
 const AppMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isReportsLink, setIsReportsLink] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
 
   const rootStore = useContext(RootStoreContext);
   const { user, logout } = rootStore.userStore;
+
+  const location = useLocation();
+  const history = useHistory();
+
+  useEffect(() => {
+    let segment = location.pathname.split("/")[1];
+    setIsReportsLink(segment === "reports" || segment === "report-types");
+  }, [location]);
 
   return (
     <header>
@@ -39,8 +49,13 @@ const AppMenu = () => {
               <>
                 <ul className="navbar-nav flex-grow">
                   <NavItem>
-                    <NavLink tag={link} to="/reports/manage">
-                      Reports
+                    <NavLink active={isReportsLink}>
+                      <Dropdown text="Reports">
+                        <Dropdown.Menu>
+                          <Dropdown.Item text="Dashboard" onClick={() => history.push("/reports/manage")} />
+                          <Dropdown.Item text="Report Types" onClick={() => history.push("/report-types/manage")} />
+                        </Dropdown.Menu>
+                      </Dropdown>
                     </NavLink>
                   </NavItem>
                   {user.role.privilegeLevel >= 50 && (
@@ -58,11 +73,6 @@ const AppMenu = () => {
                       <NavItem>
                         <NavLink tag={link} to="/users/manage">
                           Users
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink tag={link} to="/report-type/create">
-                          Forms
                         </NavLink>
                       </NavItem>
                     </>

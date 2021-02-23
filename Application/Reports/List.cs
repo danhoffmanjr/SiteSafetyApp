@@ -39,12 +39,13 @@ namespace PikeSafetyWebApp.Application.Reports
                 var images = await context.ReportImages.ToListAsync(); //needed for nested data relationships, still faster than lazy loading.
                 var currentUser = await context.Users.Where(x => x.Id == userAccessor.GetCurrentUserId()).Include(x => x.UserRoles).FirstOrDefaultAsync();
                 var userRole = currentUser.UserRoles.First().Role.Name;
+
                 var recordsForRole = new Dictionary<string, Func<Task<List<Report>>>>();
-                recordsForRole[PikeSafetyWebApp.Models.RoleNames.Admin] = async () => { return await context.Reports.Include(x => x.Images).ToListAsync(); };
-                recordsForRole[PikeSafetyWebApp.Models.RoleNames.Inspector] = async () => { return await context.Reports.Where(x => x.CreatedBy == currentUser.Id).Include(x => x.Images).ToListAsync(); };
-                recordsForRole[PikeSafetyWebApp.Models.RoleNames.AreaManager] = async () => { return await context.Reports.Where(x => x.CompanyId == currentUser.CompanyId).Include(x => x.Images).ToListAsync(); };
-                recordsForRole[PikeSafetyWebApp.Models.RoleNames.ConstructionSupervisor] = async () => { return await context.Reports.Where(x => x.CompanyId == currentUser.CompanyId).Include(x => x.Images).ToListAsync(); };
-                recordsForRole[PikeSafetyWebApp.Models.RoleNames.Executive] = async () => { return await context.Reports.Where(x => x.CompanyId == currentUser.CompanyId).Include(x => x.Images).ToListAsync(); };
+                recordsForRole[RoleNames.Admin] = async () => { return await context.Reports.Include(x => x.Images).ToListAsync(); };
+                recordsForRole[RoleNames.Inspector] = async () => { return await context.Reports.Where(x => x.CreatedBy == currentUser.Id).Include(x => x.Images).ToListAsync(); };
+                recordsForRole[RoleNames.AreaManager] = async () => { return await context.Reports.Where(x => x.CompanyId == currentUser.CompanyId).Include(x => x.Images).ToListAsync(); };
+                recordsForRole[RoleNames.ConstructionSupervisor] = async () => { return await context.Reports.Where(x => x.CompanyId == currentUser.CompanyId).Include(x => x.Images).ToListAsync(); };
+                recordsForRole[RoleNames.Executive] = async () => { return await context.Reports.Where(x => x.CompanyId == currentUser.CompanyId).Include(x => x.Images).ToListAsync(); };
 
                 List<Report> records = await recordsForRole[userRole]?.Invoke();
 

@@ -1,4 +1,4 @@
-namespace PikeSafetyApp.Application.ReportImages
+namespace PikeSafetyWebApp.Application.ReportImages
 {
     public class ReportImageDto
     {

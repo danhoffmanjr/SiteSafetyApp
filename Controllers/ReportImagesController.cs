@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using PikeSafetyApp.Application.ReportImages;
+using PikeSafetyWebApp.Application.ReportImages;
 using PikeSafetyWebApp.Models;
 
 namespace PikeSafetyWebApp.Controllers

@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { IReportType } from "../../app/models/reportType";
 import { RootStoreContext } from "../../app/stores/rootStore";
-import { Button, Form, Header, Icon, Menu, Segment } from "semantic-ui-react";
+import { Button, Checkbox, Form, Header, Icon, Menu, Segment } from "semantic-ui-react";
 import ReactSelect from "react-select";
 import ErrorMessage from "../../app/common/form/ErrorMessage";
 import "./CreateTemplateForm.scss";
@@ -14,11 +14,11 @@ const CreateForm = ({
   startingState = {
     id: 0,
     title: "",
-    fields: [{ type: "", name: "", placeholder: "", options: "", isRequired: 1 }],
+    fields: [{ type: "", name: "", placeholder: "", options: "", required: true }],
   },
 }) => {
   const rootStore = useContext(RootStoreContext);
-  const { fieldTypeOptions, isRequiredOptions, fieldTypes } = rootStore.reportTypeStore;
+  const { fieldTypeOptions, fieldTypes } = rootStore.reportTypeStore;
 
   const [showAddFieldsForm, setShowAddFieldsForm] = useState(true);
   const [submitErrors, setSubmitErrors] = useState<AxiosResponse>();
@@ -45,10 +45,8 @@ const CreateForm = ({
   };
 
   const onSubmit = (data: IReportType) => {
-    console.log({
-      ...data,
-      fields: Object.values(data.fields),
-    });
+    let values = { ...data, fields: JSON.stringify(data.fields) };
+    console.log(values);
   };
 
   const findmax = (array: string[]) => {
@@ -70,6 +68,7 @@ const CreateForm = ({
   };
 
   const getFieldType = (name: string) => {
+    if (name === undefined || name === "") return "Text" as keyof typeof fieldTypes;
     return name as keyof typeof fieldTypes;
   };
 
@@ -114,7 +113,7 @@ const CreateForm = ({
                 <label>{errors.fields && errors.fields[parseInt(id)]?.type?.message !== undefined ? errors.fields[parseInt(id)]?.type?.message : "Type"}</label>
                 <Controller
                   control={control}
-                  name={`fields[${id}].type`}
+                  name={`fields[${id}].Type`}
                   rules={{ required: "Type is Required*" }}
                   defaultValue=""
                   render={({ onChange, value, name }) => (
@@ -136,7 +135,7 @@ const CreateForm = ({
                 <label>{errors.fields && errors.fields[parseInt(id)]?.name?.message !== undefined ? errors.fields[parseInt(id)]?.name?.message : "Name"}</label>
                 <input
                   type="text"
-                  name={`fields[${id}].name`}
+                  name={`fields[${id}].Name`}
                   placeholder="Field Name"
                   defaultValue=""
                   aria-invalid={errors.fields && errors.fields[parseInt(id)]?.name?.message !== undefined}
@@ -147,43 +146,60 @@ const CreateForm = ({
               </Form.Field>
               <Form.Field
                 className={errors.fields && errors.fields[parseInt(id)]?.placeholder?.message !== undefined ? "error field" : "field"}
-                disabled={!fieldTypes[getFieldType(watch(`fields[${id}].type`, "Text"))].requiresPlaceholder}
+                disabled={!fieldTypes[getFieldType(watch(`fields[${id}].Type`, "Text"))].requiresPlaceholder}
               >
                 <label>{errors.fields && errors.fields[parseInt(id)]?.placeholder?.message !== undefined ? errors.fields[parseInt(id)]?.placeholder?.message : "Placeholder"}</label>
                 <input
                   type="text"
-                  name={`fields[${id}].placeholder`}
+                  name={`fields[${id}].Placeholder`}
                   placeholder="Field Placeholder Text"
                   defaultValue=""
                   aria-invalid={errors.fields && errors.fields[parseInt(id)]?.placeholder?.message !== undefined}
                   ref={register({
-                    required: { value: fieldTypes[getFieldType(watch(`fields[${id}].type`, "Text"))].requiresPlaceholder, message: "Placeholder is Required*" },
+                    required: { value: fieldTypes[getFieldType(watch(`fields[${id}].Type`, "Text"))].requiresPlaceholder, message: "Placeholder is Required*" },
                   })}
                 />
               </Form.Field>
               <Form.Field
                 className={errors.fields && errors.fields[parseInt(id)]?.options?.message !== undefined ? "error field" : "field"}
-                disabled={!fieldTypes[getFieldType(watch(`fields[${id}].type`, "Text"))].requiresOptions}
+                disabled={!fieldTypes[getFieldType(watch(`fields[${id}].Type`, "Text"))].requiresOptions}
               >
                 <label>{errors.fields && errors.fields[parseInt(id)]?.options?.message !== undefined ? errors.fields[parseInt(id)]?.options?.message : "Dropdown Options"}</label>
                 <input
                   type="text"
-                  name={`fields[${id}].options`}
+                  name={`fields[${id}].Options`}
                   placeholder="Comma separated list"
                   defaultValue=""
                   aria-invalid={errors.fields && errors.fields[parseInt(id)]?.options?.message !== undefined}
                   ref={register({
-                    required: { value: fieldTypes[getFieldType(watch(`fields[${id}].type`, "Text"))].requiresOptions, message: "Options are Required*" },
+                    required: { value: fieldTypes[getFieldType(watch(`fields[${id}].Type`, "Text"))].requiresOptions, message: "Options are Required*" },
                   })}
                 />
               </Form.Field>
-              <Form.Field className={errors.fields && errors.fields[parseInt(id)]?.isRequired?.message !== undefined ? "error field" : "field"}>
-                <label>{errors.fields && errors.fields[parseInt(id)]?.isRequired?.message !== undefined ? errors.fields[parseInt(id)]?.isRequired?.message : "Is Required"}</label>
+              <Form.Field width={1} className={errors.fields && errors.fields[parseInt(id)]?.required?.message !== undefined ? "error field" : "field"}>
+                <label>{errors.fields && errors.fields[parseInt(id)]?.required?.message !== undefined ? errors.fields[parseInt(id)]?.required?.message : "Required"}</label>
                 <Controller
                   control={control}
-                  name={`fields[${id}].isRequired`}
+                  name={`fields[${id}].Required`}
+                  defaultValue={true}
+                  render={({ onChange, value, name }) => (
+                    <Checkbox
+                      fitted toggle
+                      style={{ marginTop: 8 }}
+                      name={name}
+                      onChange={() => {
+                        onChange(!value);
+                      }}
+                      label=""
+                      checked={value}
+                    />
+                  )}
+                />
+                {/* <Controller
+                  control={control}
+                  name={`fields[${id}].Required`}
                   rules={{ required: "Is Required is Required*" }}
-                  defaultValue={1}
+                  defaultValue={true}
                   render={({ onChange, value, name }) => (
                     <ReactSelect
                       options={isRequiredOptions}
@@ -197,7 +213,7 @@ const CreateForm = ({
                       isClearable={false}
                     />
                   )}
-                />
+                /> */}
               </Form.Field>
               <Form.Field width={1}>
                 <label>&nbsp;</label>

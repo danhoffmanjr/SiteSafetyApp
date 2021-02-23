@@ -9,7 +9,7 @@ using PikeSafetyWebApp.Application.Interfaces;
 using PikeSafetyWebApp.Data;
 using PikeSafetyWebApp.Models;
 
-namespace PikeSafetyApp.Application.ReportImages
+namespace PikeSafetyWebApp.Application.ReportImages
 {
     public class Add
     {
