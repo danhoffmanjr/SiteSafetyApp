@@ -15,7 +15,6 @@ export default class ReportTypeStore {
   }
 
   @observable reportTypesRegistry = new Map();
-  // @observable.shallow reportTypesSorted: IReportType[] = [];
   @observable loadingReportTypes = false;
   @observable isSubmitting = false;
 
@@ -62,7 +61,6 @@ export default class ReportTypeStore {
         types.forEach((type) => {
           this.reportTypesRegistry.set(type.id, type);
         });
-        // this.reportTypesSorted = Array.from(this.reportTypesRegistry.values()).sort(this.compareFormTitle);
         this.loadingReportTypes = false;
       });
     } catch (error) {
@@ -80,13 +78,29 @@ export default class ReportTypeStore {
       runInAction(() => {
         this.loadReportTypes();
         this.isSubmitting = false;
-        toast.success(`${values.title} report type created successfully!`);
+        toast.success(`${values.title} report type created successfully.`);
       });
     } catch (error) {
       runInAction(() => {
         this.isSubmitting = false;
       });
       console.log("Create report Type Error:", error); //remove
+      throw error;
+    }
+  };
+
+  @action deleteReportType = async (id: number) => {
+    this.isSubmitting = true;
+    try {
+      await agent.ReportTypes.delete(id);
+      runInAction(() => {
+        this.reportTypesRegistry.delete(id);
+        this.isSubmitting = false;
+      });
+      toast.success(`Report Type deleted successfully.`);
+    } catch (error) {
+      console.log("Delete Report Type Error:", error); //remove
+      this.isSubmitting = false;
       throw error;
     }
   };

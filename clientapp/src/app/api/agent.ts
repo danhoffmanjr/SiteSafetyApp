@@ -73,6 +73,7 @@ const Reports = {
 const ReportTypes = {
   list: (): Promise<IReportType[]> => requests.get("/reporttypes"),
   create: (values: IReportTypeFormValues) => requests.post("/reporttypes/create", values),
+  delete: (id: number) => requests.delete(`/reporttypes/delete/${id}`),
 };
 
 const ReportImages = {
