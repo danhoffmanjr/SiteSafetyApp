@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { useForm } from "react-hook-form";
+import { observer } from "mobx-react-lite";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Checkbox, Form, Grid, Header, Icon, Menu, Segment, Select, TextArea, Image } from "semantic-ui-react";
 import ImageUploader from "../../app/common/imageUpload/ImageUploader";
 import { IReportType } from "../../app/models/reportType";
@@ -14,10 +14,16 @@ const ReportTypeForm = ({ type }: Props) => {
   const { createDropdownOptions, fieldTypes } = rootStore.reportTypeStore;
   const { removeImage, removeAllImages, imageRegistry } = rootStore.imageStore;
 
+  const [images, setImages] = useState<Map<string, Blob>>();
+
   const handleRemoveImage = (url: string, key: string) => {
     URL.revokeObjectURL(url);
     removeImage(key);
   };
+
+  useEffect(() => {
+    setImages(imageRegistry);
+  }, [imageRegistry]);
 
   return (
     <>
@@ -84,12 +90,12 @@ const ReportTypeForm = ({ type }: Props) => {
                       <Form.Field className="field" fluid="true">
                         <label>{field.name ? field.name : "[Field Name]"}</label>
                         <Segment attached="top" style={{ marginTop: 0 }}>
-                          <ImageUploader />
+                          <ImageUploader PreviewMode={true} />
                         </Segment>
                         <Segment attached="bottom">
                           <Header sub color="blue">
                             Images:{" "}
-                            {imageRegistry && imageRegistry.size > 1 && (
+                            {images && images.size > 1 && (
                               <Button compact size="mini" onClick={removeAllImages}>
                                 Remove All
                               </Button>
@@ -97,9 +103,9 @@ const ReportTypeForm = ({ type }: Props) => {
                           </Header>
 
                           <div style={{ display: "flex", justifyContent: "flex-start", flexWrap: "wrap" }}>
-                            {imageRegistry &&
-                              imageRegistry.size > 0 &&
-                              Array.from(imageRegistry).map((blob) => {
+                            {images &&
+                              images.size > 0 &&
+                              Array.from(images).map((blob) => {
                                 let imageUrl = URL.createObjectURL(blob[1]);
                                 let imageKey = blob[0];
                                 return (
@@ -127,4 +133,4 @@ const ReportTypeForm = ({ type }: Props) => {
   );
 };
 
-export default ReportTypeForm;
+export default observer(ReportTypeForm);

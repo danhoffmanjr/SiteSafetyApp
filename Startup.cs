@@ -86,7 +86,7 @@ namespace PikeSafetyWebApp
             services.AddMediatR(typeof(Login.Handler).Assembly);
             services.AddAutoMapper(typeof(Login.Handler));
 
-            var mailKitOptions = Configuration.GetSection("SmtpSettings").Get<MailKitOptions>();
+            var mailKitOptions = Configuration.GetSection("SmtpEthereal").Get<MailKitOptions>();
             services.AddMailKit(config =>
             {
                 var options = new MailKitOptions();

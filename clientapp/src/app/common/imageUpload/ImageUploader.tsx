@@ -5,9 +5,13 @@ import { RootStoreContext } from "../../stores/rootStore";
 import ImageCropper from "./ImageCropper";
 import ImageDropzone from "./ImageDropzone";
 
-const ImageUploader = () => {
+interface Props {
+  PreviewMode: boolean;
+}
+
+const ImageUploader = ({ PreviewMode }: Props) => {
   const rootStore = useContext(RootStoreContext);
-  const { addImage, imageRegistry, uploadImage } = rootStore.imageStore;
+  const { addImage, uploadImage } = rootStore.imageStore;
 
   const [files, setFiles] = useState<any[]>([]);
   const [cropper, setCropper] = useState<Cropper>();
@@ -15,8 +19,12 @@ const ImageUploader = () => {
   function onCrop() {
     if (cropper) {
       cropper.getCroppedCanvas().toBlob((blob) => {
-        //uploadImage(files[0].name, blob!);
-        addImage(files[0].name, blob!);
+        if (PreviewMode === true) {
+          addImage(files[0].name, blob!);
+        } else {
+          addImage(files[0].name, blob!);
+          uploadImage(files[0].name, blob!);
+        }
       });
       setFiles([]);
     }

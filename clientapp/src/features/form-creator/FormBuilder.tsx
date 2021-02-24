@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { Control, useWatch } from "react-hook-form";
 import { IReportType } from "../../app/models/reportType";
-import { IReportTypeField } from "../../app/models/reportTypeField";
 import { Button, Checkbox, Form, Grid, Header, Icon, Image, Menu, Segment, Select, TextArea } from "semantic-ui-react";
 import ImageUploader from "../../app/common/imageUpload/ImageUploader";
 import { RootStoreContext } from "../../app/stores/rootStore";
@@ -88,7 +87,7 @@ const FormBuilder = ({ control }: { control: Control<IReportType> }) => {
                     <Form.Field className="field" fluid="true">
                       <label>{field.Name ? field.Name : "[Field Name]"}</label>
                       <Segment attached="top" style={{ marginTop: 0 }}>
-                        <ImageUploader />
+                        <ImageUploader PreviewMode={true} />
                       </Segment>
                       <Segment attached="bottom">
                         <Header sub color="blue">
@@ -106,7 +105,7 @@ const FormBuilder = ({ control }: { control: Control<IReportType> }) => {
                             Array.from(imageRegistry).map((blob) => {
                               let imageUrl = URL.createObjectURL(blob[1]);
                               let imageKey = blob[0];
-                              console.log("Blob: ", blob[1]);
+                              console.log("From Image Registry: ", blob);
                               return (
                                 <Segment key={imageKey} style={{ padding: 0, margin: "0.5em 1em 0.5em 0 " }}>
                                   <Image src={imageUrl} alt={imageKey} style={{ maxHeight: 100 }} />
