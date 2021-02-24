@@ -1,8 +1,10 @@
 import { action, computed, observable, runInAction } from "mobx";
+import { toast } from "react-toastify";
 import agent from "../api/agent";
 import { IFieldType } from "../models/fieldType";
 import { ISelectOptions } from "../models/reactSelectOptions";
 import { IReportType } from "../models/reportType";
+import { IReportTypeFormValues } from "../models/reportTypeFormValues";
 import { RootStore } from "./rootStore";
 
 export default class ReportTypeStore {
@@ -13,8 +15,9 @@ export default class ReportTypeStore {
   }
 
   @observable reportTypesRegistry = new Map();
-  @observable.shallow reportTypesSorted: IReportType[] = [];
+  // @observable.shallow reportTypesSorted: IReportType[] = [];
   @observable loadingReportTypes = false;
+  @observable isSubmitting = false;
 
   @observable fieldTypes: IFieldType = {
     Text: { name: "Text", label: "Text", requiresPlaceholder: true, requiresOptions: false },
@@ -59,7 +62,7 @@ export default class ReportTypeStore {
         types.forEach((type) => {
           this.reportTypesRegistry.set(type.id, type);
         });
-        this.reportTypesSorted = Array.from(this.reportTypesRegistry.values()).sort(this.compareFormTitle);
+        // this.reportTypesSorted = Array.from(this.reportTypesRegistry.values()).sort(this.compareFormTitle);
         this.loadingReportTypes = false;
       });
     } catch (error) {
@@ -67,6 +70,24 @@ export default class ReportTypeStore {
         this.loadingReportTypes = false;
       });
       console.log("Load Report Types Error:", error.statusText); //remove
+    }
+  };
+
+  @action createReportType = async (values: IReportTypeFormValues) => {
+    this.isSubmitting = true;
+    try {
+      await agent.ReportTypes.create(values);
+      runInAction(() => {
+        this.loadReportTypes();
+        this.isSubmitting = false;
+        toast.success(`${values.title} report type created successfully!`);
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.isSubmitting = false;
+      });
+      console.log("Create report Type Error:", error); //remove
+      throw error;
     }
   };
 

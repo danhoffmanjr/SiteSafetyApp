@@ -15,7 +15,7 @@ const ImageUploader = () => {
   function onCrop() {
     if (cropper) {
       cropper.getCroppedCanvas().toBlob((blob) => {
-        uploadImage(files[0].name, blob!);
+        //uploadImage(files[0].name, blob!);
         addImage(files[0].name, blob!);
       });
       setFiles([]);

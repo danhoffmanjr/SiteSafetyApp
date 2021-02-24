@@ -11,7 +11,7 @@ import ReportTypeForm from "./ReportTypeForm";
 
 const ReportTypesPage = () => {
   const rootStore = useContext(RootStoreContext);
-  const { loadingReportTypes, loadReportTypes, reportTypesSorted, typesOrderedByTitleAscending } = rootStore.reportTypeStore;
+  const { loadingReportTypes, loadReportTypes, typesOrderedByTitleAscending } = rootStore.reportTypeStore;
 
   const [showForm, setShowForm] = useState(false);
   const toggleForm = () => setShowForm(!showForm);
@@ -76,9 +76,9 @@ const ReportTypesPage = () => {
                       <Accordion.Title key={`${form.id}-title`} active={activeIndex === index} index={index} onClick={() => setActiveIndex(index)}>
                         <Icon name="dropdown" />
                         {form.title}{" "}
-                          <Button icon size="mini" compact floated="right">
-                            <Icon color="red" name="trash alternate" />
-                          </Button>
+                        <Button icon size="mini" compact floated="right">
+                          <Icon color="red" name="trash alternate" />
+                        </Button>
                       </Accordion.Title>
                       <Accordion.Content key={`${form.id}-content`} active={activeIndex === index}>
                         <ReportTypeForm type={form} />

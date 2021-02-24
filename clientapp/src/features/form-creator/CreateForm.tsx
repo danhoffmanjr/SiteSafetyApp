@@ -9,6 +9,7 @@ import ErrorMessage from "../../app/common/form/ErrorMessage";
 import "./CreateTemplateForm.scss";
 import { observer } from "mobx-react-lite";
 import FormBuilder from "./FormBuilder";
+import { IReportTypeFormValues } from "../../app/models/reportTypeFormValues";
 
 const CreateForm = ({
   startingState = {
@@ -18,7 +19,7 @@ const CreateForm = ({
   },
 }) => {
   const rootStore = useContext(RootStoreContext);
-  const { fieldTypeOptions, fieldTypes } = rootStore.reportTypeStore;
+  const { fieldTypeOptions, fieldTypes, createReportType } = rootStore.reportTypeStore;
 
   const [showAddFieldsForm, setShowAddFieldsForm] = useState(true);
   const [submitErrors, setSubmitErrors] = useState<AxiosResponse>();
@@ -45,8 +46,11 @@ const CreateForm = ({
   };
 
   const onSubmit = (data: IReportType) => {
-    let values = { ...data, fields: JSON.stringify(data.fields) };
-    console.log(values);
+    let values: IReportTypeFormValues = { ...data, fields: JSON.stringify(data.fields) };
+    console.log(values); // remove
+    createReportType(values).catch((error) => {
+      setSubmitErrors(error);
+    });
   };
 
   const findmax = (array: string[]) => {
@@ -184,7 +188,8 @@ const CreateForm = ({
                   defaultValue={true}
                   render={({ onChange, value, name }) => (
                     <Checkbox
-                      fitted toggle
+                      fitted
+                      toggle
                       style={{ marginTop: 8 }}
                       name={name}
                       onChange={() => {
