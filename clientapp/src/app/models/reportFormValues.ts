@@ -2,14 +2,14 @@ import { IReportField } from "./reportField";
 import { IReportImage } from "./reportImage";
 
 export interface IReportFormValues {
-  id: number;
+  id: string;
   title: string;
   reportType: string;
-  reportTypeId: number;
+  reportTypeId: string;
   reportFields: IReportField[];
-  companyId: number;
+  companyId: string;
   companyName: string;
-  siteId: number;
+  siteId: string;
   siteName: string;
   images?: IReportImage[];
 }

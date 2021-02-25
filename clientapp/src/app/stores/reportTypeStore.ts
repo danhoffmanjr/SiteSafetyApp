@@ -18,6 +18,7 @@ export default class ReportTypeStore {
   @observable loadingReportTypes = false;
   @observable isSubmitting = false;
 
+  // add radio button option
   @observable fieldTypes: IFieldType = {
     Text: { name: "Text", label: "Text", requiresPlaceholder: true, requiresOptions: false },
     Dropdown: { name: "Dropdown", label: "Dropdown", requiresPlaceholder: true, requiresOptions: true },
@@ -26,6 +27,7 @@ export default class ReportTypeStore {
     ImageUploader: { name: "ImageUploader", label: "Image Uploader", requiresPlaceholder: false, requiresOptions: false },
   };
 
+  // refactor to derive from fieldTypes object above
   @observable fieldTypeOptions: ISelectOptions[] = [
     { value: `Text`, label: `Text` },
     { value: `Dropdown`, label: `Dropdown` },
@@ -43,6 +45,24 @@ export default class ReportTypeStore {
     return Array.from(this.reportTypesRegistry.values()).sort(this.compareFormTitle);
   }
 
+  @computed get reportTypeSelectOptions(): ISelectOptions[] {
+    let options: ISelectOptions[] = [];
+    this.reportTypesRegistry.forEach((type) => {
+      options.push({ value: `${type.id}`, label: `${type.title}` });
+    });
+    return options.sort(this.compareOptions);
+  }
+
+  compareOptions(options1: ISelectOptions, options2: ISelectOptions) {
+    if (options1.label < options2.label) {
+      return -1;
+    }
+    if (options1.label > options2.label) {
+      return 1;
+    }
+    return 0;
+  }
+
   compareFormTitle(form1: IReportType, form2: IReportType) {
     if (form1.title < form2.title) {
       return -1;
@@ -52,6 +72,10 @@ export default class ReportTypeStore {
     }
     return 0;
   }
+
+  @action getReportType = (id: number) => {
+    return this.reportTypesRegistry.get(id);
+  };
 
   @action loadReportTypes = async () => {
     this.loadingReportTypes = true;

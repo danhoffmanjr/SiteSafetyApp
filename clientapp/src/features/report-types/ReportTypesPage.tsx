@@ -17,7 +17,7 @@ const ReportTypesPage = () => {
   const toggleForm = () => setShowForm(!showForm);
   const [query, setQuery] = useState("");
 
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(-1);
 
   useEffect(() => {
     loadReportTypes();
