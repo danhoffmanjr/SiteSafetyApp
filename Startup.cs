@@ -1,3 +1,5 @@
+using System;
+using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -5,28 +7,28 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using PikeSafetyWebApp.Data;
 using PikeSafetyWebApp.Models;
+using PikeSafetyWebApp.Application.User;
+using PikeSafetyWebApp.Application.Companies;
+using PikeSafetyWebApp.Application.Sites;
+using PikeSafetyWebApp.Application.Reports;
+using PikeSafetyWebApp.Application.Utils;
+using PikeSafetyWebApp.Application.Interfaces;
+using PikeSafetyWebApp.Application.Security;
+using PikeSafetyWebApp.Application.Middleware;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MediatR;
-using PikeSafetyWebApp.Application.User;
-using PikeSafetyWebApp.Application.Companies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using PikeSafetyWebApp.Application.Interfaces;
-using PikeSafetyWebApp.Application.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using FluentValidation.AspNetCore;
-using PikeSafetyWebApp.Application.Middleware;
 using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
-using System;
 using Microsoft.IdentityModel.Logging;
-using PikeSafetyWebApp.Application.Utils;
+using MediatR;
 using AutoMapper;
-using PikeSafetyWebApp.Application.Sites;
+
 
 namespace PikeSafetyWebApp
 {
@@ -109,6 +111,7 @@ namespace PikeSafetyWebApp
             services.AddScoped<ICompanyService, CompanyService>();
             services.AddScoped<ISiteService, SiteService>();
             services.AddScoped<IModelConverters, ModelConverters>();
+            services.AddScoped<IReportService, ReportService>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

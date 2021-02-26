@@ -16,7 +16,6 @@ namespace PikeSafetyWebApp.Application.ReportImages
         public class Command : IRequest<ReportImage>
         {
             public IFormFile File { get; set; }
-            public string Filename { get; set; }
         }
 
         public class handler : IRequestHandler<Command, ReportImage>
@@ -45,7 +44,7 @@ namespace PikeSafetyWebApp.Application.ReportImages
                     var newImage = new ReportImage
                     {
                         ImageData = fileBytes,
-                        FileName = request.Filename,
+                        FileName = file.FileName,
                         FileType = file.ContentType,
                         Size = file.Length,
                         ReportId = 1
@@ -53,14 +52,13 @@ namespace PikeSafetyWebApp.Application.ReportImages
 
                     await context.ReportImages.AddAsync(newImage);
 
-                    var result = await context.SaveChangesAsync() > 0;
+                    var succeeded = await context.SaveChangesAsync() > 0;
+                    if (!succeeded) throw new Exception("Error Saving Report Image.");
 
                     return newImage;
-
                 }
 
                 return null;
-
             }
         }
     }

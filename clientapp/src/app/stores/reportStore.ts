@@ -1,6 +1,8 @@
 import { action, computed, observable, runInAction } from "mobx";
 import { toast } from "react-toastify";
 import agent from "../api/agent";
+import { IImage } from "../models/image";
+import { IImageUploadFormValues } from "../models/imageUploadFormValues";
 import { ISelectOptions } from "../models/reactSelectOptions";
 import { IReport } from "../models/report";
 import { IReportPostValues } from "../models/reportPostValues";
@@ -48,10 +50,20 @@ export default class ReportStore {
     }
   };
 
-  @action createReport = async (values: IReportPostValues) => {
+  @action createReport = async (values: IReportPostValues, images?: IImage[]) => {
     this.isSubmitting = true;
     try {
-      await agent.Reports.create(values);
+      const newReportId = await agent.Reports.create(values);
+      if (images) {
+        const data: IImageUploadFormValues = {
+          reportId: newReportId,
+          images: images,
+        };
+        runInAction(() => {
+          this.rootStore.imageStore.uploadImages(data);
+        });
+      }
+
       runInAction(() => {
         this.loadReports();
         this.isSubmitting = false;
@@ -62,6 +74,22 @@ export default class ReportStore {
         this.isSubmitting = false;
       });
       console.log("Create report Type Error:", error); //remove
+      throw error;
+    }
+  };
+
+  @action deleteReport = async (id: number) => {
+    this.isSubmitting = true;
+    try {
+      await agent.Reports.delete(id.toString());
+      runInAction(() => {
+        this.reportsRegistry.delete(id);
+        this.isSubmitting = false;
+      });
+      toast.success(`Report deleted successfully.`);
+    } catch (error) {
+      console.log("Delete Report Error:", error); //remove
+      this.isSubmitting = false;
       throw error;
     }
   };

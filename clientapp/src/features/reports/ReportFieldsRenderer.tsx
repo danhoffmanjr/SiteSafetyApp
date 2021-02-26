@@ -7,6 +7,7 @@ import { IReportField } from "../../app/models/reportField";
 import { IReportFormValues } from "../../app/models/reportFormValues";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import { observer } from "mobx-react-lite";
+import { IImage } from "../../app/models/image";
 
 interface Props {
   reportTypeFields: IReportField[];
@@ -35,14 +36,15 @@ const ReportFieldsRenderer = ({ reportTypeFields, control, register, errors, set
   useEffect(() => {
     if (images !== undefined && images.size > 0) {
       let imageEnumerator = images.entries();
-      let imageArr = [];
+      let imageArr: IImage[] = [];
       for (let i = 0; i < images.size; i++) {
-        imageArr.push(imageEnumerator.next().value);
+        let data = imageEnumerator.next().value;
+        let image: IImage = { filename: data[0], image: data[1] };
+        imageArr.push(image);
       }
-      //TODO: map to IReportImage model
       setValue("reportFields.images", imageArr);
       setValue("reportFields.imageCount", images.size);
-      console.log("useEffect ran"); //remove
+      console.log("useEffect ran for image change:", imageArr); //remove
     } else {
       setValue("reportFields.images", []);
       setValue("reportFields.imageCount", "");

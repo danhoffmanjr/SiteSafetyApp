@@ -12,5 +12,11 @@ namespace PikeSafetyWebApp.Controllers
         {
             return await Mediator.Send(command);
         }
+
+        [HttpPost("batch")]
+        public async Task<IActionResult> AddBatch([FromForm] AddBatch.Command command)
+        {
+            return Ok(await Mediator.Send(command));
+        }
     }
 }

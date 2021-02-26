@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PikeSafetyWebApp.Application.Reports;
 using PikeSafetyWebApp.Models;
@@ -15,9 +16,15 @@ namespace PikeSafetyWebApp.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(Report report)
+        public async Task<long> Create(Report report)
         {
-            return Ok(await Mediator.Send(new Create.Command { Report = report }));
+            return await Mediator.Send(new Create.Command { Report = report });
+        }
+
+        [HttpDelete("delete/{id}")]
+        public async Task<ActionResult<Unit>> Delete(long id)
+        {
+            return await Mediator.Send(new Delete.Command { Id = id });
         }
     }
 }

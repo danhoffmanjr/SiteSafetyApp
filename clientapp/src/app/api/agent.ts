@@ -17,6 +17,7 @@ import { IReportImage } from "../models/reportImage";
 import { IReportType } from "../models/reportType";
 import { IReportTypeFormValues } from "../models/reportTypeFormValues";
 import { IReportPostValues } from "../models/reportPostValues";
+import { IImageUploadFormValues } from "../models/imageUploadFormValues";
 
 const responseBody = (response: AxiosResponse) => response.data;
 
@@ -68,7 +69,7 @@ const Reports = {
   details: (id: string) => requests.get(`/reports/${id}`),
   create: (report: IReportPostValues) => requests.post("/reports/create", report),
   update: (report: any) => requests.put(`/reports/${report.id}`, report),
-  delete: (id: string) => requests.delete(`/reports/${id}`),
+  delete: (id: string) => requests.delete(`/reports/delete/${id}`),
 };
 
 const ReportTypes = {
@@ -80,9 +81,18 @@ const ReportTypes = {
 const ReportImages = {
   upload: (filename: string, image: Blob) => {
     let formData = new FormData();
-    formData.append("File", image);
-    formData.append("FileName", filename);
+    formData.append("File", image, filename);
     return axios.post<IReportImage>("/api/reportImages", formData, {
+      headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${localStorage.getItem("ps-token")}` },
+    });
+  },
+  uploadBatch: (data: IImageUploadFormValues) => {
+    let formData = new FormData();
+    data.images.forEach((img) => {
+      formData.append("Files", img.image, img.filename);
+    });
+    formData.append("ReportId", data.reportId.toString());
+    return axios.post("/api/reportImages/batch", formData, {
       headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${localStorage.getItem("ps-token")}` },
     });
   },

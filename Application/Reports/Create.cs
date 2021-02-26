@@ -15,24 +15,26 @@ namespace PikeSafetyWebApp.Application.Reports
 {
     public class Create
     {
-        public class Command : IRequest
+        public class Command : IRequest<long>
         {
             public Report Report { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<Command, long>
         {
             private readonly PikeSafetyDbContext context;
             private readonly IUserAccessor userAccessor;
             private readonly UserManager<AppUser> userManager;
-            public Handler(PikeSafetyDbContext context, UserManager<AppUser> userManager, IUserAccessor userAccessor)
+            private readonly IReportService reportService;
+            public Handler(PikeSafetyDbContext context, UserManager<AppUser> userManager, IUserAccessor userAccessor, IReportService reportService)
             {
+                this.reportService = reportService;
                 this.userManager = userManager;
                 this.userAccessor = userAccessor;
                 this.context = context;
             }
 
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<long> Handle(Command request, CancellationToken cancellationToken)
             {
                 var currentUser = await userManager.FindByIdAsync(userAccessor.GetCurrentUserId());
 
@@ -57,8 +59,11 @@ namespace PikeSafetyWebApp.Application.Reports
                 };
 
                 context.Reports.Add(newReport);
-                await context.SaveChangesAsync();
-                return Unit.Value;
+                var succeeded = await context.SaveChangesAsync() > 0;
+
+                if (!succeeded) throw new Exception("Error Saving New Report.");
+
+                return await reportService.GetIdByTitleAsync(newReport.Title);
             }
 
             private bool CheckExistsByTitle(string title)
