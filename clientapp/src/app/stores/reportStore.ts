@@ -17,6 +17,7 @@ export default class ReportStore {
   @observable reportsRegistry = new Map();
   @observable loadingReports = false;
   @observable isSubmitting = false;
+  @observable showForm = false;
 
   @computed get reportsOrderedByTitleAscending(): IReport[] {
     return Array.from(this.reportsRegistry.values()).sort(this.compareReportTitle);
@@ -32,6 +33,12 @@ export default class ReportStore {
     return 0;
   }
 
+  @action toggleForm = () => {
+    runInAction(() => {
+      this.showForm = !this.showForm;
+    });
+  };
+
   @action loadReports = async () => {
     this.loadingReports = true;
     try {
@@ -46,6 +53,7 @@ export default class ReportStore {
       runInAction(() => {
         this.loadingReports = false;
       });
+      toast.error(`Problem uploading reports. Error: ${error.statusText}`, { autoClose: 10000 });
       console.log("Load Reports Error:", error.statusText); //remove
     }
   };
@@ -68,11 +76,13 @@ export default class ReportStore {
         this.loadReports();
         this.isSubmitting = false;
         toast.success(`${values.title} report created successfully.`);
+        this.toggleForm();
       });
     } catch (error) {
       runInAction(() => {
         this.isSubmitting = false;
       });
+      toast.error(`Problem creating report. Error: ${error.statusText}`, { autoClose: 10000 });
       console.log("Create report Type Error:", error); //remove
       throw error;
     }
@@ -89,6 +99,7 @@ export default class ReportStore {
       toast.success(`Report deleted successfully.`);
     } catch (error) {
       console.log("Delete Report Error:", error); //remove
+      toast.error(`Problem deleting report. Error: ${error.statusText}`, { autoClose: 5000 });
       this.isSubmitting = false;
       throw error;
     }

@@ -10,7 +10,7 @@ import ReportsTable from "./ReportsTable";
 
 const ReportsPage = () => {
   const rootStore = useContext(RootStoreContext);
-  const { loadReports, loadingReports, reportsOrderedByTitleAscending } = rootStore.reportStore;
+  const { showForm, toggleForm, loadReports, loadingReports, reportsOrderedByTitleAscending } = rootStore.reportStore;
   const { openModal } = rootStore.modalStore;
 
   useEffect(() => {
@@ -21,8 +21,6 @@ const ReportsPage = () => {
     return reportsOrderedByTitleAscending;
   }, [reportsOrderedByTitleAscending]);
 
-  const [showForm, setShowForm] = useState(false);
-  const toggleForm = () => setShowForm(!showForm);
   const [query, setQuery] = useState("");
 
   if (loadingReports) return <LoadingComponent content="Loading reports..." />;

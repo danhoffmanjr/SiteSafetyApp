@@ -99,8 +99,6 @@ const CreateReportForm = () => {
     createReport(values, images.length > 0 ? images : undefined).catch((error) => {
       setSubmitErrors(error);
     });
-    console.log("Form Values: ", values); // remove
-    console.log("Form Images: ", images); // remove
   };
 
   const methods = useFormContext();
