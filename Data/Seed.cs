@@ -588,7 +588,7 @@ namespace PikeSafetyWebApp.Data
                             }
                         ),
                         CreatedOn = DateTime.UtcNow,
-                        CreatedBy = DghoffmanUser.Id,
+                        CreatedBy = "Seed Data",
                         UpdatedOn = null,
                         UpdatedBy = null,
                         IsActive = true
@@ -605,7 +605,7 @@ namespace PikeSafetyWebApp.Data
                 {
                     new Report
                     {
-                        Title = "Add McTesteface",
+                        Title = "Added McTesteface",
                         ReportType = "New User",
                         ReportTypeId = 1,
                         ReportFields = JsonSerializer.Serialize(new List<ReportField>
@@ -668,9 +668,11 @@ namespace PikeSafetyWebApp.Data
                         ),
                         IsComplete = false,
                         CompanyId = ChafinHomeBuildersId,
+                        CompanyName = "Chafin Home Builders",
                         SiteId = StonewaterCreekSiteId,
+                        SiteName = "Stonewater Creek",
                         CreatedOn = DateTime.UtcNow,
-                        CreatedBy = DghoffmanUser.Id,
+                        CreatedBy = "Seed Data",
                         UpdatedOn = null,
                         UpdatedBy = null,
                         IsActive = true

@@ -9,7 +9,7 @@ using PikeSafetyWebApp.Data;
 namespace PikeSafetyWebApp.Migrations
 {
     [DbContext(typeof(PikeSafetyDbContext))]
-    [Migration("20210222185100_DataSchema")]
+    [Migration("20210226153251_DataSchema")]
     partial class DataSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -357,6 +357,9 @@ namespace PikeSafetyWebApp.Migrations
                     b.Property<long>("CompanyId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("text");
+
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
@@ -380,6 +383,9 @@ namespace PikeSafetyWebApp.Migrations
 
                     b.Property<long>("SiteId")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("SiteName")
+                        .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");

@@ -27,8 +27,8 @@ export default class SiteStore {
 
   @computed get siteSelectOptions(): ISelectOptions[] {
     let options: ISelectOptions[] = [];
-     this.sitesRegistry.forEach(site => {
-      options.push({ value: `${site.id}`, label: `${site.name}` })
+    this.sitesRegistry.forEach((site) => {
+      options.push({ value: `${site.id}`, label: `${site.name}` });
     });
     return options.sort(this.compareOptions);
   }
@@ -53,7 +53,7 @@ export default class SiteStore {
     return 0;
   }
 
-  getSite = (id: number) => {
+  @action getSite = (id: number) => {
     return this.sitesRegistry.get(id);
   };
 
@@ -66,82 +66,82 @@ export default class SiteStore {
   @action loadSites = async () => {
     this.loadingSites = true;
     try {
-        const sites = await agent.Sites.list();
-        console.log("Sites:", sites);//remove
-        runInAction(() => {
-            sites.forEach((site) => {
-            this.sitesRegistry.set(site.id, site);
-          });
-          this.loadingSites = false;
+      const sites = await agent.Sites.list();
+      console.log("Sites:", sites); //remove
+      runInAction(() => {
+        sites.forEach((site) => {
+          this.sitesRegistry.set(site.id, site);
         });
-      } catch (error) {
-        runInAction(() => {
-          this.loadingSites = false;
-        });
-        console.log("Get Sites Error:", error);//remove
-        throw error;
-      }
+        this.loadingSites = false;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.loadingSites = false;
+      });
+      console.log("Get Sites Error:", error); //remove
+      throw error;
+    }
   };
 
   @action loadSitesNoLoader = async () => {
     try {
-        const sites = await agent.Sites.list();
-        runInAction(() => {
-            sites.forEach((site) => {
-            this.sitesRegistry.set(site.id, site);
-          });
+      const sites = await agent.Sites.list();
+      runInAction(() => {
+        sites.forEach((site) => {
+          this.sitesRegistry.set(site.id, site);
         });
-      } catch (error) {
-        throw error;
-      }
+      });
+    } catch (error) {
+      throw error;
+    }
   };
 
   @action loadSiteById = async (siteId: string) => {
     this.loadingSite = true;
     try {
-        const site = await agent.Sites.get(siteId);
-        console.log("Site Loaded:", site);//remove
-        runInAction(() => {
-            this.site = site;
-            this.loadingSite = false;
-          });
-        } catch (error) {
-        runInAction(() => {
-          this.loadingSite = false;
-        });
-        console.log("Get Site by Id Error:", error);//remove
-        throw error;
-      }
+      const site = await agent.Sites.get(siteId);
+      console.log("Site Loaded:", site); //remove
+      runInAction(() => {
+        this.site = site;
+        this.loadingSite = false;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.loadingSite = false;
+      });
+      console.log("Get Site by Id Error:", error); //remove
+      throw error;
+    }
   };
 
   @action loadSiteByIdNoLoader = async (siteId: string) => {
     try {
-        const site = await agent.Sites.get(siteId);
-        runInAction(() => {
-            this.site = site;
-          });
-        } catch (error) {
-        throw error;
-      }
+      const site = await agent.Sites.get(siteId);
+      runInAction(() => {
+        this.site = site;
+      });
+    } catch (error) {
+      throw error;
+    }
   };
 
   @action createSite = async (site: ISiteFormValues) => {
     this.isSubmitting = true;
     try {
-        const newSite = await agent.Sites.create(site);
-        runInAction(() => {
-          this.sitesRegistry.set(newSite.id, newSite);
-          this.isSubmitting = false;
-          toast.success(`${newSite.name} successfully created!`);
-          this.toggleForm();
-        });
-      } catch (error) {
-        runInAction(() => {
-          this.isSubmitting = false;
-        });
-        console.log("Create Site Error:", error);//remove
-        throw error;
-      }
+      const newSite = await agent.Sites.create(site);
+      runInAction(() => {
+        this.sitesRegistry.set(newSite.id, newSite);
+        this.isSubmitting = false;
+        toast.success(`${newSite.name} successfully created!`);
+        this.toggleForm();
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.isSubmitting = false;
+      });
+      console.log("Create Site Error:", error); //remove
+      throw error;
+    }
   };
 
   @action updateSite = async (site: Partial<ISiteFormValues>) => {
@@ -149,10 +149,10 @@ export default class SiteStore {
     try {
       if ((site.id !== null || site.id !== undefined) && typeof site.id === "string") {
         site.id = parseInt(site.id!.toString());
-      }  
+      }
       await agent.Sites.update(site);
       runInAction(() => {
-        this.site = {...this.site!, ...site}
+        this.site = { ...this.site!, ...site };
         this.isSubmitting = false;
         toast.success(`${site.name} successfully updated!`);
       });
@@ -160,7 +160,7 @@ export default class SiteStore {
       runInAction(() => {
         this.isSubmitting = false;
       });
-      console.log("Update Site Error:", error);//remove
+      console.log("Update Site Error:", error); //remove
       throw error;
     }
   };
@@ -175,55 +175,55 @@ export default class SiteStore {
         this.isSubmitting = false;
       });
       toast.success(`Site successfully deleted.`);
-      } catch (error) {
-        console.log("Delete Site Error:", error);//remove
-        this.isSubmitting = false;
-        throw error;
-      }
+    } catch (error) {
+      console.log("Delete Site Error:", error); //remove
+      this.isSubmitting = false;
+      throw error;
+    }
   };
 
   @action assignUserToSite = async (values: IUserSiteFormValues) => {
     this.isSubmitting = true;
     try {
       const siteAssigned: ISite = await agent.Sites.assign(values);
-        runInAction(() => {
-          this.loadSitesNoLoader();
-          this.loadSiteByIdNoLoader(values.siteId!.toString());
-          this.isSubmitting = false;
-          toast.success(`Site successfully assigned!`);
-        });
-      } catch (error) {
-        runInAction(() => {
-          this.isSubmitting = false;
-        });
-        console.log("Assign Site Error:", error);//remove
-        throw error;
-      }
+      runInAction(() => {
+        this.loadSitesNoLoader();
+        this.loadSiteByIdNoLoader(values.siteId!.toString());
+        this.isSubmitting = false;
+        toast.success(`Site successfully assigned!`);
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.isSubmitting = false;
+      });
+      console.log("Assign Site Error:", error); //remove
+      throw error;
+    }
   };
 
   @action unassignUserFromSite = async (values: IUserSiteFormValues) => {
     this.isSubmitting = true;
     try {
-        await agent.Sites.unassign(values);
-        runInAction(() => {
-          this.loadSitesNoLoader();
-          this.loadSiteByIdNoLoader(values.siteId!.toString());
-          this.isSubmitting = false;
-          toast.success(`User successfully removed from site.`);
-        });
-      } catch (error) {
-        runInAction(() => {
-          this.isSubmitting = false;
-        });
-        console.log("Unassign User Error:", error);//remove
-        throw error;
-      }
+      await agent.Sites.unassign(values);
+      runInAction(() => {
+        this.loadSitesNoLoader();
+        this.loadSiteByIdNoLoader(values.siteId!.toString());
+        this.isSubmitting = false;
+        toast.success(`User successfully removed from site.`);
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.isSubmitting = false;
+      });
+      console.log("Unassign User Error:", error); //remove
+      throw error;
+    }
   };
 
   @action getSelectOptionsForSites = (sites: ISite[]): ISelectOptions[] => {
     let options: ISelectOptions[] = [];
-    sites.forEach(site => {
-      options.push({ value: `${site.id}`, label: `${site.name}` })
+    sites.forEach((site) => {
+      options.push({ value: `${site.id}`, label: `${site.name}` });
     });
     return options.sort(this.compareOptions);
   };

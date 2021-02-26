@@ -10,6 +10,8 @@ using PikeSafetyWebApp.Application.Reports;
 using PikeSafetyWebApp.Application.Sites;
 using PikeSafetyWebApp.Application.User;
 using PikeSafetyWebApp.Models;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace PikeSafetyWebApp.Application.Utils
 {
@@ -109,9 +111,9 @@ namespace PikeSafetyWebApp.Application.Utils
 
         public ReportDto ReportToReportDto(Report report)
         {
-            var fields = JsonSerializer.Deserialize<List<ReportField>>(report.ReportFields);
+            var fields = JsonConvert.DeserializeObject<List<ReportField>>(report.ReportFields);
 
-            return new ReportDto
+            var reportDto = new ReportDto
             {
                 Id = report.Id,
                 ReportTypeId = report.ReportTypeId,
@@ -120,16 +122,18 @@ namespace PikeSafetyWebApp.Application.Utils
                 ReportFields = fields,
                 IsComplete = report.IsComplete,
                 CompanyId = report.CompanyId,
-                CompanyName = companyService.GetCompanyNameByIdAsync(report.CompanyId).Result,
+                CompanyName = report.CompanyName,
                 SiteId = report.SiteId,
-                SiteName = siteService.GetSiteNameByIdAsync(report.SiteId).Result,
-                CreatedBy = userManager.FindByIdAsync(report.CreatedBy).Result.FullName,
+                SiteName = report.SiteName,
+                CreatedBy = report.CreatedBy,
                 CreatedOn = report.CreatedOn,
                 UpdatedBy = report.UpdatedBy,
                 UpdatedOn = report.UpdatedOn,
                 IsActive = report.IsActive,
                 Images = report.Images?.ToList().ConvertAll(new Converter<ReportImage, ReportImageDto>(ReportImageToReportImageDto))
             };
+
+            return reportDto;
         }
 
         public ReportImageDto ReportImageToReportImageDto(ReportImage image)
@@ -148,7 +152,7 @@ namespace PikeSafetyWebApp.Application.Utils
 
         public ReportTypeDto ReportTypeToReportTypeDto(ReportType type)
         {
-            var fields = JsonSerializer.Deserialize<List<ReportTypeField>>(type.Fields);
+            var fields = JsonConvert.DeserializeObject<List<ReportTypeField>>(type.Fields);
 
             var reportTypeDto = new ReportTypeDto
             {

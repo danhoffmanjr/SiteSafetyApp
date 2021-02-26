@@ -44,7 +44,7 @@ const ReportTypeForm = ({ type }: Props) => {
                   return (
                     <Grid.Column key={index}>
                       <Form.Field key={index} className="field" fluid="true">
-                        <label>{field.name ? field.name : "[Field Name]"}</label>
+                        <label>{field.required === false ? field.name : `${field.name} [Required]`}</label>
                         <input type="text" name={field.name} placeholder={field.placeholder ? field.placeholder : "[input placeholder text]"} />
                       </Form.Field>
                     </Grid.Column>
@@ -56,7 +56,7 @@ const ReportTypeForm = ({ type }: Props) => {
                   return (
                     <Grid.Column key={index}>
                       <Form.Field key={index} className="field" fluid="true">
-                        <label>{field.name ? field.name : "[Field Name]"}</label>
+                        <label>{field.required === false ? field.name : `${field.name} [Required]`}</label>
                         <Select placeholder={field.placeholder ? field.placeholder : "[dropdown placeholder text]"} options={options} />
                       </Form.Field>
                     </Grid.Column>
@@ -67,7 +67,7 @@ const ReportTypeForm = ({ type }: Props) => {
                   return (
                     <Grid.Column key={index}>
                       <Form.Field key={index} className="field" fluid="true">
-                        <label>{field.name ? field.name : "[Field Name]"}</label>
+                        <label>{field.required === false ? field.name : `${field.name} [Required]`}</label>
                         <TextArea name={field.name} placeholder={field.placeholder ? field.placeholder : "[textarea placeholder text]"} />
                       </Form.Field>
                     </Grid.Column>
@@ -77,7 +77,8 @@ const ReportTypeForm = ({ type }: Props) => {
                 if (field.type && field.type === "Checkbox") {
                   return (
                     <Grid.Column key={index}>
-                      <Form.Field key={index} className="field" fluid="true">
+                      <Form.Field className="field" fluid="true">
+                        <label>{field.required === false ? "&nbsp;" : "[Required]"}</label>
                         <Checkbox name={field.name} label={field.placeholder ? field.placeholder : "[checkbox content = placeholder text]"} />
                       </Form.Field>
                     </Grid.Column>
@@ -88,7 +89,7 @@ const ReportTypeForm = ({ type }: Props) => {
                   return (
                     <Grid.Column key={index} width={16}>
                       <Form.Field className="field" fluid="true">
-                        <label>{field.name ? field.name : "[Field Name]"}</label>
+                        <label>{field.required === false ? field.name : `${field.name} [Required]`}</label>
                         <Segment attached="top" style={{ marginTop: 0 }}>
                           <ImageUploader PreviewMode={true} />
                         </Segment>

@@ -32,7 +32,7 @@ namespace PikeSafetyWebApp.Controllers
         public async Task<ActionResult<UserDto>> Login(Login.Query query)
         {
             var user = await Mediator.Send(query);
-            SetTokenCookie(user.RefreshToken);
+            SetTokenCookie(user?.RefreshToken ?? "");
             return user;
         }
 
@@ -66,7 +66,7 @@ namespace PikeSafetyWebApp.Controllers
         public async Task<ActionResult<UserDto>> CurrentUser()
         {
             var user = await Mediator.Send(new CurrentUser.Query());
-            SetTokenCookie(user.RefreshToken);
+            SetTokenCookie(user?.RefreshToken ?? "");
             return user;
         }
 
@@ -153,7 +153,7 @@ namespace PikeSafetyWebApp.Controllers
         {
             command.RefreshToken = Request.Cookies["refreshToken"];
             var user = await Mediator.Send(command);
-            SetTokenCookie(user.RefreshToken);
+            SetTokenCookie(user?.RefreshToken ?? "");
             return user;
         }
 

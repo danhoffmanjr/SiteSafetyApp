@@ -14,7 +14,7 @@ export default class ReportTypeStore {
     this.rootStore = rootStore;
   }
 
-  @observable reportTypesRegistry = new Map();
+  @observable reportTypesRegistry = new Map<number, IReportType>();
   @observable loadingReportTypes = false;
   @observable isSubmitting = false;
 
@@ -73,7 +73,7 @@ export default class ReportTypeStore {
     return 0;
   }
 
-  @action getReportType = (id: number) => {
+  @action getReportType = (id: number): IReportType | undefined => {
     return this.reportTypesRegistry.get(id);
   };
 

@@ -16,6 +16,7 @@ import { IProfileFormValues } from "../models/profileFormValues";
 import { IReportImage } from "../models/reportImage";
 import { IReportType } from "../models/reportType";
 import { IReportTypeFormValues } from "../models/reportTypeFormValues";
+import { IReportPostValues } from "../models/reportPostValues";
 
 const responseBody = (response: AxiosResponse) => response.data;
 
@@ -65,7 +66,7 @@ const Sites = {
 const Reports = {
   list: (): Promise<IReport[]> => requests.get("/reports"),
   details: (id: string) => requests.get(`/reports/${id}`),
-  create: (report: IReport) => requests.post("/createReport", report),
+  create: (report: IReportPostValues) => requests.post("/reports/create", report),
   update: (report: any) => requests.put(`/reports/${report.id}`, report),
   delete: (id: string) => requests.delete(`/reports/${id}`),
 };

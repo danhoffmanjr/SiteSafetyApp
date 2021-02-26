@@ -35,9 +35,11 @@ namespace PikeSafetyWebApp.Application.Reports
 
             public async Task<List<ReportDto>> Handle(Query request, CancellationToken cancellationToken)
             {
+                var userId = userAccessor.GetCurrentUserId();
+
                 var roles = await context.Roles.ToListAsync(); //needed for nested data relationships, still faster than lazy loading.
                 var images = await context.ReportImages.ToListAsync(); //needed for nested data relationships, still faster than lazy loading.
-                var currentUser = await context.Users.Where(x => x.Id == userAccessor.GetCurrentUserId()).Include(x => x.UserRoles).FirstOrDefaultAsync();
+                var currentUser = await context.Users.Where(x => x.Id == userId).Include(x => x.UserRoles).FirstOrDefaultAsync();
                 var userRole = currentUser.UserRoles.First().Role.Name;
 
                 var recordsForRole = new Dictionary<string, Func<Task<List<Report>>>>();
@@ -54,7 +56,8 @@ namespace PikeSafetyWebApp.Application.Reports
 
             private List<ReportDto> Reduce(List<Report> records)
             {
-                return records.ConvertAll(new Converter<Report, ReportDto>(modelConverters.ReportToReportDto));
+                List<ReportDto> reportDtos = records.ConvertAll(new Converter<Report, ReportDto>(modelConverters.ReportToReportDto));
+                return reportDtos;
             }
         }
     }

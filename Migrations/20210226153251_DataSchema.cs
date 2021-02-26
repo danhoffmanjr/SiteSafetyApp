@@ -291,7 +291,9 @@ namespace PikeSafetyWebApp.Migrations
                     Title = table.Column<string>(nullable: true),
                     ReportFields = table.Column<string>(nullable: true),
                     CompanyId = table.Column<long>(nullable: false),
+                    CompanyName = table.Column<string>(nullable: true),
                     SiteId = table.Column<long>(nullable: false),
+                    SiteName = table.Column<string>(nullable: true),
                     IsComplete = table.Column<bool>(nullable: false),
                     AppUserId = table.Column<string>(nullable: true)
                 },

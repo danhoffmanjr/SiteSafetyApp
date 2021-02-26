@@ -1,6 +1,9 @@
 import { action, computed, observable, runInAction } from "mobx";
+import { toast } from "react-toastify";
 import agent from "../api/agent";
+import { ISelectOptions } from "../models/reactSelectOptions";
 import { IReport } from "../models/report";
+import { IReportPostValues } from "../models/reportPostValues";
 import { RootStore } from "./rootStore";
 
 export default class ReportStore {
@@ -44,4 +47,41 @@ export default class ReportStore {
       console.log("Load Reports Error:", error.statusText); //remove
     }
   };
+
+  @action createReport = async (values: IReportPostValues) => {
+    this.isSubmitting = true;
+    try {
+      await agent.Reports.create(values);
+      runInAction(() => {
+        this.loadReports();
+        this.isSubmitting = false;
+        toast.success(`${values.title} report created successfully.`);
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.isSubmitting = false;
+      });
+      console.log("Create report Type Error:", error); //remove
+      throw error;
+    }
+  };
+
+  @action createSelectOptionsFromString = (options: string): ISelectOptions[] => {
+    let optionsArray = options.split(",");
+    let selectOptions: { value: string; label: string }[] = [];
+    optionsArray.map((option) => {
+      selectOptions.push({ value: `${option}`, label: `${option}` });
+    });
+    return selectOptions.sort(this.compareOptions);
+  };
+
+  compareOptions(options1: ISelectOptions, options2: ISelectOptions) {
+    if (options1.label < options2.label) {
+      return -1;
+    }
+    if (options1.label > options2.label) {
+      return 1;
+    }
+    return 0;
+  }
 }

@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { observer } from "mobx-react-lite";
 import React, { useContext, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm, useFormContext } from "react-hook-form";
 import { Button, Form, Header, Loader, Segment } from "semantic-ui-react";
 import Select from "react-select";
 import ErrorMessage from "../../app/common/form/ErrorMessage";
@@ -9,15 +9,21 @@ import { IReportFormValues } from "../../app/models/reportFormValues";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import { ISelectOptions } from "../../app/models/reactSelectOptions";
 import { toJS } from "mobx";
-import { IReportTypeField } from "../../app/models/reportTypeField";
 import ReportFieldsRenderer from "./ReportFieldsRenderer";
+import { IReportField } from "../../app/models/reportField";
+import { IReportPostValues } from "../../app/models/reportPostValues";
 
 const CreateReportForm = () => {
   const rootStore = useContext(RootStoreContext);
-  const { isSubmitting } = rootStore.reportStore;
-  const { loadCompanies, companySelectOptions, loadingCompanies } = rootStore.companyStore;
-  const { siteSelectOptions, loadSites, loadingSites } = rootStore.siteStore;
+  const { isSubmitting, createReport } = rootStore.reportStore;
+  const { loadCompanies, companySelectOptions, loadingCompanies, getCompany } = rootStore.companyStore;
+  const { siteSelectOptions, loadSites, loadingSites, getSite } = rootStore.siteStore;
   const { reportTypeSelectOptions, loadReportTypes, loadingReportTypes, getReportType } = rootStore.reportTypeStore;
+
+  useEffect(() => {
+    register({ name: "companyName" });
+    register({ name: "siteName" });
+  }, []);
 
   useEffect(() => {
     if (companySelectOptions.length < 1) {
@@ -39,7 +45,9 @@ const CreateReportForm = () => {
 
   const [submitErrors, setSubmitErrors] = useState<AxiosResponse>();
 
-  const { handleSubmit, register, watch, errors, formState, control, setValue } = useForm<IReportFormValues>({
+  const [reportFields, setReportFields] = useState<IReportField[]>([]);
+
+  const { handleSubmit, register, errors, formState, control, setValue, getValues } = useForm<IReportFormValues>({
     mode: "all",
     reValidateMode: "onChange",
     defaultValues: {
@@ -58,125 +66,152 @@ const CreateReportForm = () => {
 
   const { isDirty } = formState;
 
-  const [reportTypeFields, setReportTypeFields] = useState<IReportTypeField[]>([]);
-
   const handleReportTypeChange = (option: ISelectOptions) => {
     let reportType = getReportType(parseInt(option.value.toString()));
-    console.log("Selected Type fields: ", toJS(reportType.fields));
-    setReportTypeFields(toJS(reportType.fields));
+    let fields: IReportField[] | undefined = toJS(reportType?.fields)?.map((field) =>
+      Object.assign(field, {
+        value: "",
+      })
+    );
+    setReportFields(fields!);
   };
 
-  const onSubmit = (data: IReportFormValues) => {
-    console.log(data); // remove
+  const onSubmit = (data: any) => {
+    let updateValues = reportFields.map((field) => {
+      field.value = data.reportFields[field.name];
+      return field;
+    });
+    let company = getCompany(parseInt(data.companyId));
+    let site = getSite(parseInt(data.citeId));
+    let reportType = getReportType(parseInt(data.reportTypeId));
+    let values: IReportPostValues = {
+      ...data,
+      companyName: company?.name,
+      siteName: site?.name,
+      siteId: parseInt(data.siteId),
+      reportTypeId: parseInt(data.reportTypeId),
+      reportType: reportType?.title,
+      reportFields: JSON.stringify(updateValues),
+      //images: data.reportFields.images,
+    };
+
+    createReport(values).catch((error) => {
+      setSubmitErrors(error);
+    });
+    console.log("Form Values: ", values); // remove
   };
+
+  const methods = useFormContext();
 
   return (
     <Segment>
       {(loadingCompanies || loadingSites || loadingReportTypes) && <Loader content="Loading options..." active />}
       <Header as="h3">Create Report</Header>
-      <Form onSubmit={handleSubmit(onSubmit)} error>
-        <Form.Group widths="equal">
-          <Form.Field className={errors.companyId !== undefined ? "error field" : "field"}>
-            <label>Company</label>
-            <Controller
-              control={control}
-              name="companyId"
-              rules={{ required: "Company is Required*" }}
-              defaultValue={null}
-              render={({ onChange, name, value }) => (
-                <Select
-                  options={companySelectOptions}
-                  onChange={(value) => {
-                    onChange(value);
-                    setValue(name, parseInt(value.value));
-                  }}
-                  value={value?.value}
-                  name={name}
-                  isClearable={false}
-                />
+      <FormProvider {...methods}>
+        <Form onSubmit={handleSubmit(onSubmit)} error>
+          <Form.Group widths="equal">
+            <Form.Field className={errors.companyId !== undefined ? "error field" : "field"}>
+              <label>Company</label>
+              <Controller
+                control={control}
+                name="companyId"
+                rules={{ required: "Company is Required*" }}
+                defaultValue={null}
+                render={({ onChange, name, value }) => (
+                  <Select
+                    options={companySelectOptions}
+                    onChange={(value) => {
+                      onChange(value);
+                      setValue(name, parseInt(value.value));
+                    }}
+                    value={value?.value}
+                    name={name}
+                    isClearable={false}
+                  />
+                )}
+              />
+              {errors.companyId && (
+                <div className="ui pointing above prompt label" id="form-select-companyId-error-message" role="alert" aria-atomic="true">
+                  {errors.companyId.message}
+                </div>
               )}
+            </Form.Field>
+            <Form.Field className={errors.siteId !== undefined ? "error field" : "field"}>
+              <label>Site</label>
+              <Controller
+                name="siteId"
+                defaultValue={null}
+                control={control}
+                rules={{ required: "Site is Required*" }}
+                render={({ onChange, name, value }) => (
+                  <Select
+                    options={siteSelectOptions}
+                    onChange={(value) => {
+                      onChange(value);
+                      setValue(name, value.value);
+                    }}
+                    value={value?.value}
+                    name={name}
+                    isClearable={false}
+                  />
+                )}
+              />
+              {errors.siteId && (
+                <div className="ui pointing above prompt label" id="form-select-siteId-error-message" role="alert" aria-atomic="true">
+                  {errors.siteId.message}
+                </div>
+              )}
+            </Form.Field>
+            <Form.Field className={errors.reportTypeId !== undefined ? "error field" : "field"}>
+              <label>Report Type</label>
+              <Controller
+                control={control}
+                name="reportTypeId"
+                rules={{ required: "Report Type is Required*" }}
+                defaultValue={null}
+                render={({ onChange, name, value }) => (
+                  <Select
+                    options={reportTypeSelectOptions}
+                    onChange={(value) => {
+                      onChange(value);
+                      setValue(name, value.value);
+                      handleReportTypeChange(value);
+                    }}
+                    value={value?.value}
+                    name={name}
+                    isClearable={false}
+                  />
+                )}
+              />
+              {errors.reportTypeId && (
+                <div className="ui pointing above prompt label" id="form-select-reportTypeId-error-message" role="alert" aria-atomic="true">
+                  {errors.reportTypeId.message}
+                </div>
+              )}
+            </Form.Field>
+          </Form.Group>
+          <Form.Field className={errors.title !== undefined ? "error field" : "field"}>
+            <label>Report Title</label>
+            <input
+              type="text"
+              name="title"
+              placeholder="Report Title"
+              aria-invalid={errors.title !== undefined}
+              ref={register({
+                required: "Report Title is Required*",
+              })}
             />
-            {errors.companyId && (
-              <div className="ui pointing above prompt label" id="form-select-company-error-message" role="alert" aria-atomic="true">
-                {errors.companyId.message}
+            {errors.title && (
+              <div className="ui pointing above prompt label" id="form-input-title-error-message" role="alert" aria-atomic="true">
+                {errors.title.message}
               </div>
             )}
           </Form.Field>
-          <Form.Field className={errors.siteId !== undefined ? "error field" : "field"}>
-            <label>Site</label>
-            <Controller
-              name="siteId"
-              defaultValue={null}
-              control={control}
-              rules={{ required: "Site is Required*" }}
-              render={({ onChange, name, value }) => (
-                <Select
-                  options={siteSelectOptions}
-                  onChange={(value) => {
-                    onChange(value);
-                    setValue(name, value.value);
-                  }}
-                  value={value?.value}
-                  name={name}
-                  isClearable={false}
-                />
-              )}
-            />
-            {errors.siteId && (
-              <div className="ui pointing above prompt label" id="form-select-site-error-message" role="alert" aria-atomic="true">
-                {errors.siteId.message}
-              </div>
-            )}
-          </Form.Field>
-          <Form.Field className={errors.siteId !== undefined ? "error field" : "field"}>
-            <label>Report Type</label>
-            <Controller
-              control={control}
-              name="reportTypeId"
-              rules={{ required: "Report Type is Required*" }}
-              defaultValue={null}
-              render={({ onChange, name, value }) => (
-                <Select
-                  options={reportTypeSelectOptions}
-                  onChange={(value) => {
-                    onChange(value);
-                    setValue(name, value.value);
-                    handleReportTypeChange(value);
-                  }}
-                  value={value?.value}
-                  name={name}
-                  isClearable={false}
-                />
-              )}
-            />
-            {errors.reportTypeId && (
-              <div className="ui pointing above prompt label" id="form-select-report-type-error-message" role="alert" aria-atomic="true">
-                {errors.reportTypeId.message}
-              </div>
-            )}
-          </Form.Field>
-        </Form.Group>
-        <Form.Field className={errors.title !== undefined ? "error field" : "field"}>
-          <label>Report Title</label>
-          <input
-            type="text"
-            name="title"
-            placeholder="Report Title"
-            aria-invalid={errors.title !== undefined}
-            ref={register({
-              required: "Report Title is Required*",
-            })}
-          />
-          {errors.title && (
-            <div className="ui pointing above prompt label" id="form-input-title-error-message" role="alert" aria-atomic="true">
-              {errors.title.message}
-            </div>
-          )}
-        </Form.Field>
-        <ReportFieldsRenderer reportFields={reportTypeFields} />
-        <Button color="green" content="Create" disabled={!isDirty} loading={isSubmitting} style={{ marginTop: 15 }} />
-        {submitErrors && <ErrorMessage error={submitErrors!} />}
-      </Form>
+          <ReportFieldsRenderer reportTypeFields={reportFields} control={control} register={register} errors={errors} setValue={setValue} />
+          <Button color="green" content="Create" disabled={!isDirty} loading={isSubmitting} style={{ marginTop: 15 }} />
+          {submitErrors && <ErrorMessage error={submitErrors!} />}
+        </Form>
+      </FormProvider>
     </Segment>
   );
 };

@@ -6,7 +6,6 @@ import { ISelectOptions } from "../models/reactSelectOptions";
 import { toast } from "react-toastify";
 import { ISiteFormValues } from "../models/siteFormValues";
 
-
 export default class CompanyStore {
   rootStore: RootStore;
 
@@ -26,8 +25,8 @@ export default class CompanyStore {
 
   @computed get companySelectOptions(): ISelectOptions[] {
     let options: ISelectOptions[] = [];
-     this.companyRegistry.forEach(company => {
-      options.push({ value: `${company.id}`, label: `${company.name}` })
+    this.companyRegistry.forEach((company) => {
+      options.push({ value: `${company.id}`, label: `${company.name}` });
     });
     return options.sort(this.compareOptions);
   }
@@ -51,8 +50,8 @@ export default class CompanyStore {
     }
     return 0;
   }
-  
-  getCompany = (id: number) => {
+
+  @action getCompany = (id: number) => {
     return this.companyRegistry.get(id);
   };
 
@@ -65,73 +64,73 @@ export default class CompanyStore {
   @action loadCompanies = async () => {
     this.loadingCompanies = true;
     try {
-        const companies = await agent.Companies.list();
-        runInAction(() => {
-          companies.forEach((company) => {
-            this.companyRegistry.set(company.id, company);
-            this.loadingCompanies = false;
-          });
-        });
-      } catch (error) {
-        runInAction(() => {
+      const companies = await agent.Companies.list();
+      runInAction(() => {
+        companies.forEach((company) => {
+          this.companyRegistry.set(company.id, company);
           this.loadingCompanies = false;
         });
-        console.log("Get Companies Error:", error);//remove
-        throw error;
-      }
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.loadingCompanies = false;
+      });
+      console.log("Get Companies Error:", error); //remove
+      throw error;
+    }
   };
 
   @action createCompany = async (name: string) => {
     try {
-        const company = await agent.Companies.create(name);
-        runInAction(() => {
-          this.companyRegistry.set(company.id, company);
-        });
-        toast.success(`${company.name} successfully created`);
-      } catch (error) {
-        console.log("Create Company Error:", error);//remove
-        throw error;
-      }
+      const company = await agent.Companies.create(name);
+      runInAction(() => {
+        this.companyRegistry.set(company.id, company);
+      });
+      toast.success(`${company.name} successfully created`);
+    } catch (error) {
+      console.log("Create Company Error:", error); //remove
+      throw error;
+    }
   };
 
   @action deleteCompany = async (id: string) => {
     try {
       const companyId = parseInt(id);
       await agent.Companies.delete(id);
-        runInAction(() => {
-          this.companyRegistry.delete(companyId);
-        });
-        toast.success(`Company successfully deleted`);
-      } catch (error) {
-        console.log("Delete Company Error:", error);//remove
-        throw error;
-      }
+      runInAction(() => {
+        this.companyRegistry.delete(companyId);
+      });
+      toast.success(`Company successfully deleted`);
+    } catch (error) {
+      console.log("Delete Company Error:", error); //remove
+      throw error;
+    }
   };
 
   @action createSiteForCompany = async (site: ISiteFormValues) => {
     this.isSubmitting = true;
     console.log("Create Site for Company form values:", site);
     try {
-        const newSite = await agent.Sites.create(site);
-        if (newSite !== null) {
-          const companies = await agent.Companies.list();
-          runInAction(() => {
-            this.loadingCompanies = true;
-            companies.forEach((company) => {
-              this.companyRegistry.set(company.id, company);
-            });
-            this.loadingCompanies = false;
-            this.isSubmitting = false;
-            toast.success(`${newSite.name} successfully created!`);
-          });
-        }
-      } catch (error) {
+      const newSite = await agent.Sites.create(site);
+      if (newSite !== null) {
+        const companies = await agent.Companies.list();
         runInAction(() => {
+          this.loadingCompanies = true;
+          companies.forEach((company) => {
+            this.companyRegistry.set(company.id, company);
+          });
+          this.loadingCompanies = false;
           this.isSubmitting = false;
+          toast.success(`${newSite.name} successfully created!`);
         });
-        console.log("Create Site Error:", error);//remove
-        throw error;
       }
+    } catch (error) {
+      runInAction(() => {
+        this.isSubmitting = false;
+      });
+      console.log("Create Site Error:", error); //remove
+      throw error;
+    }
   };
 
   @action deleteSiteFromCompany = async (id: string) => {
@@ -152,19 +151,19 @@ export default class CompanyStore {
           toast.success(`Site successfully deleted.`);
         });
       }
-      } catch (error) {
-        console.log("Delete site from company error:", error);//remove
-        this.isSubmitting = false;
-        throw error;
-      }
+    } catch (error) {
+      console.log("Delete site from company error:", error); //remove
+      this.isSubmitting = false;
+      throw error;
+    }
   };
 
   @action getSiteOptionsByCompanyId = (companyId: number): ISelectOptions[] => {
     let options: ISelectOptions[] = [];
     let company = this.companyRegistry.get(companyId);
-     company?.sites.forEach(site => {
-      options.push({ value: `${site.id}`, label: `${site.name}` })
+    company?.sites.forEach((site) => {
+      options.push({ value: `${site.id}`, label: `${site.name}` });
     });
     return options.sort(this.compareOptions);
-  }
+  };
 }

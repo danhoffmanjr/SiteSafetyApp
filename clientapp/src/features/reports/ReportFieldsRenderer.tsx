@@ -1,19 +1,53 @@
-import React, { useContext, useState } from "react";
-import { Button, Checkbox, Form, Grid, Header, Segment, Select, TextArea, Image, Message, Icon } from "semantic-ui-react";
+import React, { useContext, useEffect, useState } from "react";
+import { Control, Controller, DeepMap, FieldError } from "react-hook-form";
+import { Button, Checkbox, Form, Grid, Header, Segment, TextArea, Image, Message, Icon } from "semantic-ui-react";
+import Select from "react-select";
 import ImageUploader from "../../app/common/imageUpload/ImageUploader";
-import { IReportTypeField } from "../../app/models/reportTypeField";
+import { IReportField } from "../../app/models/reportField";
+import { IReportFormValues } from "../../app/models/reportFormValues";
 import { RootStoreContext } from "../../app/stores/rootStore";
+import { observer } from "mobx-react-lite";
 
 interface Props {
-  reportFields: IReportTypeField[];
+  reportTypeFields: IReportField[];
+  control: Control<IReportFormValues>;
+  register: any;
+  setValue: any;
+  errors: DeepMap<IReportFormValues, FieldError>;
 }
 
-const ReportFieldsRenderer = ({ reportFields }: Props) => {
+const ReportFieldsRenderer = ({ reportTypeFields, control, register, errors, setValue }: Props) => {
   const rootStore = useContext(RootStoreContext);
-  const { createDropdownOptions, fieldTypes } = rootStore.reportTypeStore;
+  const { fieldTypes } = rootStore.reportTypeStore;
+  const { createSelectOptionsFromString } = rootStore.reportStore;
   const { removeImage, removeAllImages, imageRegistry } = rootStore.imageStore;
 
   const [images, setImages] = useState<Map<string, Blob>>();
+
+  useEffect(() => {
+    setImages(imageRegistry);
+  }, [imageRegistry]);
+
+  useEffect(() => {
+    register({ name: "reportFields.images" });
+  }, []);
+
+  useEffect(() => {
+    if (images !== undefined && images.size > 0) {
+      let imageEnumerator = images.entries();
+      let imageArr = [];
+      for (let i = 0; i < images.size; i++) {
+        imageArr.push(imageEnumerator.next().value);
+      }
+      //TODO: map to IReportImage model
+      setValue("reportFields.images", imageArr);
+      setValue("reportFields.imageCount", images.size);
+      console.log("useEffect ran"); //remove
+    } else {
+      setValue("reportFields.images", []);
+      setValue("reportFields.imageCount", "");
+    }
+  }, [images?.size]);
 
   const handleRemoveImage = (url: string, key: string) => {
     URL.revokeObjectURL(url);
@@ -21,8 +55,8 @@ const ReportFieldsRenderer = ({ reportFields }: Props) => {
   };
 
   return (
-    <Grid stackable columns={3} padded={reportFields.length < 1 ? true : false}>
-      {reportFields.length < 1 && (
+    <Grid stackable columns={3} padded={reportTypeFields.length < 1 ? true : false}>
+      {reportTypeFields.length < 1 && (
         <Message icon>
           <Icon name="circle notched" loading />
           <Message.Content>
@@ -31,99 +65,172 @@ const ReportFieldsRenderer = ({ reportFields }: Props) => {
           </Message.Content>
         </Message>
       )}
-      {reportFields &&
-        reportFields.map((field, index) => {
-          if (field === undefined) return false;
-          if (field?.type === undefined) return false;
+      {reportTypeFields?.map((field, index) => {
+        if (field === undefined) return false;
+        if (field?.type === undefined) return false;
 
-          if (field?.type === fieldTypes.Text.name) {
-            return (
-              <Grid.Column key={index}>
-                <Form.Field key={index} className="field" fluid="true">
-                  <label>{field.name ? field.name : "[Field Name]"}</label>
-                  <input type="text" name={field.name} placeholder={field.placeholder ? field.placeholder : "[input placeholder text]"} />
-                </Form.Field>
-              </Grid.Column>
-            );
-          }
+        if (field?.type === fieldTypes.Text.name) {
+          return (
+            <Grid.Column key={index}>
+              <Form.Field className={errors.reportFields && errors.reportFields[`${field.name}` as keyof typeof reportTypeFields] !== undefined ? "error field" : "field"}>
+                <label>{field.name}</label>
+                <input type="text" name={`reportFields.${field.name}`} placeholder={field.placeholder} ref={register({ required: field.required })} />
+                {errors.reportFields && errors.reportFields[`${field.name}` as keyof typeof reportTypeFields] && (
+                  <div className="ui pointing above prompt label" id="form-input-text-error-message" role="alert" aria-atomic="true">
+                    {errors.reportFields[`${field.name}` as keyof typeof reportTypeFields] !== undefined ? `${field.name} is Required*` : false}
+                  </div>
+                )}
+              </Form.Field>
+            </Grid.Column>
+          );
+        }
 
-          if (field.type && field.type === "Dropdown") {
-            let options = createDropdownOptions(field.options);
-            return (
-              <Grid.Column key={index}>
-                <Form.Field key={index} className="field" fluid="true">
-                  <label>{field.name ? field.name : "[Field Name]"}</label>
-                  <Select placeholder={field.placeholder ? field.placeholder : "[dropdown placeholder text]"} options={options} />
-                </Form.Field>
-              </Grid.Column>
-            );
-          }
+        if (field?.type === fieldTypes.Dropdown.name) {
+          let options = createSelectOptionsFromString(field.options!);
+          return (
+            <Grid.Column key={index}>
+              <Form.Field className={errors.reportFields && errors.reportFields[`${field.name}` as keyof typeof reportTypeFields] !== undefined ? "error field" : "field"}>
+                <label>{field.name}</label>
+                <Controller
+                  name={`reportFields.${field.name}`}
+                  defaultValue={null}
+                  control={control}
+                  rules={{ required: field.required }}
+                  render={({ onChange, name, value }) => (
+                    <Select
+                      options={options}
+                      onChange={(value) => {
+                        onChange(value);
+                        setValue(name, value.value);
+                      }}
+                      value={value?.value}
+                      name={name}
+                      isClearable={false}
+                    />
+                  )}
+                />
+                {errors.reportFields && errors.reportFields[`${field.name}` as keyof typeof reportTypeFields] && (
+                  <div className="ui pointing above prompt label" id="form-input-select-error-message" role="alert" aria-atomic="true">
+                    {errors.reportFields[`${field.name}` as keyof typeof reportTypeFields] !== undefined ? `${field.name} is Required*` : false}
+                  </div>
+                )}
+              </Form.Field>
+            </Grid.Column>
+          );
+        }
 
-          if (field.type && field.type === "Textarea") {
-            return (
-              <Grid.Column key={index}>
-                <Form.Field key={index} className="field" fluid="true">
-                  <label>{field.name ? field.name : "[Field Name]"}</label>
-                  <TextArea name={field.name} placeholder={field.placeholder ? field.placeholder : "[textarea placeholder text]"} />
-                </Form.Field>
-              </Grid.Column>
-            );
-          }
+        if (field?.type === fieldTypes.Textarea.name) {
+          return (
+            <Grid.Column key={index}>
+              <Form.Field className={errors.reportFields && errors.reportFields[`${field.name}` as keyof typeof reportTypeFields] !== undefined ? "error field" : "field"}>
+                <label>{field.name}</label>
+                <Controller
+                  name={`reportFields.${field.name}`}
+                  defaultValue={""}
+                  control={control}
+                  rules={{ required: field.required }}
+                  render={({ onChange, name, value }) => (
+                    <TextArea
+                      name={name}
+                      placeholder={field.placeholder}
+                      onChange={(e) => {
+                        onChange(e.target.value);
+                        setValue(name, e.target.value);
+                      }}
+                      value={value}
+                    />
+                  )}
+                />
+              </Form.Field>
+              {errors.reportFields && errors.reportFields[`${field.name}` as keyof typeof reportTypeFields] && (
+                <div className="ui pointing above prompt label" id="form-input-textarea-error-message" role="alert" aria-atomic="true">
+                  {errors.reportFields[`${field.name}` as keyof typeof reportTypeFields] !== undefined ? `${field.name} is Required*` : false}
+                </div>
+              )}
+            </Grid.Column>
+          );
+        }
 
-          if (field.type && field.type === "Checkbox") {
-            return (
-              <Grid.Column key={index}>
-                <Form.Field key={index} className="field" fluid="true">
-                  <Checkbox name={field.name} label={field.placeholder ? field.placeholder : "[checkbox content = placeholder text]"} />
-                </Form.Field>
-              </Grid.Column>
-            );
-          }
+        if (field?.type === fieldTypes.Checkbox.name) {
+          return (
+            <Grid.Column key={index}>
+              <Form.Field className={errors.reportFields && errors.reportFields[`${field.name}` as keyof typeof reportTypeFields] !== undefined ? "error field" : "field"}>
+                <label>&nbsp;</label>
+                <Controller
+                  name={`reportFields.${field.name}`}
+                  defaultValue={false}
+                  control={control}
+                  rules={{ required: field.required }}
+                  render={({ onChange, name, value }) => (
+                    <Checkbox
+                      name={name}
+                      label={field.placeholder}
+                      onChange={() => {
+                        onChange(!value);
+                      }}
+                      checked={value}
+                    />
+                  )}
+                />
+                {errors.reportFields && errors.reportFields[`${field.name}` as keyof typeof reportTypeFields] && (
+                  <div className="ui pointing above prompt label" id="form-input-textarea-error-message" role="alert" aria-atomic="true">
+                    {errors.reportFields[`${field.name}` as keyof typeof reportTypeFields] !== undefined ? `${field.name} is Required*` : false}
+                  </div>
+                )}
+              </Form.Field>
+            </Grid.Column>
+          );
+        }
 
-          if (field.type && field.type === "ImageUploader") {
-            return (
-              <Grid.Column key={index} width={16}>
-                <Form.Field className="field" fluid="true">
-                  <label>{field.name ? field.name : "[Field Name]"}</label>
-                  <Segment attached="top" style={{ marginTop: 0 }}>
-                    <ImageUploader PreviewMode={true} />
-                  </Segment>
-                  <Segment attached="bottom">
-                    <Header sub color="blue">
-                      Images:{" "}
-                      {images && images.size > 1 && (
-                        <Button compact size="mini" onClick={removeAllImages}>
-                          Remove All
-                        </Button>
-                      )}
-                    </Header>
+        if (field?.type === fieldTypes.ImageUploader.name) {
+          return (
+            <Grid.Column key={index} width={16}>
+              <Form.Field className={errors.reportFields && errors.reportFields["imageCount" as keyof typeof reportTypeFields] !== undefined ? "error field" : "field"}>
+                <label>{field.name}</label>
+                <Segment attached="top" style={{ marginTop: 0 }}>
+                  <ImageUploader PreviewMode={true} />
+                </Segment>
+                <Segment attached="bottom">
+                  <Header sub color="blue">
+                    Images:
+                    <input type="hidden" name="reportFields.imageCount" ref={register({ required: field.required })} />
+                    {errors.reportFields && errors.reportFields["imageCount" as keyof typeof reportTypeFields] && (
+                      <div className="ui pointing below prompt label" id="form-input-textarea-error-message" role="alert" aria-atomic="true">
+                        {errors.reportFields["imageCount" as keyof typeof reportTypeFields] !== undefined ? `${field.name} is Required*` : false}
+                      </div>
+                    )}
+                    {images && images.size > 1 && (
+                      <Button compact size="mini" onClick={removeAllImages}>
+                        Remove All
+                      </Button>
+                    )}
+                  </Header>
+                  <div style={{ display: "flex", justifyContent: "flex-start", flexWrap: "wrap" }}>
+                    {images &&
+                      images.size > 0 &&
+                      Array.from(images).map((blob) => {
+                        let imageUrl = URL.createObjectURL(blob[1]);
+                        let imageKey = blob[0];
+                        return (
+                          <Segment key={imageKey} style={{ padding: 0, margin: "0.5em 1em 0.5em 0 " }}>
+                            <Image src={imageUrl} alt={imageKey} style={{ maxHeight: 100 }} />
+                            <Button fluid compact size="mini" attached="bottom" onClick={() => handleRemoveImage(imageUrl, imageKey)}>
+                              Remove
+                            </Button>
+                          </Segment>
+                        );
+                      })}
+                  </div>
+                </Segment>
+              </Form.Field>
+            </Grid.Column>
+          );
+        }
 
-                    <div style={{ display: "flex", justifyContent: "flex-start", flexWrap: "wrap" }}>
-                      {images &&
-                        images.size > 0 &&
-                        Array.from(images).map((blob) => {
-                          let imageUrl = URL.createObjectURL(blob[1]);
-                          let imageKey = blob[0];
-                          return (
-                            <Segment key={imageKey} style={{ padding: 0, margin: "0.5em 1em 0.5em 0 " }}>
-                              <Image src={imageUrl} alt={imageKey} style={{ maxHeight: 100 }} />
-                              <Button fluid compact size="mini" attached="bottom" onClick={() => handleRemoveImage(imageUrl, imageKey)}>
-                                Remove
-                              </Button>
-                            </Segment>
-                          );
-                        })}
-                    </div>
-                  </Segment>
-                </Form.Field>
-              </Grid.Column>
-            );
-          }
-
-          return false;
-        })}
+        return false;
+      })}
     </Grid>
   );
 };
 
-export default ReportFieldsRenderer;
+export default observer(ReportFieldsRenderer);

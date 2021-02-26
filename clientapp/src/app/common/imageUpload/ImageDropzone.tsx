@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { Button, Icon } from "semantic-ui-react";
+import { Button } from "semantic-ui-react";
 
 interface Props {
   setFiles: (files: any) => void;
@@ -26,7 +26,6 @@ export default function ImageDropzone({ setFiles }: Props) {
 
   const onDrop = useCallback(
     (acceptedFiles) => {
-      console.log(acceptedFiles);
       setFiles(
         acceptedFiles.map((file: any) =>
           Object.assign(file, {
@@ -47,7 +46,7 @@ export default function ImageDropzone({ setFiles }: Props) {
         <p>Drop the image here ...</p>
       ) : (
         <>
-          <Button icon="upload" size="large" />
+          <Button type="button" icon="upload" size="large" />
           <p>Drag 'n' drop image here, or click to select image</p>
         </>
       )}

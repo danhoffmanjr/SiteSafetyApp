@@ -9,9 +9,11 @@ namespace PikeSafetyWebApp.Models
         public string ReportType { get; set; }
         public string Title { get; set; }
         public string ReportFields { get; set; } //stringified json object based on report type fields with additional value parameter
-        public virtual long CompanyId { get; set; }
-        public virtual long SiteId { get; set; }
-        public virtual ICollection<ReportImage> Images { get; set; } = new List<ReportImage>();
+        public long CompanyId { get; set; }
+        public string CompanyName { get; set; }
+        public long SiteId { get; set; }
+        public string SiteName { get; set; }
         public bool IsComplete { get; set; }
+        public ICollection<ReportImage> Images { get; set; } = new List<ReportImage>();
     }
 }
