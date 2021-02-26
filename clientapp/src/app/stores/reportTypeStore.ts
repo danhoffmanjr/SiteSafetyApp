@@ -17,6 +17,7 @@ export default class ReportTypeStore {
   @observable reportTypesRegistry = new Map<number, IReportType>();
   @observable loadingReportTypes = false;
   @observable isSubmitting = false;
+  @observable showForm = false;
 
   // add radio button option
   @observable fieldTypes: IFieldType = {
@@ -73,6 +74,12 @@ export default class ReportTypeStore {
     return 0;
   }
 
+  @action toggleForm = () => {
+    runInAction(() => {
+      this.showForm = !this.showForm;
+    });
+  };
+
   @action getReportType = (id: number): IReportType | undefined => {
     return this.reportTypesRegistry.get(id);
   };
@@ -91,7 +98,7 @@ export default class ReportTypeStore {
       runInAction(() => {
         this.loadingReportTypes = false;
       });
-      console.log("Load Report Types Error:", error.statusText); //remove
+      toast.error(`Problem loading report types. Error: ${error.statusText}`, { autoClose: 10000 });
     }
   };
 
@@ -102,13 +109,14 @@ export default class ReportTypeStore {
       runInAction(() => {
         this.loadReportTypes();
         this.isSubmitting = false;
+        this.toggleForm();
         toast.success(`${values.title} report type created successfully.`);
       });
     } catch (error) {
       runInAction(() => {
         this.isSubmitting = false;
       });
-      console.log("Create report Type Error:", error); //remove
+      toast.error(`Problem creating report type. Error: ${error.statusText}`, { autoClose: 10000 });
       throw error;
     }
   };
@@ -123,7 +131,7 @@ export default class ReportTypeStore {
       });
       toast.success(`Report Type deleted successfully.`);
     } catch (error) {
-      console.log("Delete Report Type Error:", error); //remove
+      toast.error(`Problem deleting report type. Error: ${error.statusText}`, { autoClose: 10000 });
       this.isSubmitting = false;
       throw error;
     }

@@ -11,10 +11,8 @@ import ReportTypeForm from "./ReportTypeForm";
 
 const ReportTypesPage = () => {
   const rootStore = useContext(RootStoreContext);
-  const { loadingReportTypes, loadReportTypes, typesOrderedByTitleAscending, deleteReportType } = rootStore.reportTypeStore;
+  const { showForm, toggleForm, loadingReportTypes, loadReportTypes, typesOrderedByTitleAscending, deleteReportType } = rootStore.reportTypeStore;
 
-  const [showForm, setShowForm] = useState(false);
-  const toggleForm = () => setShowForm(!showForm);
   const [query, setQuery] = useState("");
 
   const [activeIndex, setActiveIndex] = useState(-1);
