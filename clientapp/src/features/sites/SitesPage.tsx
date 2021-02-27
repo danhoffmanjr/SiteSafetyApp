@@ -1,6 +1,7 @@
 import { observer } from "mobx-react-lite";
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import { Grid, Header, Icon, Menu, Segment } from "semantic-ui-react";
+import React, { SyntheticEvent, useContext, useEffect, useMemo, useState } from "react";
+import { Grid, Header, Icon, Menu, Pagination, Segment } from "semantic-ui-react";
+import { paginate } from "../../app/common/utils/paginate";
 import { search } from "../../app/common/utils/search";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { ISite } from "../../app/models/site";
@@ -8,11 +9,19 @@ import { RootStoreContext } from "../../app/stores/rootStore";
 import CreateCompanyForm from "../companies/CreateCompanyForm";
 import CreateSiteForm from "./CreateSiteForm";
 import SitesTable from "./SitesTable";
+import _ from "lodash";
 
 const SitesPage = () => {
   const rootStore = useContext(RootStoreContext);
   const { loadSites, sitesOrderedAscending, loadingSites, showForm, toggleForm } = rootStore.siteStore;
   const { openModal } = rootStore.modalStore;
+
+  const [pageSize, setPageSize] = useState(10);
+  const [page, setPage] = useState(1);
+
+  const handlePageChange = (e: SyntheticEvent, pageInfo: any) => {
+    setPage(pageInfo.activePage);
+  };
 
   useEffect(() => {
     loadSites();
@@ -23,6 +32,10 @@ const SitesPage = () => {
   }, [sitesOrderedAscending]);
 
   const [query, setQuery] = useState("");
+
+  let filtered = data.filter((site) => search<ISite>(site, ["name", "address", "companyName"], query));
+
+  const sites = paginate(filtered, page, pageSize);
 
   if (loadingSites) return <LoadingComponent content="Loading sites..." />;
   return (
@@ -65,7 +78,24 @@ const SitesPage = () => {
             <CreateSiteForm />
           </Segment>
         )}
-        <Segment attached="bottom">{(data[0] && <SitesTable sites={data.filter((site) => search<ISite>(site, ["name", "address", "companyName"], query))} />) || <p>NO DATA</p>}</Segment>
+        <Segment attached="bottom">
+          {(filtered.length > 0 && (
+            <>
+              <SitesTable sites={sites} />
+              <Pagination
+                boundaryRange={0}
+                defaultActivePage={1}
+                ellipsisItem={null}
+                firstItem={null}
+                lastItem={null}
+                siblingRange={1}
+                activePage={page}
+                totalPages={Math.ceil(filtered.length / pageSize)}
+                onPageChange={handlePageChange}
+              />
+            </>
+          )) || <p>NO DATA</p>}
+        </Segment>
       </div>
     </>
   );
