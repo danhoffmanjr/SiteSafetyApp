@@ -9,9 +9,9 @@ namespace PikeSafetyWebApp.Models
         public string Name { get; set; }
         public string Address { get; set; }
         public string Notes { get; set; }
-        public virtual long CompanyId { get; set; }
+        public long CompanyId { get; set; }
         public string CompanyName { get; set; }
-        public virtual ICollection<Report> Reports { get; set; }
-        public virtual ICollection<UserSite> UserSites { get; set; }
+        public ICollection<Report> Reports { get; set; }
+        public ICollection<UserSite> UserSites { get; set; }
     }
 }

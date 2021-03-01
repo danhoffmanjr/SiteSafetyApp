@@ -22,8 +22,8 @@ namespace PikeSafetyWebApp.Models
         }
         public bool IsActive { get; set; }
         public long CompanyId { get; set; }
-        public virtual ICollection<AppUserRole> UserRoles { get; set; }
-        public virtual ICollection<Report> Reports { get; set; }
-        public virtual List<UserSite> UserSites { get; set; }
+        public ICollection<AppUserRole> UserRoles { get; set; }
+        public ICollection<Report> Reports { get; set; }
+        public List<UserSite> UserSites { get; set; }
     }
 }

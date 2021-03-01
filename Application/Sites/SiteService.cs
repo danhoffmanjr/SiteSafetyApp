@@ -98,7 +98,7 @@ namespace PikeSafetyWebApp.Application.Sites
 
             if (success) return Unit.Value;
 
-            throw new Exception($"Problem Editing {request.Notes}");
+            throw new Exception($"Problem Editing {request.Name}");
         }
     }
 }

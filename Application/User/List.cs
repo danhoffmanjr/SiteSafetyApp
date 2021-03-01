@@ -43,9 +43,7 @@ namespace PikeSafetyWebApp.Application.User
                 }
                 var isAdmin = await userManager.IsInRoleAsync(currentUser, RoleNames.Admin);
 
-                var appUsers = context.Users.Include(x => x.UserRoles).Include(x => x.UserSites).ToList();
-                var allAppRoles = context.Roles.Include(x => x.UserRoles).ToList(); //needed for nested data relationships, still faster than lazy loading.
-                var activeSites = context.Sites.Where(x => x.IsActive == true).Include(x => x.UserSites).ToList(); //needed for nested data relationships, still faster than lazy loading.
+                var appUsers = await context.Users.Include(x => x.UserRoles).Include(x => x.UserSites).ThenInclude(us => us.Site).ToListAsync();
 
                 if (isAdmin) return Reduce(appUsers);
 

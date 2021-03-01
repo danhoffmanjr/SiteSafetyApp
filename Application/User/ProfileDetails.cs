@@ -24,26 +24,27 @@ namespace PikeSafetyWebApp.Application.User
         {
             private readonly PikeSafetyDbContext context;
             private readonly UserManager<AppUser> userManager;
-            private readonly IRoleAccessor roleAccessor;
+            private readonly IUserAccessor userAccessor;
             private readonly IModelConverters modelConverters;
 
-            public Handler(PikeSafetyDbContext context, UserManager<AppUser> userManager, IRoleAccessor roleAccessor, IModelConverters modelConverters)
+            public Handler(PikeSafetyDbContext context, UserManager<AppUser> userManager, IUserAccessor userAccessor, IModelConverters modelConverters)
             {
                 this.modelConverters = modelConverters;
-                this.roleAccessor = roleAccessor;
+                this.userAccessor = userAccessor;
                 this.userManager = userManager;
                 this.context = context;
             }
 
             public async Task<Profile> Handle(Query request, CancellationToken cancellationToken)
             {
-                var allAppRoles = await context.Roles.Include(x => x.UserRoles).ToListAsync(); //needed for nested data relationships, still faster than lazy loading.
-                var activeSites = await context.Sites.Where(x => x.IsActive == true).Include(x => x.UserSites).ToListAsync(); //needed for nested data relationships, still faster than lazy loading.
-                var user = await context.Users.Where(x => x.UserName == request.Username).Include(x => x.UserRoles).Include(x => x.UserSites).Include(x => x.Reports).FirstOrDefaultAsync();
+                var currentUser = await userManager.FindByIdAsync(userAccessor.GetCurrentUserId());
+                if (request.Username != currentUser.Email) throw new RestException(HttpStatusCode.Forbidden, new { Forbidden = "Permission denied." });
+                var user = await context.Users.Include(x => x.UserRoles).Include(x => x.UserSites).ThenInclude(us => us.Site).FirstOrDefaultAsync(x => x.Id == currentUser.Id);
+
                 if (user == null) throw new RestException(HttpStatusCode.Unauthorized, new { Profile = "User Not Found" });
 
-                var reports = await context.Reports.Where(x => x.CreatedBy == user.Id).ToListAsync();
-                user.Reports = reports;
+                var userReports = await context.Reports.Where(x => x.CreatedBy == user.FullName).ToListAsync();
+                user.Reports = userReports;
 
                 return modelConverters.AppUserToProfileWithSites(user);
             }

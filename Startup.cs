@@ -46,7 +46,9 @@ namespace PikeSafetyWebApp
         {
             services.AddDbContext<PikeSafetyDbContext>(options =>
             {
-                options.UseMySQL(Configuration.GetConnectionString("PikeSafetyDB"));
+                options.UseMySQL(Configuration.GetConnectionString("PikeSafetyDB"))
+                        .EnableSensitiveDataLogging()
+                        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 
             var builder = services.AddIdentityCore<AppUser>(options =>

@@ -75,6 +75,8 @@ namespace PikeSafetyWebApp.Application.Utils
                 siteDtos = sites.ConvertAll(new Converter<Site, SiteDto>(SiteToSiteDto));
             }
 
+            var role = userManager.GetRolesAsync(user).Result.First();
+
             return new Profile
             {
                 Id = user.Id,
@@ -85,7 +87,7 @@ namespace PikeSafetyWebApp.Application.Utils
                 ContactPhoneNumber = user.PhoneNumber,
                 CompanyName = companyService.GetCompanyNameByIdAsync(user.CompanyId).Result,
                 CompanyId = user.CompanyId,
-                Role = user.UserRoles.SingleOrDefault().Role.Name,
+                Role = role,
                 IsActive = user.IsActive,
                 Sites = siteDtos,
                 Reports = user.Reports?.ToList().ConvertAll(new Converter<Report, ReportDto>(ReportToReportDto)) ?? null
@@ -94,6 +96,8 @@ namespace PikeSafetyWebApp.Application.Utils
 
         public Profile AppUserToProfile(AppUser user)
         {
+            var role = userManager.GetRolesAsync(user).Result.First();
+
             return new Profile
             {
                 Id = user.Id,
@@ -104,7 +108,7 @@ namespace PikeSafetyWebApp.Application.Utils
                 ContactPhoneNumber = user.PhoneNumber,
                 CompanyName = companyService.GetCompanyNameByIdAsync(user.CompanyId).Result,
                 CompanyId = user.CompanyId,
-                Role = user.UserRoles.SingleOrDefault().Role.Name,
+                Role = role,
                 IsActive = user.IsActive
             };
         }

@@ -37,10 +37,8 @@ namespace PikeSafetyWebApp.Application.Reports
             {
                 var userId = userAccessor.GetCurrentUserId();
 
-                var roles = await context.Roles.ToListAsync(); //needed for nested data relationships, still faster than lazy loading.
-                var images = await context.ReportImages.ToListAsync(); //needed for nested data relationships, still faster than lazy loading.
-                var currentUser = await context.Users.Where(x => x.Id == userId).Include(x => x.UserRoles).FirstOrDefaultAsync();
-                var userRole = currentUser.UserRoles.First().Role.Name;
+                var currentUser = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+                var userRole = userManager.GetRolesAsync(currentUser).Result.FirstOrDefault();
 
                 var recordsForRole = new Dictionary<string, Func<Task<List<Report>>>>();
                 recordsForRole[RoleNames.Admin] = async () => { return await context.Reports.Include(x => x.Images).ToListAsync(); };

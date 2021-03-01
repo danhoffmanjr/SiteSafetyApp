@@ -53,7 +53,7 @@ export default class ReportStore {
       runInAction(() => {
         this.loadingReports = false;
       });
-      toast.error(`Problem uploading reports. Error: ${error.statusText}`, { autoClose: 10000 });
+      toast.error(`Problem loading reports. Error: ${error.statusText}`, { autoClose: 10000 });
       console.log("Load Reports Error:", error.statusText); //remove
     }
   };

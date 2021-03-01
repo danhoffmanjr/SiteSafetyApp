@@ -39,9 +39,7 @@ namespace PikeSafetyWebApp.Application.Sites
                 var currentUser = await userManager.FindByIdAsync(userAccessor.GetCurrentUserId());
                 var isAdmin = await userManager.IsInRoleAsync(currentUser, RoleNames.Admin);
 
-                var allUsers = context.Users.Include(x => x.UserRoles).ToList(); //needed for nested data relationships, still faster than lazy loading.
-                var allAppRoles = context.Roles.Include(x => x.UserRoles).ToList(); //needed for nested data relationships, still faster than lazy loading.
-                var activeSites = context.Sites.Where(x => x.IsActive == true).Include(x => x.UserSites).Include(x => x.Reports).ToList();
+                var activeSites = context.Sites.Where(x => x.IsActive == true).Include(x => x.UserSites).ThenInclude(us => us.User).Include(x => x.Reports).ToList();
 
                 if (isAdmin) return Reduce(activeSites);
 
@@ -56,21 +54,3 @@ namespace PikeSafetyWebApp.Application.Sites
         }
     }
 }
-
-// Stopwatch stopwatch = new Stopwatch();
-//                 stopwatch.Start();
-//                 var siteDtos = records.ConvertAll(new Converter<Site, SiteDto>(modelConverters.SiteToSiteDto));
-//                 var timeSpan = stopwatch.Elapsed;
-//                 stopwatch.Stop();
-//                 return siteDtos;
-
-// Stopwatch stopwatch = new Stopwatch();
-//                 stopwatch.Start();
-//                 var siteDtos = new List<SiteDto>();
-//                 foreach (var record in records)
-//                 {
-//                     siteDtos.Add(mapper.Map<Site, SiteDto>(record));
-//                 }
-//                 stopwatch.Stop();
-//                 var timeSpan = stopwatch.Elapsed;
-//                 return siteDtos;
