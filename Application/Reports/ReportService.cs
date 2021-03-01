@@ -15,6 +15,13 @@ namespace PikeSafetyWebApp.Application.Reports
         {
             this.context = context;
         }
+
+        public async Task<Report> FindByIdAsync(long id)
+        {
+            var report = await context.Reports.Where(x => x.Id == id).Include(x => x.Images).FirstOrDefaultAsync();
+            if (report == null) throw new ArgumentNullException(nameof(report));
+            return report;
+        }
         public async Task<long> GetIdByTitleAsync(string name)
         {
             var report = await context.Reports.FirstOrDefaultAsync(x => x.Title.ToLower() == name.ToLower());

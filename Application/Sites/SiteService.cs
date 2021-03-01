@@ -43,18 +43,14 @@ namespace PikeSafetyWebApp.Application.Sites
 
         public async Task<Site> FindByIdAsync(long id)
         {
-            var allUsers = context.Users.Include(x => x.UserRoles).ToList(); //needed for nested data relationships, still faster than lazy loading.
-            var allAppRoles = context.Roles.Include(x => x.UserRoles).ToList(); //needed for nested data relationships, still faster than lazy loading.
-            var site = await context.Sites.Where(x => x.Id == id).Include(x => x.UserSites).Include(x => x.Reports).FirstOrDefaultAsync();
+            var site = await context.Sites.Where(x => x.Id == id).Include(x => x.UserSites).ThenInclude(us => us.User).Include(x => x.Reports).FirstOrDefaultAsync();
             if (site == null) throw new ArgumentNullException(nameof(site));
             return site;
         }
 
         public async Task<Site> FindByNameAsync(string name)
         {
-            var allUsers = context.Users.Include(x => x.UserRoles).ToList(); //needed for nested data relationships, still faster than lazy loading.
-            var allAppRoles = context.Roles.Include(x => x.UserRoles).ToList(); //needed for nested data relationships, still faster than lazy loading.
-            var site = await context.Sites.Where(x => x.Name.ToLower() == name.ToLower()).Include(x => x.UserSites).FirstOrDefaultAsync();
+            var site = await context.Sites.Where(x => x.Name.ToLower() == name.ToLower()).Include(x => x.UserSites).ThenInclude(us => us.User).FirstOrDefaultAsync();
             if (site == null) throw new ArgumentNullException(nameof(site));
             return site;
         }
@@ -81,24 +77,24 @@ namespace PikeSafetyWebApp.Application.Sites
             var siteToUpdate = await context.Sites.FindAsync(request.Id);
 
             if (siteToUpdate == null) throw new RestException(HttpStatusCode.NotFound, new { Site = "Not Found" });
-            if (
-                siteToUpdate.Name?.ToLower().Trim() == request.Name.ToLower().Trim() &&
-                siteToUpdate.Address?.ToLower().Trim() == request.Address.ToLower().Trim() &&
-                siteToUpdate.Notes?.ToLower().Trim() == request.Notes.ToLower().Trim()
-                )
+
+            var requestSite = new Site(request.Name, request.Address, request.Notes);
+            if (siteToUpdate.Equals(requestSite))
             {
                 throw new RestException(HttpStatusCode.BadRequest, new { Data = "No Changes Found" });
             }
 
-            siteToUpdate.Name = request.Name ?? siteToUpdate.Name;
-            siteToUpdate.Address = request.Address ?? siteToUpdate.Address;
-            siteToUpdate.Notes = request.Notes ?? siteToUpdate.Notes;
+            siteToUpdate.Name = request.Name;
+            siteToUpdate.Address = request.Address;
+            siteToUpdate.Notes = request.Notes;
+
+            context.Entry(siteToUpdate).State = EntityState.Modified;
 
             var success = await context.SaveChangesAsync() > 0;
 
             if (success) return Unit.Value;
 
-            throw new Exception($"Problem Editing {request.Name}");
+            throw new Exception($"Problem updating {request.Name}");
         }
     }
 }

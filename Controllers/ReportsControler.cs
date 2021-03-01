@@ -21,6 +21,12 @@ namespace PikeSafetyWebApp.Controllers
             return await Mediator.Send(new Create.Command { Report = report });
         }
 
+        [HttpGet("manage/{id}")]
+        public async Task<ActionResult<ReportDto>> Report(long id)
+        {
+            return await Mediator.Send(new Details.Query { Id = id });
+        }
+
         [HttpDelete("delete/{id}")]
         public async Task<ActionResult<Unit>> Delete(long id)
         {
