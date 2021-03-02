@@ -16,8 +16,10 @@ export default class ReportStore {
 
   @observable reportsRegistry = new Map();
   @observable loadingReports = false;
+  @observable loadingReport = false;
   @observable isSubmitting = false;
   @observable showForm = false;
+  @observable report: IReport | null = null;
 
   @computed get reportsOrderedByTitleAscending(): IReport[] {
     return Array.from(this.reportsRegistry.values()).sort(this.compareReportTitle);
@@ -28,6 +30,16 @@ export default class ReportStore {
       return -1;
     }
     if (report1.title > report2.title) {
+      return 1;
+    }
+    return 0;
+  }
+
+  compareOptions(options1: ISelectOptions, options2: ISelectOptions) {
+    if (options1.label < options2.label) {
+      return -1;
+    }
+    if (options1.label > options2.label) {
       return 1;
     }
     return 0;
@@ -55,6 +67,25 @@ export default class ReportStore {
       });
       toast.error(`Problem loading reports. Error: ${error.statusText}`, { autoClose: 10000 });
       console.log("Load Reports Error:", error.statusText); //remove
+    }
+  };
+
+  @action loadReportById = async (id: string) => {
+    this.loadingReport = true;
+    try {
+      const report = await agent.Reports.get(id);
+      console.log("Report Loaded:", report); //remove
+      runInAction(() => {
+        this.report = report;
+        this.loadingReport = false;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.loadingReport = false;
+      });
+      console.log("Load Report by Id Error:", error); //remove
+      toast.error(`Problem loading report. Error: ${error.statusText}`, { autoClose: 10000 });
+      throw error;
     }
   };
 
@@ -113,14 +144,4 @@ export default class ReportStore {
     });
     return selectOptions.sort(this.compareOptions);
   };
-
-  compareOptions(options1: ISelectOptions, options2: ISelectOptions) {
-    if (options1.label < options2.label) {
-      return -1;
-    }
-    if (options1.label > options2.label) {
-      return 1;
-    }
-    return 0;
-  }
 }

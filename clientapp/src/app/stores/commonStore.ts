@@ -19,10 +19,9 @@ export default class CommonStore {
         }
       }
     );
-
   }
 
-  @observable token: string | null =  localStorage.getItem("ps-token");
+  @observable token: string | null = localStorage.getItem("ps-token");
   @observable userId: string | null = localStorage.getItem("ps-user-id");
   @observable appLoaded = false;
 
@@ -30,7 +29,7 @@ export default class CommonStore {
     const tokenObject = this.parseToken(this.token);
     const userId: string = tokenObject.nameid;
     return userId;
-  };
+  }
 
   @action setToken = (token: string | null) => {
     this.token = token;
@@ -46,14 +45,34 @@ export default class CommonStore {
 
   @action parseToken = (token: string | null) => {
     if (token !== null) {
-        var base64Url = token.split('.')[1];
-        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
+      var base64Url = token.split(".")[1];
+      var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      var jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map(function (c) {
+            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join("")
+      );
 
-        return JSON.parse(jsonPayload);
+      return JSON.parse(jsonPayload);
     }
-    return null;  
+    return null;
+  };
+
+  @action getLocaleDateTime = (dateUtc: Date | undefined): string => {
+    if (dateUtc === undefined) return "undefined";
+    const currentTimeZoneOffset = dateUtc.getTimezoneOffset() * 60_000;
+    const date = new Date(dateUtc.getTime() - currentTimeZoneOffset).toLocaleDateString("en-us");
+    const time = new Date(dateUtc.getTime() - currentTimeZoneOffset).toLocaleTimeString();
+    return `${date} ${time}`;
+  };
+
+  @action getLocaleDateOffset = (dateUtc: Date | undefined): string => {
+    if (dateUtc === undefined) return "undefined";
+    const currentTimeZoneOffset = dateUtc.getTimezoneOffset() * 60_000;
+    const localeDate = new Date(dateUtc.getTime() - currentTimeZoneOffset).toLocaleDateString("en-us");
+    return localeDate;
   };
 }

@@ -4,6 +4,7 @@ import { Grid, Header, Icon, Image, Menu, Segment } from "semantic-ui-react";
 import { search } from "../../app/common/utils/search";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { IReport } from "../../app/models/report";
+import { DefaultFormValues } from "../../app/models/reportFormValues";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import CreateReportForm from "./CreateReportForm";
 import ReportsTable from "./ReportsTable";
@@ -57,7 +58,7 @@ const ReportsPage = () => {
         </Menu>
         {showForm && (
           <Segment attached>
-            <CreateReportForm />
+            <CreateReportForm report={new DefaultFormValues} />
             {/* {data?.[0].imageDtos.map((image) => <Image src={image.imageDataUrl} alt={image.Name} style={{ maxHeight: 200 }} />)} */}
           </Segment>
         )}

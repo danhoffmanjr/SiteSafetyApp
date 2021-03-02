@@ -66,7 +66,7 @@ const Sites = {
 
 const Reports = {
   list: (): Promise<IReport[]> => requests.get("/reports"),
-  details: (id: string) => requests.get(`/reports/${id}`),
+  get: (id: string): Promise<IReport> => requests.get(`/reports/manage/${id}`),
   create: (report: IReportPostValues) => requests.post("/reports/create", report),
   update: (report: any) => requests.put(`/reports/${report.id}`, report),
   delete: (id: string) => requests.delete(`/reports/delete/${id}`),

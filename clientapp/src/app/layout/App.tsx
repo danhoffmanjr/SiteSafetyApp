@@ -10,7 +10,7 @@ import CreateForm from "../../features/form-creator/CreateForm";
 import HomePage from "../../features/home/HomePage";
 import ReportTypesPage from "../../features/report-types/ReportTypesPage";
 import CreateReportForm from "../../features/reports/CreateReportForm";
-import ReportDetailsPage from "../../features/reports/ReportDetailsPage";
+import ManageReportPage from "../../features/reports/ManageReportPage";
 import ReportsPage from "../../features/reports/ReportsPage";
 import CreateSiteForm from "../../features/sites/CreateSiteForm";
 import ManageSitePage from "../../features/sites/ManageSitePage";
@@ -22,7 +22,6 @@ import LoginForm from "../../features/user/LoginForm";
 import ManageUserPage from "../../features/user/ManageUserPage";
 import PasswordResetForm from "../../features/user/PasswordResetForm";
 import ProfilePage from "../../features/user/ProfilePage";
-import RegisterForm from "../../features/user/RegisterForm";
 import RegisterSuccess from "../../features/user/RegisterSuccess";
 import UsersPage from "../../features/user/UsersPage";
 import ConfirmContainer from "../common/modal/ConfirmContainer";
@@ -58,7 +57,7 @@ const App: React.FC<RouteComponentProps> = ({ location, match, history, children
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route exact path="/reports/manage" component={ReportsPage} />
-          <Route path="/reports/manage/:id" component={ReportDetailsPage} />
+          <Route path="/reports/manage/:id" component={ManageReportPage} />
           <Route exact path="/reports/create" component={CreateReportForm} />
           <Route exact path="/companies/manage" component={CompaniesPage} />
           <Route exact path="/companies/create" component={CreateCompanyForm} />

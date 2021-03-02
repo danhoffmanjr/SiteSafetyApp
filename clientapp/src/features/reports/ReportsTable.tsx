@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useContext } from "react";
 import { Button, Icon, Table, Popup } from "semantic-ui-react";
 import useSortableData from "../../app/common/utils/useSortableData";
 import { IReport } from "../../app/models/report";
@@ -6,12 +6,16 @@ import { history } from "../..";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfDocument from "../pdf/PdfDocument";
 import moment from "moment";
+import { RootStoreContext } from "../../app/stores/rootStore";
 
 interface IProps {
   reports: IReport[];
 }
 
 const ReportsTable: React.FC<IProps> = ({ reports }) => {
+  const rootStore = useContext(RootStoreContext);
+  const { getLocaleDateOffset } = rootStore.commonStore;
+
   const columns = [
     { name: "Title", field: "title" },
     { name: "Report Type", field: "formType" },
@@ -63,7 +67,7 @@ const ReportsTable: React.FC<IProps> = ({ reports }) => {
                   <Table.Cell>{report.companyName}</Table.Cell>
                   <Table.Cell>{report.siteName}</Table.Cell>
                   <Table.Cell>{report.createdBy}</Table.Cell>
-                  <Table.Cell>{moment(report.createdOn, "YYYY-MM-DD").format("l")}</Table.Cell>
+                  <Table.Cell>{getLocaleDateOffset(new Date(report.createdOn!))}</Table.Cell>
                   <Table.Cell>{report.isComplete.toString()}</Table.Cell>
 
                   <Table.Cell textAlign="center" verticalAlign="middle">

@@ -3,6 +3,7 @@ import React, { Fragment, useContext, useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Accordion, Button, Grid, Header, Icon, Segment } from "semantic-ui-react";
 import LoadingComponent from "../../app/layout/LoadingComponent";
+import { DefaultFormValues } from "../../app/models/reportFormValues";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import CreateReportForm from "../reports/CreateReportForm";
 import ReportsTable from "../reports/ReportsTable";
@@ -91,7 +92,7 @@ const ManageSitePage: React.FC<IProps> = ({ match }) => {
           {site && site.reports && site.reports?.length > 0 ? (
             <ReportsTable reports={site?.reports} />
           ) : (
-            <Button basic color="blue" content="Create Report" onClick={() => openModal(`Create Report for ${site!.name}`, <CreateReportForm />, site!.id, site!.companyId)} />
+            <Button basic color="blue" content="Create Report" onClick={() => openModal(`Create Report for ${site!.name}`, <CreateReportForm report={new DefaultFormValues} />, site!.id, site!.companyId)} />
           )}
         </Accordion.Content>
 

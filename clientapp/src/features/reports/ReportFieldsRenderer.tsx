@@ -8,6 +8,7 @@ import { IReportFormValues } from "../../app/models/reportFormValues";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import { observer } from "mobx-react-lite";
 import { IImage } from "../../app/models/image";
+import { indexOf } from "lodash";
 
 interface Props {
   reportTypeFields: IReportField[];
@@ -76,7 +77,21 @@ const ReportFieldsRenderer = ({ reportTypeFields, control, register, errors, set
             <Grid.Column key={index}>
               <Form.Field className={errors.reportFields && errors.reportFields[`${field.name}` as keyof typeof reportTypeFields] !== undefined ? "error field" : "field"}>
                 <label>{field.name}</label>
-                <input type="text" name={`reportFields.${field.name}`} placeholder={field.placeholder} ref={register({ required: field.required })} />
+                <input
+                  type="text"
+                  name={`reportFields.${field.name}`}
+                  placeholder={field.placeholder}
+                  ref={register({ required: field.required })}
+                  defaultValue={
+                    reportTypeFields[
+                      reportTypeFields
+                        .map((field) => {
+                          return field.name;
+                        })
+                        .indexOf(`${field.name}`)
+                    ].value
+                  }
+                />
                 {errors.reportFields && errors.reportFields[`${field.name}` as keyof typeof reportTypeFields] && (
                   <div className="ui pointing above prompt label" id="form-input-text-error-message" role="alert" aria-atomic="true">
                     {errors.reportFields[`${field.name}` as keyof typeof reportTypeFields] !== undefined ? `${field.name} is Required*` : false}
@@ -108,6 +123,15 @@ const ReportFieldsRenderer = ({ reportTypeFields, control, register, errors, set
                       value={value?.value}
                       name={name}
                       isClearable={false}
+                      defaultInputValue={
+                        reportTypeFields[
+                          reportTypeFields
+                            .map((field) => {
+                              return field.name;
+                            })
+                            .indexOf(`${field.name}`)
+                        ].value
+                      }
                     />
                   )}
                 />
@@ -128,7 +152,15 @@ const ReportFieldsRenderer = ({ reportTypeFields, control, register, errors, set
                 <label>{field.name}</label>
                 <Controller
                   name={`reportFields.${field.name}`}
-                  defaultValue={""}
+                  defaultValue={
+                    reportTypeFields[
+                      reportTypeFields
+                        .map((field) => {
+                          return field.name;
+                        })
+                        .indexOf(`${field.name}`)
+                    ].value
+                  }
                   control={control}
                   rules={{ required: field.required }}
                   render={({ onChange, name, value }) => (
@@ -160,7 +192,15 @@ const ReportFieldsRenderer = ({ reportTypeFields, control, register, errors, set
                 <label>&nbsp;</label>
                 <Controller
                   name={`reportFields.${field.name}`}
-                  defaultValue={false}
+                  defaultValue={
+                    reportTypeFields[
+                      reportTypeFields
+                        .map((field) => {
+                          return field.name;
+                        })
+                        .indexOf(`${field.name}`)
+                    ].value
+                  }
                   control={control}
                   rules={{ required: field.required }}
                   render={({ onChange, name, value }) => (

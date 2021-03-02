@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { observer } from "mobx-react-lite";
 import React, { useContext, useEffect, useState } from "react";
-import { Controller, FormProvider, useForm, useFormContext } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Button, Form, Header, Loader, Segment } from "semantic-ui-react";
 import Select from "react-select";
 import ErrorMessage from "../../app/common/form/ErrorMessage";
@@ -14,7 +14,11 @@ import { IReportField } from "../../app/models/reportField";
 import { IReportPostValues } from "../../app/models/reportPostValues";
 import { IImage } from "../../app/models/image";
 
-const CreateReportForm = () => {
+interface IProps {
+  report: IReportFormValues;
+}
+
+const CreateReportForm = ({ report }: IProps) => {
   const rootStore = useContext(RootStoreContext);
   const { isSubmitting, createReport } = rootStore.reportStore;
   const { loadCompanies, companySelectOptions, loadingCompanies, getCompany } = rootStore.companyStore;
@@ -46,23 +50,12 @@ const CreateReportForm = () => {
 
   const [submitErrors, setSubmitErrors] = useState<AxiosResponse>();
 
-  const [reportFields, setReportFields] = useState<IReportField[]>([]);
+  const [reportFields, setReportFields] = useState<IReportField[]>(report.reportFields);
 
-  const { handleSubmit, register, errors, formState, control, setValue, getValues } = useForm<IReportFormValues>({
+  const { handleSubmit, register, errors, formState, control, setValue } = useForm<IReportFormValues>({
     mode: "all",
     reValidateMode: "onChange",
-    defaultValues: {
-      id: "",
-      title: "",
-      companyId: "",
-      companyName: "",
-      siteId: "",
-      siteName: "",
-      reportTypeId: "",
-      reportType: "",
-      reportFields: [],
-      images: [],
-    },
+    defaultValues: report,
   });
 
   const { isDirty } = formState;
@@ -101,8 +94,6 @@ const CreateReportForm = () => {
     });
   };
 
-  const methods = useFormContext();
-
   return (
     <Segment>
       {(loadingCompanies || loadingSites || loadingReportTypes) && <Loader content="Loading options..." active />}
@@ -115,7 +106,7 @@ const CreateReportForm = () => {
               control={control}
               name="companyId"
               rules={{ required: "Company is Required*" }}
-              defaultValue={null}
+              defaultValue={{ value: `${report.companyId}`, label: `${report.companyName}` }}
               render={({ onChange, name, value }) => (
                 <Select
                   options={companySelectOptions}
@@ -126,6 +117,8 @@ const CreateReportForm = () => {
                   value={value?.value}
                   name={name}
                   isClearable={false}
+                  defaultInputValue={report.companyName}
+                  isDisabled={report.companyName.length > 0}
                 />
               )}
             />
@@ -139,7 +132,7 @@ const CreateReportForm = () => {
             <label>Site</label>
             <Controller
               name="siteId"
-              defaultValue={null}
+              defaultValue={{ value: `${report.siteId}`, label: `${report.siteName}` }}
               control={control}
               rules={{ required: "Site is Required*" }}
               render={({ onChange, name, value }) => (
@@ -152,6 +145,8 @@ const CreateReportForm = () => {
                   value={value?.value}
                   name={name}
                   isClearable={false}
+                  defaultInputValue={report.siteName}
+                  isDisabled={report.siteName.length > 0}
                 />
               )}
             />
@@ -167,7 +162,7 @@ const CreateReportForm = () => {
               control={control}
               name="reportTypeId"
               rules={{ required: "Report Type is Required*" }}
-              defaultValue={null}
+              defaultValue={{ value: `${report.reportTypeId}`, label: `${report.reportType}` }}
               render={({ onChange, name, value }) => (
                 <Select
                   options={reportTypeSelectOptions}
@@ -179,6 +174,7 @@ const CreateReportForm = () => {
                   value={value?.value}
                   name={name}
                   isClearable={false}
+                  defaultInputValue={report.reportType}
                 />
               )}
             />
@@ -207,7 +203,7 @@ const CreateReportForm = () => {
           )}
         </Form.Field>
         <ReportFieldsRenderer reportTypeFields={reportFields} control={control} register={register} errors={errors} setValue={setValue} />
-        <Button color="green" content="Create" disabled={!isDirty} loading={isSubmitting} style={{ marginTop: 15 }} />
+        <Button color="green" content={report.id === "" ? "Create" : "Update"} disabled={!isDirty} loading={isSubmitting} style={{ marginTop: 15 }} />
         {submitErrors && <ErrorMessage error={submitErrors!} />}
       </Form>
     </Segment>

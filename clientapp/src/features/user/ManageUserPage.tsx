@@ -3,6 +3,7 @@ import React, { Fragment, useContext, useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Accordion, Button, Grid, Header, Icon, Segment } from "semantic-ui-react";
 import LoadingComponent from "../../app/layout/LoadingComponent";
+import { DefaultFormValues } from "../../app/models/reportFormValues";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import CreateReportForm from "../reports/CreateReportForm";
 import ReportsTable from "../reports/ReportsTable";
@@ -103,7 +104,12 @@ const ManageUserPage: React.FC<IProps> = ({ match }) => {
           {profile && profile.reports && profile.reports?.length > 0 ? (
             <ReportsTable reports={profile?.reports} />
           ) : (
-            <Button basic color="blue" content="Create Report" onClick={() => openModal(`Create Report for ${profile!.firstName}`, <CreateReportForm />, profile!.id, profile!.companyId)} />
+            <Button
+              basic
+              color="blue"
+              content="Create Report"
+              onClick={() => openModal(`Create Report for ${profile!.firstName}`, <CreateReportForm report={new DefaultFormValues()} />, profile!.id, profile!.companyId)}
+            />
           )}
         </Accordion.Content>
 
