@@ -1,11 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink, Container } from "reactstrap";
-import { Link, NavLink as link, useHistory } from "react-router-dom";
+import { Link, NavLink as link, useHistory, useLocation } from "react-router-dom";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import "./app-menu.css";
 import { observer } from "mobx-react-lite";
 import { Item, Dropdown, Label, Icon } from "semantic-ui-react";
-import { useLocation } from "react-router-dom";
 
 const AppMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,8 +51,8 @@ const AppMenu = () => {
                     <NavLink active={isReportsLink}>
                       <Dropdown text="Reports">
                         <Dropdown.Menu>
-                          <Dropdown.Item text="Dashboard" onClick={() => history.push("/reports/manage")} />
-                          <Dropdown.Item text="Report Types" onClick={() => history.push("/report-types/manage")} />
+                          <Dropdown.Item text="Reports" onClick={() => history.push("/reports")} />
+                          <Dropdown.Item text="Report Types" onClick={() => history.push("/report-types")} />
                         </Dropdown.Menu>
                       </Dropdown>
                     </NavLink>
@@ -61,17 +60,17 @@ const AppMenu = () => {
                   {user.role.privilegeLevel >= 50 && (
                     <>
                       <NavItem>
-                        <NavLink tag={link} to="/companies/manage">
+                        <NavLink tag={link} to="/companies">
                           Companies
                         </NavLink>
                       </NavItem>
                       <NavItem>
-                        <NavLink tag={link} to="/sites/manage">
+                        <NavLink tag={link} to="/sites">
                           Sites
                         </NavLink>
                       </NavItem>
                       <NavItem>
-                        <NavLink tag={link} to="/users/manage">
+                        <NavLink tag={link} to="/users">
                           Users
                         </NavLink>
                       </NavItem>

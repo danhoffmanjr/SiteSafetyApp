@@ -9,7 +9,7 @@ interface Props {
   PreviewMode: boolean;
 }
 
-const ImageUploader = ({ PreviewMode }: Props) => {
+const ImageCropperLoader = ({ PreviewMode }: Props) => {
   const rootStore = useContext(RootStoreContext);
   const { addImage, uploadImage } = rootStore.imageStore;
 
@@ -64,4 +64,4 @@ const ImageUploader = ({ PreviewMode }: Props) => {
   );
 };
 
-export default observer(ImageUploader);
+export default observer(ImageCropperLoader);

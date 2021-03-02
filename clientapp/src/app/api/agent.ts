@@ -18,6 +18,7 @@ import { IReportType } from "../models/reportType";
 import { IReportTypeFormValues } from "../models/reportTypeFormValues";
 import { IReportPostValues } from "../models/reportPostValues";
 import { IImageUploadFormValues } from "../models/imageUploadFormValues";
+import { IImageUpdateFormValues } from "../models/imageUpdateFormValues";
 
 const responseBody = (response: AxiosResponse) => response.data;
 
@@ -68,7 +69,7 @@ const Reports = {
   list: (): Promise<IReport[]> => requests.get("/reports"),
   get: (id: string): Promise<IReport> => requests.get(`/reports/manage/${id}`),
   create: (report: IReportPostValues) => requests.post("/reports/create", report),
-  update: (report: any) => requests.put(`/reports/${report.id}`, report),
+  update: (report: any) => requests.put(`/reports/manage/${report.id}`, report),
   delete: (id: string) => requests.delete(`/reports/delete/${id}`),
 };
 
@@ -79,6 +80,9 @@ const ReportTypes = {
 };
 
 const ReportImages = {
+  get: (id: string): Promise<IReportImage> => requests.get(`/reportImages/manage/${id}`),
+  update: (image: Partial<IImageUpdateFormValues>) => requests.put(`/reportImages/edit`, image),
+  delete: (id: string) => requests.delete(`/reportImages/delete/${id}`),
   upload: (filename: string, image: Blob) => {
     let formData = new FormData();
     formData.append("File", image, filename);

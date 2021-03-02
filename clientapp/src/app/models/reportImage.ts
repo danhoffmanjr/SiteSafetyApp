@@ -1,7 +1,7 @@
 export interface IReportImage {
-    Id: number;
-    ReportId: number;
-    Name: string;
-    Description: string;
-    imageDataUrl: string;
+  id: number;
+  reportId: number;
+  fileName: string;
+  description: string;
+  imageDataUrl: string;
 }

@@ -8,6 +8,7 @@ import CompaniesPage from "../../features/companies/CompaniesPage";
 import CreateCompanyForm from "../../features/companies/CreateCompanyForm";
 import CreateForm from "../../features/form-creator/CreateForm";
 import HomePage from "../../features/home/HomePage";
+import ImageForm from "../../features/images/ImageForm";
 import ReportTypesPage from "../../features/report-types/ReportTypesPage";
 import CreateReportForm from "../../features/reports/CreateReportForm";
 import ManageReportPage from "../../features/reports/ManageReportPage";
@@ -56,18 +57,19 @@ const App: React.FC<RouteComponentProps> = ({ location, match, history, children
       <Container>
         <Switch>
           <Route exact path="/" component={HomePage} />
-          <Route exact path="/reports/manage" component={ReportsPage} />
+          <Route exact path="/reports" component={ReportsPage} />
           <Route path="/reports/manage/:id" component={ManageReportPage} />
           <Route exact path="/reports/create" component={CreateReportForm} />
-          <Route exact path="/companies/manage" component={CompaniesPage} />
+          <Route path="/images/manage/:id" component={ImageForm} />
+          <Route exact path="/companies" component={CompaniesPage} />
           <Route exact path="/companies/create" component={CreateCompanyForm} />
-          <Route exact path="/sites/manage" component={SitesPage} />
+          <Route exact path="/sites" component={SitesPage} />
           <Route path="/sites/manage/:id" component={ManageSitePage} />
           <Route exact path="/sites/create" component={CreateSiteForm} />
           <Route exact path="/login" component={LoginForm} />
           {/* <Route exact path="/register" component={RegisterForm} /> */}
           <Route exact path="/users/forgotPassword" component={ForgotPasswordForm} />
-          <Route exact path="/users/manage" component={UsersPage} />
+          <Route exact path="/users" component={UsersPage} />
           <Route path="/users/manage/:email" component={ManageUserPage} />
           <Route path="/users/registerSuccess" component={RegisterSuccess} />
           <Route path="/users/verifyEmail" component={ConfirmEmail} />
@@ -76,7 +78,7 @@ const App: React.FC<RouteComponentProps> = ({ location, match, history, children
           <Route path="/users/verifyEmailChange" component={ConfirmEmail} />
           <Route path="/profiles/:username" component={ProfilePage} />
           <Route path="/report-types/create" component={CreateForm} />
-          <Route exact path="/report-types/manage" component={ReportTypesPage} />
+          <Route exact path="/report-types" component={ReportTypesPage} />
           <Route exact path="/access-denied" component={AccessDenied} />
           <Route component={NotFound} />
         </Switch>

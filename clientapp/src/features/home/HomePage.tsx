@@ -25,7 +25,7 @@ const HomePage = () => {
               className="mx-2"
               color="primary"
               onClick={() => {
-                history.push("/reports/manage");
+                history.push("/reports");
               }}
             >
               My Reports

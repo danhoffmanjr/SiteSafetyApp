@@ -19,23 +19,23 @@ export default class ReportTypeStore {
   @observable isSubmitting = false;
   @observable showForm = false;
 
-  // add radio button option
+  //TODO: add radio button option
   @observable fieldTypes: IFieldType = {
     Text: { name: "Text", label: "Text", requiresPlaceholder: true, requiresOptions: false },
     Dropdown: { name: "Dropdown", label: "Dropdown", requiresPlaceholder: true, requiresOptions: true },
     Checkbox: { name: "Checkbox", label: "Checkbox", requiresPlaceholder: true, requiresOptions: false },
     Textarea: { name: "Textarea", label: "Textarea", requiresPlaceholder: true, requiresOptions: false },
-    ImageUploader: { name: "ImageUploader", label: "Image Uploader", requiresPlaceholder: false, requiresOptions: false },
+    ImageCropperLoader: { name: "ImageCropperLoader", label: "Image Cropper Loader", requiresPlaceholder: false, requiresOptions: false },
+    ImagesLoader: { name: "ImagesLoader", label: "Images Loader", requiresPlaceholder: false, requiresOptions: false },
   };
 
-  // refactor to derive from fieldTypes object above
-  @observable fieldTypeOptions: ISelectOptions[] = [
-    { value: `Text`, label: `Text` },
-    { value: `Dropdown`, label: `Dropdown` },
-    { value: `Checkbox`, label: `Checkbox` },
-    { value: `Textarea`, label: `Textarea` },
-    { value: `ImageUploader`, label: `Image Uploader` },
-  ];
+  @computed get fieldTypeOptions(): ISelectOptions[] {
+    let options: ISelectOptions[] = [];
+    Object.keys(this.fieldTypes).map((type) => {
+      options.push({ value: `${this.fieldTypes[type].name}`, label: `${this.fieldTypes[type].label}` });
+    });
+    return options.sort(this.compareOptions);
+  }
 
   @observable isRequiredOptions: ISelectOptions[] = [
     { value: 1, label: `Yes` },

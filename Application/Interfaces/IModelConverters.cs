@@ -4,6 +4,7 @@ using PikeSafetyWebApp.Application.Reports;
 using PikeSafetyWebApp.Application.Sites;
 using PikeSafetyWebApp.Application.User;
 using PikeSafetyWebApp.Models;
+using PikeSafetyWebApp.Application.ReportImages;
 
 namespace PikeSafetyWebApp.Application.Interfaces
 {
@@ -15,5 +16,6 @@ namespace PikeSafetyWebApp.Application.Interfaces
         Profile AppUserToProfileWithSites(AppUser user);
         ReportDto ReportToReportDto(Report report);
         ReportTypeDto ReportTypeToReportTypeDto(ReportType type);
+        ReportImageDto ReportImageToReportImageDto(ReportImage image);
     }
 }

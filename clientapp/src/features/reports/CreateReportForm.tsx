@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios";
 import { observer } from "mobx-react-lite";
 import React, { useContext, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Button, Form, Header, Loader, Segment } from "semantic-ui-react";
+import { Button, Divider, Form, Header, Loader, Segment } from "semantic-ui-react";
 import Select from "react-select";
 import ErrorMessage from "../../app/common/form/ErrorMessage";
 import { IReportFormValues } from "../../app/models/reportFormValues";
@@ -97,7 +97,7 @@ const CreateReportForm = ({ report }: IProps) => {
   return (
     <Segment>
       {(loadingCompanies || loadingSites || loadingReportTypes) && <Loader content="Loading options..." active />}
-      <Header as="h3">Create Report</Header>
+      <Header as="h3" content={report.id === "" ? "Create Report" : `${report.title}`} />
       <Form onSubmit={handleSubmit(onSubmit)} error>
         <Form.Group widths="equal">
           <Form.Field className={errors.companyId !== undefined ? "error field" : "field"}>
@@ -203,6 +203,7 @@ const CreateReportForm = ({ report }: IProps) => {
           )}
         </Form.Field>
         <ReportFieldsRenderer reportTypeFields={reportFields} control={control} register={register} errors={errors} setValue={setValue} />
+        <Divider horizontal />
         <Button color="green" content={report.id === "" ? "Create" : "Update"} disabled={!isDirty} loading={isSubmitting} style={{ marginTop: 15 }} />
         {submitErrors && <ErrorMessage error={submitErrors!} />}
       </Form>

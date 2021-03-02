@@ -121,7 +121,7 @@ export default class UserStore {
             this.rootStore.commonStore.setToken(user.token);
             this.rootStore.commonStore.setUserId(user.id);
             this.startRefreshTokenTimer(user);
-            history.push("/reports/manage");
+            history.push("/reports");
           });
         } catch (error) {
           runInAction(() => {
