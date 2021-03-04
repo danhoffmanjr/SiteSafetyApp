@@ -9,7 +9,7 @@ using PikeSafetyWebApp.Data;
 namespace PikeSafetyWebApp.Migrations
 {
     [DbContext(typeof(PikeSafetyDbContext))]
-    [Migration("20210226153251_DataSchema")]
+    [Migration("20210303190309_DataSchema")]
     partial class DataSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -104,88 +104,6 @@ namespace PikeSafetyWebApp.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-                });
-
-            modelBuilder.Entity("PikeSafetyWebApp.Models.ActiveStorageAttachments", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("BlobId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<long>("RecordId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("RecordType")
-                        .HasColumnType("text");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ActiveStorageAttachments");
-                });
-
-            modelBuilder.Entity("PikeSafetyWebApp.Models.ActiveStorageBlobs", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("ByteSize")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Checksum")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ContentType")
-                        .HasColumnType("text");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("Filename")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Key")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Metadata")
-                        .HasColumnType("text");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("datetime");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ActiveStorageBlobs");
                 });
 
             modelBuilder.Entity("PikeSafetyWebApp.Models.AppRole", b =>

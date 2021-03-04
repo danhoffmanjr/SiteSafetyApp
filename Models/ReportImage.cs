@@ -8,7 +8,7 @@ namespace PikeSafetyWebApp.Models
         public long ReportId { get; set; }
         public string FileName { get; set; }
         public string FileType { get; set; }
-        public string Description { get; set; }
+        public string Description { get; set; } = String.Empty;
         public long Size { get; set; }
         public byte[] ImageData { get; set; }
 

@@ -9,50 +9,6 @@ namespace PikeSafetyWebApp.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ActiveStorageAttachments",
-                columns: table => new
-                {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    CreatedOn = table.Column<DateTime>(nullable: false),
-                    UpdatedOn = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    UpdatedBy = table.Column<string>(nullable: true),
-                    IsActive = table.Column<bool>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    RecordType = table.Column<string>(nullable: true),
-                    RecordId = table.Column<long>(nullable: false),
-                    BlobId = table.Column<long>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ActiveStorageAttachments", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ActiveStorageBlobs",
-                columns: table => new
-                {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    CreatedOn = table.Column<DateTime>(nullable: false),
-                    UpdatedOn = table.Column<DateTime>(nullable: true),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    UpdatedBy = table.Column<string>(nullable: true),
-                    IsActive = table.Column<bool>(nullable: false),
-                    Key = table.Column<string>(nullable: true),
-                    Filename = table.Column<string>(nullable: true),
-                    ContentType = table.Column<string>(nullable: true),
-                    Metadata = table.Column<string>(nullable: true),
-                    ByteSize = table.Column<long>(nullable: false),
-                    Checksum = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ActiveStorageBlobs", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -448,12 +404,6 @@ namespace PikeSafetyWebApp.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "ActiveStorageAttachments");
-
-            migrationBuilder.DropTable(
-                name: "ActiveStorageBlobs");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

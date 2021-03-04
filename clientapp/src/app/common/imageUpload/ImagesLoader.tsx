@@ -51,8 +51,8 @@ const ImagesLoader = ({ PreviewMode }: Props) => {
             <Card.Group stackable itemsPerRow={4}>
               {files &&
                 files.length > 0 &&
-                files.map((file) => (
-                  <Card>
+                files.map((file, index) => (
+                  <Card key={index}>
                     <Card.Content style={{ padding: "2px" }}>
                       <Image src={file.preview} />
                     </Card.Content>

@@ -45,6 +45,14 @@ export default class ReportStore {
     return 0;
   }
 
+  @action setAllNullReportFieldsToEmpty = (report: IReport) => {
+    report.reportFields.forEach((field) => {
+      if (field.value === null) {
+        return (field.value = "");
+      }
+    });
+  };
+
   @action toggleForm = () => {
     runInAction(() => {
       this.showForm = !this.showForm;
@@ -55,6 +63,7 @@ export default class ReportStore {
     this.loadingReports = true;
     try {
       const reports = await agent.Reports.list();
+      reports.forEach((report) => this.setAllNullReportFieldsToEmpty(report));
       runInAction(() => {
         reports.forEach((report) => {
           this.reportsRegistry.set(report.id, report);
@@ -74,7 +83,7 @@ export default class ReportStore {
     this.loadingReport = true;
     try {
       const report = await agent.Reports.get(id);
-      console.log("Report Loaded:", report); //remove
+      this.setAllNullReportFieldsToEmpty(report);
       runInAction(() => {
         this.report = report;
         this.loadingReport = false;

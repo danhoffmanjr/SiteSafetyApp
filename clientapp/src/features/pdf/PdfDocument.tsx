@@ -49,7 +49,6 @@ const styles = StyleSheet.create({
 });
 
 const PdfDocument: React.FC<IProps> = ({ report }) => {
-  console.log("Report: ", report);
   const [fields, setFields] = useState(report?.reportFields);
   return (
     <Document>

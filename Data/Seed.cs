@@ -605,7 +605,7 @@ namespace PikeSafetyWebApp.Data
                 {
                     new Report
                     {
-                        Title = "Added McTesteface",
+                        Title = "Added McTesterface",
                         ReportType = "New User",
                         ReportTypeId = 1,
                         ReportFields = JsonSerializer.Serialize(new List<ReportField>

@@ -72,7 +72,7 @@ const AssignSiteToUserForm: React.FC<IProps> = ({ user, companyId }) => {
         setSubmitErrors(undefined);
       })
       .catch((error) => {
-        console.log("Sned Invite Error:", error.statusText); //remove
+        console.log("Send Invite Error:", error.statusText); //remove
         setSubmitErrors(error);
       })
       .finally(() => {

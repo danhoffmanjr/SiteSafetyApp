@@ -52,6 +52,14 @@ const CreateReportForm = ({ report }: IProps) => {
 
   const [reportFields, setReportFields] = useState<IReportField[]>(report.reportFields);
 
+  useEffect(() => {
+    reportFields.forEach((field) => {
+      if (field.value === null) {
+        return (field.value = "");
+      }
+    });
+  }, [reportFields]);
+
   const { handleSubmit, register, errors, formState, control, setValue } = useForm<IReportFormValues>({
     mode: "all",
     reValidateMode: "onChange",
@@ -93,6 +101,8 @@ const CreateReportForm = ({ report }: IProps) => {
       setSubmitErrors(error);
     });
   };
+
+  console.log("Report", toJS(report.reportFields));
 
   return (
     <Segment>

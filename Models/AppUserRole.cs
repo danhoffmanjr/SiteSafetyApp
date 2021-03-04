@@ -6,9 +6,7 @@ namespace PikeSafetyWebApp.Models
 {
     public class AppUserRole : IdentityUserRole<string>
     {
-        [JsonIgnore]
-        public AppUser User { get; set; }
-        [JsonIgnore]
-        public AppRole Role { get; set; }
+        public virtual AppUser User { get; set; }
+        public virtual AppRole Role { get; set; }
     }
 }

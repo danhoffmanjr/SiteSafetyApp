@@ -16,6 +16,13 @@ const ReportsTable: React.FC<IProps> = ({ reports }) => {
   const rootStore = useContext(RootStoreContext);
   const { getLocaleDateOffset } = rootStore.commonStore;
 
+  const getPercentComplete = (report: IReport): string => {
+    const totalFields = report.reportFields.length;
+    const completedFields = report.reportFields.filter((field) => field.value?.toString().trim().length > 0).length;
+    const percent = (completedFields / totalFields) * 100;
+    return `${percent.toFixed(2)}%`;
+  };
+
   const columns = [
     { name: "Title", field: "title" },
     { name: "Report Type", field: "formType" },
@@ -23,7 +30,7 @@ const ReportsTable: React.FC<IProps> = ({ reports }) => {
     { name: "Site Name", field: "siteName" },
     { name: "Created By", field: "createdBy" },
     { name: "Date", field: "createdOn" },
-    { name: "Completed", field: "isComplete" },
+    { name: "% Complete", field: "isComplete" },
     { name: "PDF", field: "pdf" },
     { name: "", field: "actions" },
   ];
@@ -68,7 +75,7 @@ const ReportsTable: React.FC<IProps> = ({ reports }) => {
                   <Table.Cell>{report.siteName}</Table.Cell>
                   <Table.Cell>{report.createdBy}</Table.Cell>
                   <Table.Cell>{getLocaleDateOffset(new Date(report.createdOn!))}</Table.Cell>
-                  <Table.Cell>{report.isComplete.toString()}</Table.Cell>
+                  <Table.Cell>{getPercentComplete(report)}</Table.Cell>
 
                   <Table.Cell textAlign="center" verticalAlign="middle">
                     <PDFDownloadLink document={<PdfDocument report={report} />} fileName={`${report.title}.pdf`}>

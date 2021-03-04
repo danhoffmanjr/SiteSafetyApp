@@ -9,7 +9,6 @@ namespace PikeSafetyWebApp.Models
     {
         public string Description { get; set; }
         public int PrivilegeLevel { get; set; }
-        [JsonIgnore]
-        public ICollection<AppUserRole> UserRoles { get; set; }
+        public virtual ICollection<AppUserRole> UserRoles { get; set; }
     }
 }

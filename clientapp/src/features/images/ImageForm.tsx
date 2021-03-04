@@ -1,7 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { AxiosResponse } from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { IImageUpdateFormValues } from "../../app/models/imageUpdateFormValues";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import { Controller, useForm } from "react-hook-form";
@@ -10,6 +10,7 @@ import { Form, Button, Image, TextArea, Divider, Grid, Segment, Label } from "se
 import ErrorMessage from "../../app/common/form/ErrorMessage";
 import { Link, RouteComponentProps } from "react-router-dom";
 import LoadingComponent from "../../app/layout/LoadingComponent";
+import { toJS } from "mobx";
 
 interface RouteParams {
   id: string;
@@ -20,10 +21,18 @@ interface IProps extends RouteComponentProps<RouteParams> {}
 const ImageForm = ({ match }: IProps) => {
   const rootStore = useContext(RootStoreContext);
   const { loadImageById, image, updateImage, loading, isSubmitting } = rootStore.imageStore;
+  const [defaultValues, setDefaultValues] = useState<IImageUpdateFormValues>({ id: 0, fileName: "what the heck?", description: "where's my data?" });
 
   useEffect(() => {
     loadImageById(match.params.id);
   }, [loadImageById, match]);
+
+  useEffect(() => {
+    if (image) {
+      setDefaultValues({ id: image.id, fileName: image.fileName, description: image.description });
+      reset({ id: image.id, fileName: image.fileName, description: image.description });
+    }
+  }, [image]);
 
   const validationSchema = yup.object().shape({
     id: yup.string().required("Id is Required"),
@@ -34,11 +43,7 @@ const ImageForm = ({ match }: IProps) => {
   const [submitErrors, setSubmitErrors] = useState<AxiosResponse>();
 
   const { handleSubmit, register, errors, control, setValue, reset, formState } = useForm<IImageUpdateFormValues>({
-    defaultValues: {
-      id: image?.id ?? 0,
-      fileName: image?.fileName ?? "problem loading data",
-      description: image?.description ?? "problem loading data",
-    },
+    defaultValues: defaultValues,
     resolver: yupResolver(validationSchema),
   });
 
@@ -50,12 +55,6 @@ const ImageForm = ({ match }: IProps) => {
       setSubmitErrors(error);
     });
   };
-
-  useEffect(() => {
-    if (image) {
-      reset(image);
-    }
-  }, [image]);
 
   if (loading) return <LoadingComponent content="Loading image..." />;
 

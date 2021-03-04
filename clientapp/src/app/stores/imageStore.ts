@@ -50,11 +50,11 @@ export default class ImageStore {
     try {
       await agent.ReportImages.uploadBatch(data);
       runInAction(() => (this.uploading = false));
-      toast.success(`Images added successfully.`);
+      toast.success(`Report images added successfully.`);
     } catch (error) {
       console.log(error);
       runInAction(() => (this.uploading = false));
-      toast.error(`Problem uploading images. Error: ${error.statusText}`, { autoClose: 5000 });
+      toast.error(`Problem uploading report images. Error: ${error.statusText}`, { autoClose: 5000 });
     }
   };
 
@@ -70,8 +70,8 @@ export default class ImageStore {
       runInAction(() => {
         this.loading = false;
       });
-      console.log("Load Image by Id Error:", error); //remove
-      toast.error(`Problem loading image. Error: ${error.statusText}`, { autoClose: 10000 });
+      console.log("Load report image by Id Error:", error); //remove
+      toast.error(`Problem loading report image. Error: ${error.statusText}`, { autoClose: 10000 });
       throw error;
     }
   };
@@ -98,9 +98,9 @@ export default class ImageStore {
         this.imageRegistry.delete(name);
         this.isSubmitting = false;
       });
-      toast.success(`Image deleted successfully.`);
+      toast.success(`Report image deleted successfully.`);
     } catch (error) {
-      console.log("Delete Image Error:", error); //remove
+      console.log("Delete report image Error:", error); //remove
       this.isSubmitting = false;
       throw error;
     }

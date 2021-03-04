@@ -67,7 +67,6 @@ export default class SiteStore {
     this.loadingSites = true;
     try {
       const sites = await agent.Sites.list();
-      console.log("Sites:", sites); //remove
       runInAction(() => {
         sites.forEach((site) => {
           this.sitesRegistry.set(site.id, site);
@@ -100,7 +99,6 @@ export default class SiteStore {
     this.loadingSite = true;
     try {
       const site = await agent.Sites.get(siteId);
-      console.log("Site Loaded:", site); //remove
       runInAction(() => {
         this.site = site;
         this.loadingSite = false;

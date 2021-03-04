@@ -8,11 +8,6 @@ namespace PikeSafetyWebApp.Models
 {
     public class AppUser : IdentityUser
     {
-        public AppUser()
-        {
-            UserRoles = new HashSet<AppUserRole>();
-        }
-
         public string Title { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -22,7 +17,7 @@ namespace PikeSafetyWebApp.Models
         }
         public bool IsActive { get; set; }
         public long CompanyId { get; set; }
-        public ICollection<AppUserRole> UserRoles { get; set; }
+        public virtual ICollection<AppUserRole> UserRoles { get; set; }
         public ICollection<Report> Reports { get; set; }
         public List<UserSite> UserSites { get; set; }
     }

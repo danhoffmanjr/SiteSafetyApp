@@ -104,7 +104,7 @@ const ManageReportPage = ({ match }: IProps) => {
           <Card.Group>
             {report && report?.images.length > 0 ? (
               report.images.map((image) => (
-                <Card>
+                <Card key={image.id}>
                   <Image src={image.imageDataUrl} wrapped ui={true} />
                   <Card.Content>
                     <Card.Meta>{image.fileName}</Card.Meta>
