@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PikeSafetyWebApp.Models
 {
-    public class Site : DbMetadata
+    public class Site : EntityBase
     {
         private string NormalizeName(string name) => name?.Trim() ?? string.Empty;
         private string NormalizeAddress(string address) => address?.Trim() ?? string.Empty;
@@ -17,7 +17,6 @@ namespace PikeSafetyWebApp.Models
             this.Notes = NormalizeNotes(notes);
         }
 
-        public long Id { get; set; }
         public string Name { get; set; } = String.Empty;
         public string Address { get; set; } = String.Empty;
         public string Notes { get; set; } = String.Empty;

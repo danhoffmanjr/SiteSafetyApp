@@ -28,7 +28,8 @@ using NETCore.MailKit.Infrastructure.Internal;
 using Microsoft.IdentityModel.Logging;
 using MediatR;
 using AutoMapper;
-
+using PikeSafetyWebApp.Models.Interfaces;
+using PikeSafetyWebApp.Application.Shared;
 
 namespace PikeSafetyWebApp
 {
@@ -106,6 +107,8 @@ namespace PikeSafetyWebApp
                 config.RegisterValidatorsFromAssemblyContaining<Login>();
             });
 
+            services.AddScoped<IEntityBase, EntityBase>();
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IUserAccessor, UserAccessor>();
             services.AddScoped<IRoleAccessor, RoleAccessor>();

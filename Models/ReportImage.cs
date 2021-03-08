@@ -2,9 +2,8 @@ using System;
 
 namespace PikeSafetyWebApp.Models
 {
-    public class ReportImage : DbMetadata
+    public class ReportImage : EntityBase
     {
-        public long Id { get; set; }
         public long ReportId { get; set; }
         public string FileName { get; set; }
         public string FileType { get; set; }

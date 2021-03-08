@@ -2,9 +2,8 @@
 
 namespace PikeSafetyWebApp.Models
 {
-    public class Report : DbMetadata
+    public class Report : EntityBase
     {
-        public long Id { get; set; }
         public long ReportTypeId { get; set; }
         public string ReportType { get; set; }
         public string Title { get; set; }
