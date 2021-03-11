@@ -16,7 +16,7 @@ const ReportsPage = () => {
   useEffect(() => {
     loadReports();
     return () => {
-      console.info("Reports Page did unmount.");
+      console.info("Reports Page did unmount."); //remove
     };
   }, [loadReports]);
 

@@ -50,9 +50,8 @@ const ImagesDropzoneButton = ({ setFiles }: Props) => {
         <>
           <Button icon labelPosition="left" size="small">
             <Icon name="upload" />
-            Add Images
+            Drag 'n' drop folder or images here, or click to select image
           </Button>
-          <p>Drag folder/images here, or click to select images</p>
         </>
       )}
     </div>

@@ -98,14 +98,14 @@ export default class ReportStore {
     }
   };
 
-  @action createReport = async (values: IReportPostValues, images?: IImage[]) => {
+  @action createReport = async (values: IReportPostValues) => {
     this.isSubmitting = true;
     try {
       const newReportId = await agent.Reports.create(values);
-      if (images) {
+      if (values.images) {
         const data: IImageUploadFormValues = {
           reportId: newReportId,
-          images: images,
+          images: values.images,
         };
         runInAction(() => {
           this.rootStore.imageStore.uploadImages(data);

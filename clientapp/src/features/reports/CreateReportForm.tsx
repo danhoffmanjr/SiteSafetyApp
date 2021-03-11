@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios";
 import { observer } from "mobx-react-lite";
 import React, { useContext, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Button, Divider, Form, Header, Icon, Loader, Menu, Segment } from "semantic-ui-react";
+import { Button, Divider, Form, Header, Icon, Loader, Menu, Segment, Image } from "semantic-ui-react";
 import Select from "react-select";
 import ErrorMessage from "../../app/common/form/ErrorMessage";
 import { IReportFormValues } from "../../app/models/reportFormValues";
@@ -26,6 +26,15 @@ const CreateReportForm = ({ report }: IProps) => {
   const { loadCompanies, companySelectOptions, loadingCompanies, getCompany } = rootStore.companyStore;
   const { siteSelectOptions, loadSites, loadingSites, getSite } = rootStore.siteStore;
   const { reportTypeSelectOptions, loadReportTypes, loadingReportTypes, getReportType } = rootStore.reportTypeStore;
+  const { removeImage, removeAllImages, imageRegistry } = rootStore.imageStore;
+
+  const [submitErrors, setSubmitErrors] = useState<AxiosResponse>();
+  const [reportFields, setReportFields] = useState<IReportField[]>(report.reportFields);
+  const [images, setImages] = useState<Map<string, Blob>>();
+  const [postImages, setPostImages] = useState<IImage[]>();
+  const [requireImages, setRequireImages] = useState<boolean>(false);
+  const [showAddImagesField, setShowAddImagesField] = useState<boolean>(false);
+  const [showAddCroppedImageField, setShowAddCroppedImageField] = useState<boolean>(false);
 
   useEffect(() => {
     register({ name: "companyName" });
@@ -51,19 +60,27 @@ const CreateReportForm = ({ report }: IProps) => {
     }
   }, [reportTypeSelectOptions, loadReportTypes]);
 
-  const [submitErrors, setSubmitErrors] = useState<AxiosResponse>();
-  const [reportFields, setReportFields] = useState<IReportField[]>(report.reportFields);
-  const [requireImages, setRequireImages] = useState<boolean>(false);
-  const [showAddImagesField, setShowAddImagesField] = useState<boolean>(false);
-  const [showAddCroppedImageField, setShowAddCroppedImageField] = useState<boolean>(false);
+  useEffect(() => {
+    setImages(imageRegistry);
+  }, [imageRegistry]);
 
-  // useEffect(() => {
-  //   reportFields.forEach((field) => {
-  //     if (field.value === null) {
-  //       return (field.value = "");
-  //     }
-  //   });
-  // }, [reportFields]);
+  useEffect(() => {
+    if (images !== undefined && images.size > 0) {
+      let imageEnumerator = images.entries();
+      let imageArr: IImage[] = [];
+      for (let i = 0; i < images.size; i++) {
+        let data = imageEnumerator.next().value;
+        let image: IImage = { filename: data[0], image: data[1] };
+        imageArr.push(image);
+      }
+      setPostImages(imageArr);
+      setValue("requireImages", true);
+      console.log("useEffect ran for image change:"); //remove
+    } else {
+      setPostImages([]);
+      setValue("requireImages", false);
+    }
+  }, [images?.size]);
 
   const { handleSubmit, register, errors, formState, control, setValue } = useForm<IReportFormValues>({
     mode: "all",
@@ -97,6 +114,11 @@ const CreateReportForm = ({ report }: IProps) => {
     setShowAddCroppedImageField(!showAddCroppedImageField);
   };
 
+  const handleRemoveImage = (url: string, key: string) => {
+    URL.revokeObjectURL(url);
+    removeImage(key);
+  };
+
   const onSubmit = (data: any) => {
     let updateValues = reportFields.map((field) => {
       field.value = data.reportFields[field.name];
@@ -105,7 +127,6 @@ const CreateReportForm = ({ report }: IProps) => {
     let company = getCompany(parseInt(data.companyId));
     let site = getSite(parseInt(data.siteId));
     let reportType = getReportType(parseInt(data.reportTypeId));
-    let images: IImage[] = data.reportFields.images ?? [];
     let values: IReportPostValues = {
       ...data,
       companyName: company?.name,
@@ -114,9 +135,10 @@ const CreateReportForm = ({ report }: IProps) => {
       reportTypeId: parseInt(data.reportTypeId),
       reportType: reportType?.title,
       reportFields: JSON.stringify(updateValues),
+      images: postImages,
     };
 
-    createReport(values, images.length > 0 ? images : undefined).catch((error) => {
+    createReport(values).catch((error) => {
       setSubmitErrors(error);
     });
   };
@@ -238,7 +260,7 @@ const CreateReportForm = ({ report }: IProps) => {
             </div>
           )}
           <label>Report Images</label>
-          <input type="hidden" name="requireImages" ref={register({ required: requireImages })} defaultValue={report.images && report.images.length > 0 ? "that's a texas size 10-4 good buddy" : ""} />
+          <input type="hidden" name="requireImages" ref={register({ required: requireImages })} defaultValue={images && images.size > 0 ? "that's a texas size 10-4 good buddy" : ""} />
         </Form.Field>
         <Menu stackable attached="top" style={{ marginTop: 0 }} size="small">
           <Menu.Item>
@@ -250,10 +272,35 @@ const CreateReportForm = ({ report }: IProps) => {
           <Menu.Item onClick={handleToggleAddCroppedImageField} active={showAddCroppedImageField}>
             Add Cropped Image
           </Menu.Item>
+          {images && images.size > 1 && (
+            <Menu.Item onClick={removeAllImages} position="right">
+              Remove All Images
+            </Menu.Item>
+          )}
         </Menu>
-        <Segment attached>
-          {showAddImagesField && <AddImagesField />}
-          {showAddCroppedImageField && <AddImageWithCropperField />}
+        {(showAddImagesField || showAddCroppedImageField) && (
+          <Segment attached>
+            {showAddImagesField && <AddImagesField />}
+            {showAddCroppedImageField && <AddImageWithCropperField />}
+          </Segment>
+        )}
+        <Segment attached="bottom">
+          <div style={{ display: "flex", justifyContent: "flex-start", flexWrap: "wrap" }}>
+            {images &&
+              images.size > 0 &&
+              Array.from(images).map((blob) => {
+                let imageUrl = URL.createObjectURL(blob[1]);
+                let imageKey = blob[0];
+                return (
+                  <Segment key={imageKey} style={{ padding: 0, margin: "0.5em 1em 0.5em 0 " }}>
+                    <Image src={imageUrl} alt={imageKey} style={{ maxHeight: 100 }} />
+                    <Button fluid compact size="mini" attached="bottom" onClick={() => handleRemoveImage(imageUrl, imageKey)}>
+                      Remove
+                    </Button>
+                  </Segment>
+                );
+              })}
+          </div>
         </Segment>
         <Button color="green" content={report.id === "" ? "Create" : "Update"} disabled={!isDirty} loading={isSubmitting} style={{ marginTop: 15 }} />
         {submitErrors && <ErrorMessage error={submitErrors!} />}
