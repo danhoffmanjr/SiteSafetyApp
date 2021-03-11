@@ -7,5 +7,6 @@ namespace PikeSafetyWebApp.Models
         public string Placeholder { get; set; }
         public string Options { get; set; }
         public bool Required { get; set; }
+        public string Value { get; set; }
     }
 }

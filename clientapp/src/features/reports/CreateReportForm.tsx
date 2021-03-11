@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios";
 import { observer } from "mobx-react-lite";
 import React, { useContext, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Button, Divider, Form, Header, Loader, Segment } from "semantic-ui-react";
+import { Button, Divider, Form, Header, Icon, Loader, Menu, Segment } from "semantic-ui-react";
 import Select from "react-select";
 import ErrorMessage from "../../app/common/form/ErrorMessage";
 import { IReportFormValues } from "../../app/models/reportFormValues";
@@ -13,6 +13,8 @@ import { IReportField } from "../../app/models/reportField";
 import { IReportPostValues } from "../../app/models/reportPostValues";
 import { IImage } from "../../app/models/image";
 import { toast } from "react-toastify";
+import AddImagesField from "../../app/common/form/AddImagesField";
+import AddImageWithCropperField from "../../app/common/form/AddImageWithCropperField";
 
 interface IProps {
   report: IReportFormValues;
@@ -28,6 +30,7 @@ const CreateReportForm = ({ report }: IProps) => {
   useEffect(() => {
     register({ name: "companyName" });
     register({ name: "siteName" });
+    register({ name: "requireImages" });
   }, []);
 
   useEffect(() => {
@@ -49,16 +52,18 @@ const CreateReportForm = ({ report }: IProps) => {
   }, [reportTypeSelectOptions, loadReportTypes]);
 
   const [submitErrors, setSubmitErrors] = useState<AxiosResponse>();
-
   const [reportFields, setReportFields] = useState<IReportField[]>(report.reportFields);
+  const [requireImages, setRequireImages] = useState<boolean>(false);
+  const [showAddImagesField, setShowAddImagesField] = useState<boolean>(false);
+  const [showAddCroppedImageField, setShowAddCroppedImageField] = useState<boolean>(false);
 
-  useEffect(() => {
-    reportFields.forEach((field) => {
-      if (field.value === null) {
-        return (field.value = "");
-      }
-    });
-  }, [reportFields]);
+  // useEffect(() => {
+  //   reportFields.forEach((field) => {
+  //     if (field.value === null) {
+  //       return (field.value = "");
+  //     }
+  //   });
+  // }, [reportFields]);
 
   const { handleSubmit, register, errors, formState, control, setValue } = useForm<IReportFormValues>({
     mode: "all",
@@ -72,9 +77,24 @@ const CreateReportForm = ({ report }: IProps) => {
     let reportType = getReportType(parseInt(option.value.toString()));
     if (reportType !== undefined) {
       setReportFields(reportType.fields);
+      setRequireImages(reportType.requireImages);
     } else {
       toast.error("Report Type not found.");
     }
+  };
+
+  const handleToggleAddImagesField = () => {
+    if (showAddCroppedImageField === true) {
+      setShowAddCroppedImageField(false);
+    }
+    setShowAddImagesField(!showAddImagesField);
+  };
+
+  const handleToggleAddCroppedImageField = () => {
+    if (showAddImagesField === true) {
+      setShowAddImagesField(false);
+    }
+    setShowAddCroppedImageField(!showAddCroppedImageField);
   };
 
   const onSubmit = (data: any) => {
@@ -211,6 +231,30 @@ const CreateReportForm = ({ report }: IProps) => {
         </Form.Field>
         <ReportFieldsRenderer reportTypeFields={reportFields} control={control} register={register} errors={errors} setValue={setValue} />
         <Divider horizontal />
+        <Form.Field className={errors.requireImages !== undefined ? "error field" : "field"} style={{ marginBottom: 0 }}>
+          {errors.requireImages && (
+            <div className="ui pointing below prompt label" id="form-images-error-message" role="alert" aria-atomic="true">
+              Report must have at least one image
+            </div>
+          )}
+          <label>Report Images</label>
+          <input type="hidden" name="requireImages" ref={register({ required: requireImages })} defaultValue={report.images && report.images.length > 0 ? "that's a texas size 10-4 good buddy" : ""} />
+        </Form.Field>
+        <Menu stackable attached="top" style={{ marginTop: 0 }} size="small">
+          <Menu.Item>
+            <Icon name="photo" /> Manage Images
+          </Menu.Item>
+          <Menu.Item onClick={handleToggleAddImagesField} active={showAddImagesField}>
+            Add Images
+          </Menu.Item>
+          <Menu.Item onClick={handleToggleAddCroppedImageField} active={showAddCroppedImageField}>
+            Add Cropped Image
+          </Menu.Item>
+        </Menu>
+        <Segment attached>
+          {showAddImagesField && <AddImagesField />}
+          {showAddCroppedImageField && <AddImageWithCropperField />}
+        </Segment>
         <Button color="green" content={report.id === "" ? "Create" : "Update"} disabled={!isDirty} loading={isSubmitting} style={{ marginTop: 15 }} />
         {submitErrors && <ErrorMessage error={submitErrors!} />}
       </Form>

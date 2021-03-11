@@ -19,7 +19,6 @@ const ReportsTable: React.FC<IProps> = ({ reports }) => {
   const getPercentComplete = (report: IReport): string => {
     const totalFields = report.reportFields.length;
     const completedFields = report.reportFields.filter((field) => field.value?.toString().trim().length > 0).length;
-    console.info(toJS(report.reportFields));
     const percent = (completedFields / totalFields) * 100;
     return `${percent.toFixed(2)}%`;
   };
@@ -37,8 +36,6 @@ const ReportsTable: React.FC<IProps> = ({ reports }) => {
   ];
 
   const { items, requestSort, sortConfig } = useSortableData(reports);
-  console.info("Request Sort: ", requestSort);
-  console.info("Sort Config: ", sortConfig);
 
   const styles = {
     expanderColumn: {

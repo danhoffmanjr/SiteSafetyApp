@@ -8,6 +8,7 @@ namespace PikeSafetyWebApp.Application.ReportTypes
     {
         public long Id { get; set; }
         public string Title { get; set; }
+        public bool RequireImages { get; set; }
         public ICollection<ReportTypeField> Fields { get; set; } = new List<ReportTypeField>();
         public DateTime CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }

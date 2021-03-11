@@ -110,7 +110,7 @@ const ReportTypeForm = ({ type }: Props) => {
                               Array.from(imageRegistry).map((blob) => {
                                 let imageUrl = URL.createObjectURL(blob[1]);
                                 let imageKey = blob[0];
-                                console.log("From Image Registry: ", blob);
+                                console.log("From Image Registry: ", blob); //remove
                                 return (
                                   <Segment key={imageKey} style={{ padding: 0, margin: "0.5em 1em 0.5em 0 " }}>
                                     <Image src={imageUrl} alt={imageKey} style={{ maxHeight: 100 }} />

@@ -23,9 +23,7 @@ const ReportTypeFormPreviewer = ({ control }: { control: Control<IReportType> })
     URL.revokeObjectURL(url);
     removeImage(key);
   };
-  {
-    console.info("Form Control: ", control);
-  }
+
   return (
     <>
       <Menu stackable attached="top" inverted style={{ backgroundColor: "#696969", border: "1px solid #696969" }} size="small">
@@ -108,7 +106,7 @@ const ReportTypeFormPreviewer = ({ control }: { control: Control<IReportType> })
                             Array.from(imageRegistry).map((blob) => {
                               let imageUrl = URL.createObjectURL(blob[1]);
                               let imageKey = blob[0];
-                              console.log("From Image Registry: ", blob);
+                              console.log("From Image Registry: ", blob); //remove
                               return (
                                 <Segment key={imageKey} style={{ padding: 0, margin: "0.5em 1em 0.5em 0 " }}>
                                   <Image src={imageUrl} alt={imageKey} style={{ maxHeight: 100 }} />
@@ -132,34 +130,6 @@ const ReportTypeFormPreviewer = ({ control }: { control: Control<IReportType> })
                       <label>{field.name ? field.name : "[Field Name]"}</label>
                       <Segment attached="top" style={{ marginTop: 0 }}>
                         <ImageCropperLoader PreviewMode={true} />
-                      </Segment>
-                      <Segment attached="bottom">
-                        <Header sub color="blue">
-                          Images:{" "}
-                          {imageRegistry && imageRegistry.size > 1 && (
-                            <Button compact size="mini" onClick={removeAllImages}>
-                              Remove All
-                            </Button>
-                          )}
-                        </Header>
-
-                        <div style={{ display: "flex", justifyContent: "flex-start", flexWrap: "wrap" }}>
-                          {imageRegistry &&
-                            imageRegistry.size > 0 &&
-                            Array.from(imageRegistry).map((blob) => {
-                              let imageUrl = URL.createObjectURL(blob[1]);
-                              let imageKey = blob[0];
-                              console.log("From Image Registry: ", blob);
-                              return (
-                                <Segment key={imageKey} style={{ padding: 0, margin: "0.5em 1em 0.5em 0 " }}>
-                                  <Image src={imageUrl} alt={imageKey} style={{ maxHeight: 100 }} />
-                                  <Button fluid compact size="mini" attached="bottom" onClick={() => handleRemoveImage(imageUrl, imageKey)}>
-                                    Remove
-                                  </Button>
-                                </Segment>
-                              );
-                            })}
-                        </div>
                       </Segment>
                     </Form.Field>
                   </Grid.Column>

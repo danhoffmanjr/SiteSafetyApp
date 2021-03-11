@@ -25,8 +25,6 @@ export default class ReportTypeStore {
     Dropdown: { name: "Dropdown", label: "Dropdown", requiresPlaceholder: true, requiresOptions: true },
     Checkbox: { name: "Checkbox", label: "Checkbox", requiresPlaceholder: true, requiresOptions: false },
     Textarea: { name: "Textarea", label: "Textarea", requiresPlaceholder: true, requiresOptions: false },
-    ImageCropperLoader: { name: "ImageCropperLoader", label: "Image Cropper Loader", requiresPlaceholder: false, requiresOptions: false },
-    ImagesLoader: { name: "ImagesLoader", label: "Images Loader", requiresPlaceholder: false, requiresOptions: false },
   };
 
   @computed get fieldTypeOptions(): ISelectOptions[] {

@@ -544,7 +544,8 @@ namespace PikeSafetyWebApp.Data
                                     Name = "Title",
                                     Placeholder = "Select Title",
                                     Options = "Mr, Mrs, Ms, Miss",
-                                    Required = false
+                                    Required = false,
+                                    Value = ""
                                 },
                                 new ReportTypeField
                                 {
@@ -553,6 +554,7 @@ namespace PikeSafetyWebApp.Data
                                     Placeholder = "Input first name",
                                     Options = "",
                                     Required = true,
+                                    Value = ""
                                 },
                                 new ReportTypeField
                                 {
@@ -561,6 +563,7 @@ namespace PikeSafetyWebApp.Data
                                     Placeholder = "Input last name",
                                     Options = "",
                                     Required = true,
+                                    Value = ""
                                 },
                                 new ReportTypeField
                                 {
@@ -569,6 +572,7 @@ namespace PikeSafetyWebApp.Data
                                     Placeholder = "",
                                     Options = "Male, Female, Both",
                                     Required = true,
+                                    Value = ""
                                 },
                                 new ReportTypeField
                                 {
@@ -577,6 +581,7 @@ namespace PikeSafetyWebApp.Data
                                     Placeholder = "Add comments...",
                                     Options = "",
                                     Required = false,
+                                    Value = ""
                                 },
                                 new ReportTypeField
                                 {
@@ -585,6 +590,7 @@ namespace PikeSafetyWebApp.Data
                                     Placeholder = "I agree to the Terms of Service",
                                     Options = "",
                                     Required = true,
+                                    Value = ""
                                 },
                             }
                         ),

@@ -151,7 +151,6 @@ export default class UserStore {
         this.loadingProfile = true;
         try {
           const profiles = await agent.User.list();
-          console.log("Profiles:", profiles);//remove
           runInAction(() => {
             profiles.forEach((profile) => {
               this.profileRegistry.set(profile.id, profile);
@@ -190,7 +189,6 @@ export default class UserStore {
 
     @action loadProfile = async (email: string) => {
       this.loadingProfile = true;
-      console.log("Load Profile Email:", email);//remove
       try {
         if(email === this.user?.email) {
           const profile = await agent.User.get(email);
@@ -377,7 +375,6 @@ export default class UserStore {
     @action assignSiteToUser = async (values: IUserSiteFormValues) => {
       this.isSubmitting = true;
       try {
-        console.log("Assign Site form values:", values);  
         const siteAssigned: ISite = await agent.Sites.assign(values);
           const profiles = await agent.User.list();
           runInAction(() => {

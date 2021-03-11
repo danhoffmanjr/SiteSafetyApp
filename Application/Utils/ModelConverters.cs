@@ -157,6 +157,7 @@ namespace PikeSafetyWebApp.Application.Utils
         public ReportTypeDto ReportTypeToReportTypeDto(ReportType type)
         {
             var fields = JsonConvert.DeserializeObject<List<ReportTypeField>>(type.Fields);
+            fields.ForEach(field => field.Value = "");
 
             var reportTypeDto = new ReportTypeDto
             {
@@ -167,7 +168,8 @@ namespace PikeSafetyWebApp.Application.Utils
                 CreatedOn = type.CreatedOn,
                 UpdatedBy = type.UpdatedBy,
                 UpdatedOn = type.UpdatedOn,
-                IsActive = type.IsActive
+                IsActive = type.IsActive,
+                RequireImages = type.RequireImages
             };
 
             return reportTypeDto;
