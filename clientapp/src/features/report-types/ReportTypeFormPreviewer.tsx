@@ -5,25 +5,27 @@ import { Button, Checkbox, Form, Grid, Header, Icon, Image, Menu, Segment, Selec
 import ImageCropperLoader from "../../app/common/imageUpload/ImageCropperLoader";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import { observer } from "mobx-react-lite";
-import { FormBuilderFieldType } from "./FormBuilderFieldType";
 import ImagesLoader from "../../app/common/imageUpload/ImagesLoader";
+import { IReportField } from "../../app/models/reportField";
 
-const FormBuilder = ({ control }: { control: Control<IReportType> }) => {
+const ReportTypeFormPreviewer = ({ control }: { control: Control<IReportType> }) => {
   const rootStore = useContext(RootStoreContext);
   const { createDropdownOptions, fieldTypes } = rootStore.reportTypeStore;
   const { removeImage, removeAllImages, imageRegistry } = rootStore.imageStore;
 
-  const fieldArray = useWatch<FormBuilderFieldType[]>({
+  const fieldArray = useWatch<IReportField[]>({
     control,
     name: `fields`,
-    defaultValue: [{ Type: "", Name: "[Name]", Placeholder: "[Placeholder]", Options: "", Required: true }],
+    defaultValue: [{ type: "", name: "[Name]", placeholder: "[Placeholder]", options: "", required: true, value: "" }],
   });
 
   const handleRemoveImage = (url: string, key: string) => {
     URL.revokeObjectURL(url);
     removeImage(key);
   };
-
+  {
+    console.info("Form Control: ", control);
+  }
   return (
     <>
       <Menu stackable attached="top" inverted style={{ backgroundColor: "#696969", border: "1px solid #696969" }} size="small">
@@ -36,57 +38,57 @@ const FormBuilder = ({ control }: { control: Control<IReportType> }) => {
           <Grid stackable columns={3}>
             {fieldArray.map((field, index) => {
               if (field === undefined) return false;
-              if (field?.Type === undefined) return false;
+              if (field?.type === undefined) return false;
 
-              if (field?.Type === fieldTypes.Text.name) {
+              if (field.type === fieldTypes.Text.name) {
                 return (
                   <Grid.Column key={index}>
                     <Form.Field key={index} className="field" fluid="true">
-                      <label>{field.Name ? field.Name : "[Field Name]"}</label>
-                      <input type="text" name={field.Name} placeholder={field.Placeholder ? field.Placeholder : "[input placeholder text]"} />
+                      <label>{field.name ? field.name : "[Field Name]"}</label>
+                      <input type="text" name={field.name} placeholder={field.placeholder ? field.placeholder : "[input placeholder text]"} />
                     </Form.Field>
                   </Grid.Column>
                 );
               }
 
-              if (field.Type && field.Type === "Dropdown") {
-                let options = createDropdownOptions(field.Options);
+              if (field.type && field.type === "Dropdown") {
+                let options = createDropdownOptions(field.options);
                 return (
                   <Grid.Column key={index}>
                     <Form.Field key={index} className="field" fluid="true">
-                      <label>{field.Name ? field.Name : "[Field Name]"}</label>
-                      <Select placeholder={field.Placeholder ? field.Placeholder : "[dropdown placeholder text]"} options={options} />
+                      <label>{field.name ? field.name : "[Field Name]"}</label>
+                      <Select placeholder={field.placeholder ? field.placeholder : "[dropdown placeholder text]"} options={options} />
                     </Form.Field>
                   </Grid.Column>
                 );
               }
 
-              if (field.Type && field.Type === "Textarea") {
+              if (field.type && field.type === "Textarea") {
                 return (
                   <Grid.Column key={index}>
                     <Form.Field key={index} className="field" fluid="true">
-                      <label>{field.Name ? field.Name : "[Field Name]"}</label>
-                      <TextArea name={field.Name} placeholder={field.Placeholder ? field.Placeholder : "[textarea placeholder text]"} />
+                      <label>{field.name ? field.name : "[Field Name]"}</label>
+                      <TextArea name={field.name} placeholder={field.placeholder ? field.placeholder : "[textarea placeholder text]"} />
                     </Form.Field>
                   </Grid.Column>
                 );
               }
 
-              if (field.Type && field.Type === "Checkbox") {
+              if (field.type && field.type === "Checkbox") {
                 return (
                   <Grid.Column key={index}>
                     <Form.Field key={index} className="field" fluid="true">
-                      <Checkbox name={field.Name} label={field.Placeholder ? field.Placeholder : "[checkbox content = placeholder text]"} />
+                      <Checkbox name={field.name} label={field.placeholder ? field.placeholder : "[checkbox content = placeholder text]"} />
                     </Form.Field>
                   </Grid.Column>
                 );
               }
 
-              if (field.Type && field.Type === "ImagesLoader") {
+              if (field.type && field.type === "ImagesLoader") {
                 return (
                   <Grid.Column key={index} width={16}>
                     <Form.Field className="field" fluid="true">
-                      <label>{field.Name ? field.Name : "[Field Name]"}</label>
+                      <label>{field.name ? field.name : "[Field Name]"}</label>
                       <Segment attached="top" style={{ marginTop: 0 }}>
                         <ImagesLoader PreviewMode={true} />
                       </Segment>
@@ -123,11 +125,11 @@ const FormBuilder = ({ control }: { control: Control<IReportType> }) => {
                 );
               }
 
-              if (field.Type && field.Type === "ImageCropperLoader") {
+              if (field.type && field.type === "ImageCropperLoader") {
                 return (
                   <Grid.Column key={index} width={16}>
                     <Form.Field className="field" fluid="true">
-                      <label>{field.Name ? field.Name : "[Field Name]"}</label>
+                      <label>{field.name ? field.name : "[Field Name]"}</label>
                       <Segment attached="top" style={{ marginTop: 0 }}>
                         <ImageCropperLoader PreviewMode={true} />
                       </Segment>
@@ -173,4 +175,4 @@ const FormBuilder = ({ control }: { control: Control<IReportType> }) => {
   );
 };
 
-export default observer(FormBuilder);
+export default observer(ReportTypeFormPreviewer);

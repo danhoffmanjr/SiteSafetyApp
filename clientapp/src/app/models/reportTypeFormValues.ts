@@ -1,4 +1,5 @@
 export interface IReportTypeFormValues {
-    title: string;
-    fields: string;
+  title: string;
+  requireImages: boolean;
+  fields: string;
 }

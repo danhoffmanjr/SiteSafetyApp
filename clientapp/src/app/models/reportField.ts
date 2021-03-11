@@ -4,5 +4,5 @@ export interface IReportField {
   placeholder: string;
   options: string;
   required: boolean;
-  value: string | boolean;
+  value: string | number | boolean;
 }

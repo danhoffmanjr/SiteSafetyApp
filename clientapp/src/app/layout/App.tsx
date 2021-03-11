@@ -6,7 +6,7 @@ import { Container } from "semantic-ui-react";
 import AppMenu from "../../features/app-menu/AppMenu";
 import CompaniesPage from "../../features/companies/CompaniesPage";
 import CreateCompanyForm from "../../features/companies/CreateCompanyForm";
-import CreateForm from "../../features/form-creator/CreateForm";
+import CreateReportTypeForm from "../../features/report-types/CreateReportTypeForm";
 import HomePage from "../../features/home/HomePage";
 import ImageForm from "../../features/images/ImageForm";
 import ReportTypesPage from "../../features/report-types/ReportTypesPage";
@@ -77,7 +77,7 @@ const App: React.FC<RouteComponentProps> = ({ location, match, history, children
           <Route path="/users/resetPassword" component={PasswordResetForm} />
           <Route path="/users/verifyEmailChange" component={ConfirmEmail} />
           <Route path="/profiles/:username" component={ProfilePage} />
-          <Route path="/report-types/create" component={CreateForm} />
+          <Route path="/report-types/create" component={CreateReportTypeForm} />
           <Route exact path="/report-types" component={ReportTypesPage} />
           <Route exact path="/access-denied" component={AccessDenied} />
           <Route component={NotFound} />

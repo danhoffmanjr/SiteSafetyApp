@@ -535,6 +535,7 @@ namespace PikeSafetyWebApp.Data
                     {
                         Id = 1,
                         Title = "New User",
+                        RequireImages = false,
                         Fields = JsonSerializer.Serialize(new List<ReportTypeField>
                             {
                                 new ReportTypeField

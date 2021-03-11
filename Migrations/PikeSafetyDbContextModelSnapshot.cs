@@ -387,6 +387,9 @@ namespace PikeSafetyWebApp.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("RequireImages")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Title")
                         .HasColumnType("text");
 

@@ -8,11 +8,11 @@ import ErrorMessage from "../../app/common/form/ErrorMessage";
 import { IReportFormValues } from "../../app/models/reportFormValues";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import { ISelectOptions } from "../../app/models/reactSelectOptions";
-import { toJS } from "mobx";
 import ReportFieldsRenderer from "./ReportFieldsRenderer";
 import { IReportField } from "../../app/models/reportField";
 import { IReportPostValues } from "../../app/models/reportPostValues";
 import { IImage } from "../../app/models/image";
+import { toast } from "react-toastify";
 
 interface IProps {
   report: IReportFormValues;
@@ -70,12 +70,11 @@ const CreateReportForm = ({ report }: IProps) => {
 
   const handleReportTypeChange = (option: ISelectOptions) => {
     let reportType = getReportType(parseInt(option.value.toString()));
-    let fields: IReportField[] | undefined = toJS(reportType?.fields)?.map((field) =>
-      Object.assign(field, {
-        value: "",
-      })
-    );
-    setReportFields(fields!);
+    if (reportType !== undefined) {
+      setReportFields(reportType.fields);
+    } else {
+      toast.error("Report Type not found.");
+    }
   };
 
   const onSubmit = (data: any) => {
@@ -101,8 +100,6 @@ const CreateReportForm = ({ report }: IProps) => {
       setSubmitErrors(error);
     });
   };
-
-  console.log("Report", toJS(report.reportFields));
 
   return (
     <Segment>

@@ -1,7 +1,8 @@
-import { IReportTypeField } from "./reportTypeField";
+import { IReportField } from "./reportField";
 
 export interface IReportType {
-    id: number;
-    title: string;
-    fields: IReportTypeField[];
+  id: number;
+  title: string;
+  requireImages: boolean;
+  fields: IReportField[];
 }

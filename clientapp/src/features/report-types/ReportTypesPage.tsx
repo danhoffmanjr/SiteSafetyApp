@@ -6,7 +6,7 @@ import { search } from "../../app/common/utils/search";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { IReportType } from "../../app/models/reportType";
 import { RootStoreContext } from "../../app/stores/rootStore";
-import CreateForm from "../form-creator/CreateForm";
+import CreateReportTypeForm from "./CreateReportTypeForm";
 import ReportTypeForm from "./ReportTypeForm";
 
 const ReportTypesPage = () => {
@@ -60,7 +60,7 @@ const ReportTypesPage = () => {
         </Menu>
         {showForm && (
           <Segment attached>
-            <CreateForm />
+            <CreateReportTypeForm />
           </Segment>
         )}
         <Segment attached="bottom">

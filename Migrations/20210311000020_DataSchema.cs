@@ -54,6 +54,7 @@ namespace PikeSafetyWebApp.Migrations
                     UpdatedOn = table.Column<DateTime>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false),
                     Title = table.Column<string>(nullable: true),
+                    RequireImages = table.Column<bool>(nullable: false),
                     Fields = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

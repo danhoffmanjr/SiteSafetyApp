@@ -5,8 +5,8 @@ import { IReport } from "../../app/models/report";
 import { history } from "../..";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfDocument from "../pdf/PdfDocument";
-import moment from "moment";
 import { RootStoreContext } from "../../app/stores/rootStore";
+import { toJS } from "mobx";
 
 interface IProps {
   reports: IReport[];
@@ -19,6 +19,7 @@ const ReportsTable: React.FC<IProps> = ({ reports }) => {
   const getPercentComplete = (report: IReport): string => {
     const totalFields = report.reportFields.length;
     const completedFields = report.reportFields.filter((field) => field.value?.toString().trim().length > 0).length;
+    console.info(toJS(report.reportFields));
     const percent = (completedFields / totalFields) * 100;
     return `${percent.toFixed(2)}%`;
   };
@@ -36,6 +37,8 @@ const ReportsTable: React.FC<IProps> = ({ reports }) => {
   ];
 
   const { items, requestSort, sortConfig } = useSortableData(reports);
+  console.info("Request Sort: ", requestSort);
+  console.info("Sort Config: ", sortConfig);
 
   const styles = {
     expanderColumn: {

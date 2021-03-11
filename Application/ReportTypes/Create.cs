@@ -44,6 +44,7 @@ namespace PikeSafetyWebApp.Application.ReportTypes
                 {
                     Title = request.ReportType.Title,
                     Fields = request.ReportType.Fields,
+                    RequireImages = request.ReportType.RequireImages,
                     IsActive = true,
                     CreatedOn = DateTime.UtcNow,
                     CreatedBy = currentUser.FullName,

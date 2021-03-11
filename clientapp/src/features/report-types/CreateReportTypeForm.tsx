@@ -6,16 +6,16 @@ import { RootStoreContext } from "../../app/stores/rootStore";
 import { Button, Checkbox, Form, Header, Icon, Menu, Segment } from "semantic-ui-react";
 import ReactSelect from "react-select";
 import ErrorMessage from "../../app/common/form/ErrorMessage";
-import "./CreateTemplateForm.scss";
 import { observer } from "mobx-react-lite";
-import FormBuilder from "./FormBuilder";
+import ReportTypeFormPreviewer from "./ReportTypeFormPreviewer";
 import { IReportTypeFormValues } from "../../app/models/reportTypeFormValues";
 
-const CreateForm = ({
+const CreateReportTypeForm = ({
   startingState = {
     id: 0,
     title: "",
-    fields: [{ type: "", name: "", placeholder: "", options: "", required: true }],
+    requireImages: false,
+    fields: [{ type: "", name: "", placeholder: "", options: "", required: true, value: "" }],
   },
 }) => {
   const rootStore = useContext(RootStoreContext);
@@ -76,28 +76,60 @@ const CreateForm = ({
     return name as keyof typeof fieldTypes;
   };
 
+  const styles = {
+    hide: {
+      display: "none",
+    },
+    show: {
+      display: "inherit",
+    },
+  };
+
   return (
     <Segment style={{ marginBottom: "2em" }}>
       <Header as="h3">Create Form Type</Header>
       <Form onSubmit={handleSubmit(onSubmit)} error>
-        <Form.Field className={errors.title !== undefined ? "error field" : "field"}>
-          <label>Form Title</label>
-          <input
-            type="text"
-            name="title"
-            placeholder="Form Title"
-            defaultValue=""
-            aria-invalid={errors.title !== undefined}
-            ref={register({
-              required: "Form Title is Required*",
-            })}
-          />
-          {errors.title && (
-            <div className="ui pointing above prompt label" id="form-input-title-error-message" role="alert" aria-atomic="true">
-              {errors.title.message}
-            </div>
-          )}
-        </Form.Field>
+        <Form.Group>
+          <Form.Field width={15} className={errors.title !== undefined ? "error field" : "field"}>
+            <label>Form Title</label>
+            <input
+              type="text"
+              name="title"
+              placeholder="Form Title"
+              defaultValue=""
+              aria-invalid={errors.title !== undefined}
+              ref={register({
+                required: "Form Title is Required*",
+              })}
+            />
+            {errors.title && (
+              <div className="ui pointing above prompt label" id="form-input-title-error-message" role="alert" aria-atomic="true">
+                {errors.title.message}
+              </div>
+            )}
+          </Form.Field>
+          <Form.Field width={3} className={errors.requireImages !== undefined ? "error field" : "field"}>
+            <label>&nbsp;</label>
+            <Controller
+              control={control}
+              name="requireImages"
+              defaultValue={false}
+              render={({ onChange, value, name }) => (
+                <Checkbox
+                  fitted
+                  toggle
+                  style={{ marginTop: 8 }}
+                  name={name}
+                  onChange={() => {
+                    onChange(!value);
+                  }}
+                  label="Require Images"
+                  checked={value}
+                />
+              )}
+            />
+          </Form.Field>
+        </Form.Group>
         <Form.Field className={errors.fields !== undefined ? "error field" : "field"} style={{ marginBottom: 0 }}>
           <label>{errors.fields !== undefined ? "Form Fields - ERRORS: Please fix the errors indicated below" : "Form Fields"}</label>
         </Form.Field>
@@ -110,14 +142,14 @@ const CreateForm = ({
             {showAddFieldsForm ? "Hide" : "Show"}
           </Menu.Item>
         </Menu>
-        <Segment attached className={showAddFieldsForm ? "show" : "hide"}>
+        <Segment attached style={showAddFieldsForm ? styles.show : styles.hide}>
           {fieldIds.map((id) => (
             <Form.Group key={id} widths="equal">
               <Form.Field className={errors.fields && errors.fields[parseInt(id)]?.type?.message !== undefined ? "error field" : "field"}>
                 <label>{errors.fields && errors.fields[parseInt(id)]?.type?.message !== undefined ? errors.fields[parseInt(id)]?.type?.message : "Type"}</label>
                 <Controller
                   control={control}
-                  name={`fields[${id}].Type`}
+                  name={`fields[${id}].type`}
                   rules={{ required: "Type is Required*" }}
                   defaultValue=""
                   render={({ onChange, value, name }) => (
@@ -139,7 +171,7 @@ const CreateForm = ({
                 <label>{errors.fields && errors.fields[parseInt(id)]?.name?.message !== undefined ? errors.fields[parseInt(id)]?.name?.message : "Name"}</label>
                 <input
                   type="text"
-                  name={`fields[${id}].Name`}
+                  name={`fields[${id}].name`}
                   placeholder="Field Name"
                   defaultValue=""
                   aria-invalid={errors.fields && errors.fields[parseInt(id)]?.name?.message !== undefined}
@@ -150,33 +182,33 @@ const CreateForm = ({
               </Form.Field>
               <Form.Field
                 className={errors.fields && errors.fields[parseInt(id)]?.placeholder?.message !== undefined ? "error field" : "field"}
-                disabled={!fieldTypes[getFieldType(watch(`fields[${id}].Type`, "Text"))].requiresPlaceholder}
+                disabled={!fieldTypes[getFieldType(watch(`fields[${id}].type`, "Text"))].requiresPlaceholder}
               >
                 <label>{errors.fields && errors.fields[parseInt(id)]?.placeholder?.message !== undefined ? errors.fields[parseInt(id)]?.placeholder?.message : "Placeholder"}</label>
                 <input
                   type="text"
-                  name={`fields[${id}].Placeholder`}
+                  name={`fields[${id}].placeholder`}
                   placeholder="Field Placeholder Text"
                   defaultValue=""
                   aria-invalid={errors.fields && errors.fields[parseInt(id)]?.placeholder?.message !== undefined}
                   ref={register({
-                    required: { value: fieldTypes[getFieldType(watch(`fields[${id}].Type`, "Text"))].requiresPlaceholder, message: "Placeholder is Required*" },
+                    required: { value: fieldTypes[getFieldType(watch(`fields[${id}].type`, "Text"))].requiresPlaceholder, message: "Placeholder is Required*" },
                   })}
                 />
               </Form.Field>
               <Form.Field
                 className={errors.fields && errors.fields[parseInt(id)]?.options?.message !== undefined ? "error field" : "field"}
-                disabled={!fieldTypes[getFieldType(watch(`fields[${id}].Type`, "Text"))].requiresOptions}
+                disabled={!fieldTypes[getFieldType(watch(`fields[${id}].type`, "Text"))].requiresOptions}
               >
                 <label>{errors.fields && errors.fields[parseInt(id)]?.options?.message !== undefined ? errors.fields[parseInt(id)]?.options?.message : "Dropdown Options"}</label>
                 <input
                   type="text"
-                  name={`fields[${id}].Options`}
+                  name={`fields[${id}].options`}
                   placeholder="Comma separated list"
                   defaultValue=""
                   aria-invalid={errors.fields && errors.fields[parseInt(id)]?.options?.message !== undefined}
                   ref={register({
-                    required: { value: fieldTypes[getFieldType(watch(`fields[${id}].Type`, "Text"))].requiresOptions, message: "Options are Required*" },
+                    required: { value: fieldTypes[getFieldType(watch(`fields[${id}].type`, "Text"))].requiresOptions, message: "Options are Required*" },
                   })}
                 />
               </Form.Field>
@@ -184,7 +216,7 @@ const CreateForm = ({
                 <label>{errors.fields && errors.fields[parseInt(id)]?.required?.message !== undefined ? errors.fields[parseInt(id)]?.required?.message : "Required"}</label>
                 <Controller
                   control={control}
-                  name={`fields[${id}].Required`}
+                  name={`fields[${id}].required`}
                   defaultValue={true}
                   render={({ onChange, value, name }) => (
                     <Checkbox
@@ -200,25 +232,6 @@ const CreateForm = ({
                     />
                   )}
                 />
-                {/* <Controller
-                  control={control}
-                  name={`fields[${id}].Required`}
-                  rules={{ required: "Is Required is Required*" }}
-                  defaultValue={true}
-                  render={({ onChange, value, name }) => (
-                    <ReactSelect
-                      options={isRequiredOptions}
-                      onChange={(value) => {
-                        onChange(value);
-                        setValue(name, value.value);
-                      }}
-                      value={value?.value}
-                      defaultInputValue="Yes"
-                      name={name}
-                      isClearable={false}
-                    />
-                  )}
-                /> */}
               </Form.Field>
               <Form.Field width={1}>
                 <label>&nbsp;</label>
@@ -239,7 +252,7 @@ const CreateForm = ({
         </Menu>
         {submitErrors && <ErrorMessage error={submitErrors!} />}
       </Form>
-      {(fieldIds.length > 0 && <FormBuilder control={control} />) || (
+      {(fieldIds.length > 0 && <ReportTypeFormPreviewer control={control} />) || (
         <Menu stackable size="small">
           <Menu.Item>
             <Icon name="wordpress forms" size="large" /> Form Preview
@@ -253,4 +266,4 @@ const CreateForm = ({
   );
 };
 
-export default observer(CreateForm);
+export default observer(CreateReportTypeForm);

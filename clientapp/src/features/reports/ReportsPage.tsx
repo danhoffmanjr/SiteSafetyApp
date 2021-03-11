@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { Grid, Header, Icon, Image, Menu, Segment } from "semantic-ui-react";
+import { Grid, Header, Icon, Menu, Segment } from "semantic-ui-react";
 import { search } from "../../app/common/utils/search";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { IReport } from "../../app/models/report";
@@ -12,10 +12,12 @@ import ReportsTable from "./ReportsTable";
 const ReportsPage = () => {
   const rootStore = useContext(RootStoreContext);
   const { showForm, toggleForm, loadReports, loadingReports, reportsOrderedByTitleAscending } = rootStore.reportStore;
-  const { openModal } = rootStore.modalStore;
 
   useEffect(() => {
     loadReports();
+    return () => {
+      console.info("Reports Page did unmount.");
+    };
   }, [loadReports]);
 
   const data = useMemo(() => {
@@ -58,8 +60,7 @@ const ReportsPage = () => {
         </Menu>
         {showForm && (
           <Segment attached>
-            <CreateReportForm report={new DefaultFormValues} />
-            {/* {data?.[0].imageDtos.map((image) => <Image src={image.imageDataUrl} alt={image.Name} style={{ maxHeight: 200 }} />)} */}
+            <CreateReportForm report={new DefaultFormValues()} />
           </Segment>
         )}
         <Segment attached="bottom">
