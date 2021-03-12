@@ -673,7 +673,8 @@ namespace PikeSafetyWebApp.Data
                                 },
                             }
                         ),
-                        IsComplete = false,
+                        CompletionPercentage = 100,
+                        RequireImages = false,
                         CompanyId = ChafinHomeBuildersId,
                         CompanyName = "Chafin Home Builders",
                         SiteId = StonewaterCreekSiteId,

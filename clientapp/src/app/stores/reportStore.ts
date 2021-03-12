@@ -5,6 +5,7 @@ import { IImage } from "../models/image";
 import { IImageUploadFormValues } from "../models/imageUploadFormValues";
 import { ISelectOptions } from "../models/reactSelectOptions";
 import { IReport } from "../models/report";
+import { IReportField } from "../models/reportField";
 import { IReportPostValues } from "../models/reportPostValues";
 import { RootStore } from "./rootStore";
 
@@ -98,14 +99,14 @@ export default class ReportStore {
     }
   };
 
-  @action createReport = async (values: IReportPostValues) => {
+  @action createReport = async (values: IReportPostValues, images: IImage[] | undefined) => {
     this.isSubmitting = true;
     try {
       const newReportId = await agent.Reports.create(values);
-      if (values.images) {
+      if (images && images.length > 0) {
         const data: IImageUploadFormValues = {
           reportId: newReportId,
-          images: values.images,
+          images: images,
         };
         runInAction(() => {
           this.rootStore.imageStore.uploadImages(data);
@@ -143,6 +144,14 @@ export default class ReportStore {
       this.isSubmitting = false;
       throw error;
     }
+  };
+
+  @action setReportFieldsFromForm = (formFields: any, reportFields: IReportField[]): IReportField[] => {
+    let fields = reportFields.map((field) => {
+      field.value = formFields[field.name];
+      return field;
+    });
+    return fields;
   };
 
   @action createSelectOptionsFromString = (options: string): ISelectOptions[] => {

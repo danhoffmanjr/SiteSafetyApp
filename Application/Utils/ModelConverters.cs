@@ -120,11 +120,11 @@ namespace PikeSafetyWebApp.Application.Utils
             var reportDto = new ReportDto
             {
                 Id = report.Id,
+                Title = report.Title,
                 ReportTypeId = report.ReportTypeId,
                 ReportType = report.ReportType,
-                Title = report.Title,
                 ReportFields = fields,
-                IsComplete = report.IsComplete,
+                CompletionPercentage = report.CompletionPercentage,
                 CompanyId = report.CompanyId,
                 CompanyName = report.CompanyName,
                 SiteId = report.SiteId,
@@ -134,6 +134,7 @@ namespace PikeSafetyWebApp.Application.Utils
                 UpdatedBy = report.UpdatedBy,
                 UpdatedOn = report.UpdatedOn,
                 IsActive = report.IsActive,
+                RequireImages = report.RequireImages,
                 Images = report.Images?.ToList().ConvertAll(new Converter<ReportImage, ReportImageDto>(ReportImageToReportImageDto))
             };
 

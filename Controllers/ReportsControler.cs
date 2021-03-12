@@ -16,9 +16,9 @@ namespace PikeSafetyWebApp.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<long> Create(Report report)
+        public async Task<long> Create(Create.Command command)
         {
-            return await Mediator.Send(new Create.Command { Report = report });
+            return await Mediator.Send(command);
         }
 
         [HttpGet("manage/{id}")]

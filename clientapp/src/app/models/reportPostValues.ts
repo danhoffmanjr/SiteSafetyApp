@@ -1,5 +1,3 @@
-import { IImage } from "./image";
-
 export interface IReportPostValues {
   id: string;
   title: string;
@@ -7,6 +5,8 @@ export interface IReportPostValues {
   reportTypeId: string;
   reportFields: string;
   companyId: string;
+  companyName: string;
   siteId: string;
-  images: IImage[];
+  siteName: string;
+  requireImages: boolean;
 }

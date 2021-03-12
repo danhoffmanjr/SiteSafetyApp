@@ -15,6 +15,7 @@ import { IImage } from "../../app/models/image";
 import { toast } from "react-toastify";
 import AddImagesField from "../../app/common/form/AddImagesField";
 import AddImageWithCropperField from "../../app/common/form/AddImageWithCropperField";
+import { runInAction } from "mobx";
 
 interface IProps {
   report: IReportFormValues;
@@ -22,7 +23,7 @@ interface IProps {
 
 const CreateReportForm = ({ report }: IProps) => {
   const rootStore = useContext(RootStoreContext);
-  const { isSubmitting, createReport } = rootStore.reportStore;
+  const { setReportFieldsFromForm, isSubmitting, createReport } = rootStore.reportStore;
   const { loadCompanies, companySelectOptions, loadingCompanies, getCompany } = rootStore.companyStore;
   const { siteSelectOptions, loadSites, loadingSites, getSite } = rootStore.siteStore;
   const { reportTypeSelectOptions, loadReportTypes, loadingReportTypes, getReportType } = rootStore.reportTypeStore;
@@ -120,13 +121,10 @@ const CreateReportForm = ({ report }: IProps) => {
   };
 
   const onSubmit = (data: any) => {
-    let updateValues = reportFields.map((field) => {
-      field.value = data.reportFields[field.name];
-      return field;
-    });
     let company = getCompany(parseInt(data.companyId));
     let site = getSite(parseInt(data.siteId));
     let reportType = getReportType(parseInt(data.reportTypeId));
+    let postFields = setReportFieldsFromForm(data.reportFields, reportFields);
     let values: IReportPostValues = {
       ...data,
       companyName: company?.name,
@@ -134,11 +132,11 @@ const CreateReportForm = ({ report }: IProps) => {
       siteId: parseInt(data.siteId),
       reportTypeId: parseInt(data.reportTypeId),
       reportType: reportType?.title,
-      reportFields: JSON.stringify(updateValues),
-      images: postImages,
+      reportFields: JSON.stringify(postFields),
+      requireImages: requireImages,
     };
 
-    createReport(values).catch((error) => {
+    createReport(values, postImages).catch((error) => {
       setSubmitErrors(error);
     });
   };

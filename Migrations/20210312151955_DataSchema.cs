@@ -243,15 +243,16 @@ namespace PikeSafetyWebApp.Migrations
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     UpdatedOn = table.Column<DateTime>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false),
+                    Title = table.Column<string>(nullable: true),
                     ReportTypeId = table.Column<long>(nullable: false),
                     ReportType = table.Column<string>(nullable: true),
-                    Title = table.Column<string>(nullable: true),
                     ReportFields = table.Column<string>(nullable: true),
                     CompanyId = table.Column<long>(nullable: false),
                     CompanyName = table.Column<string>(nullable: true),
                     SiteId = table.Column<long>(nullable: false),
                     SiteName = table.Column<string>(nullable: true),
-                    IsComplete = table.Column<bool>(nullable: false),
+                    CompletionPercentage = table.Column<double>(nullable: false),
+                    RequireImages = table.Column<bool>(nullable: false),
                     AppUserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

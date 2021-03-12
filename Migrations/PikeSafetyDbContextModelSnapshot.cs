@@ -276,6 +276,9 @@ namespace PikeSafetyWebApp.Migrations
                     b.Property<string>("CompanyName")
                         .HasColumnType("text");
 
+                    b.Property<double>("CompletionPercentage")
+                        .HasColumnType("double");
+
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
@@ -283,9 +286,6 @@ namespace PikeSafetyWebApp.Migrations
                         .HasColumnType("datetime");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsComplete")
                         .HasColumnType("bit");
 
                     b.Property<string>("ReportFields")
@@ -296,6 +296,9 @@ namespace PikeSafetyWebApp.Migrations
 
                     b.Property<long>("ReportTypeId")
                         .HasColumnType("bigint");
+
+                    b.Property<bool>("RequireImages")
+                        .HasColumnType("bit");
 
                     b.Property<long>("SiteId")
                         .HasColumnType("bigint");

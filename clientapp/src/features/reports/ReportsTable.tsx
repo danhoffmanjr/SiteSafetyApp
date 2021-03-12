@@ -12,42 +12,42 @@ interface IProps {
   reports: IReport[];
 }
 
+const columns = [
+  { name: "Title", field: "title" },
+  { name: "Report Type", field: "formType" },
+  { name: "Company Name", field: "companyName" },
+  { name: "Site Name", field: "siteName" },
+  { name: "Created By", field: "createdBy" },
+  { name: "Date", field: "createdOn" },
+  { name: "% Complete", field: "isComplete" },
+  { name: "PDF", field: "pdf" },
+  { name: "", field: "actions" },
+];
+
+const styles = {
+  expanderColumn: {
+    maxWidth: "2rem",
+  },
+  actionsColumn: {
+    maxWidth: "83px",
+  },
+  pdfColumn: {
+    maxWidth: "33px",
+  },
+};
+
+const getPercentComplete = (report: IReport): string => {
+  const totalFields = report.reportFields.length;
+  const completedFields = report.reportFields.filter((field) => field.value?.toString().trim().length > 0).length;
+  const percent = (completedFields / totalFields) * 100;
+  return `${percent.toFixed(2)}%`;
+};
+
 const ReportsTable: React.FC<IProps> = ({ reports }) => {
   const rootStore = useContext(RootStoreContext);
   const { getLocaleDateOffset } = rootStore.commonStore;
 
-  const getPercentComplete = (report: IReport): string => {
-    const totalFields = report.reportFields.length;
-    const completedFields = report.reportFields.filter((field) => field.value?.toString().trim().length > 0).length;
-    const percent = (completedFields / totalFields) * 100;
-    return `${percent.toFixed(2)}%`;
-  };
-
-  const columns = [
-    { name: "Title", field: "title" },
-    { name: "Report Type", field: "formType" },
-    { name: "Company Name", field: "companyName" },
-    { name: "Site Name", field: "siteName" },
-    { name: "Created By", field: "createdBy" },
-    { name: "Date", field: "createdOn" },
-    { name: "% Complete", field: "isComplete" },
-    { name: "PDF", field: "pdf" },
-    { name: "", field: "actions" },
-  ];
-
   const { items, requestSort, sortConfig } = useSortableData(reports);
-
-  const styles = {
-    expanderColumn: {
-      maxWidth: "2rem",
-    },
-    actionsColumn: {
-      maxWidth: "83px",
-    },
-    pdfColumn: {
-      maxWidth: "33px",
-    },
-  };
 
   return (
     <Table sortable striped celled selectable compact>
@@ -76,7 +76,6 @@ const ReportsTable: React.FC<IProps> = ({ reports }) => {
                   <Table.Cell>{report.createdBy}</Table.Cell>
                   <Table.Cell>{getLocaleDateOffset(new Date(report.createdOn!))}</Table.Cell>
                   <Table.Cell>{getPercentComplete(report)}</Table.Cell>
-
                   <Table.Cell textAlign="center" verticalAlign="middle">
                     <PDFDownloadLink document={<PdfDocument report={report} />} fileName={`${report.title}.pdf`}>
                       <Popup content={`Download PDF for ${report.title}`} trigger={<Icon name="file pdf outline" />} />

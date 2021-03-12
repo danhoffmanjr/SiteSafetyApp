@@ -17,7 +17,16 @@ namespace PikeSafetyWebApp.Application.Reports
     {
         public class Command : IRequest<long>
         {
-            public Report Report { get; set; }
+            public string Title { get; set; }
+            public long ReportTypeId { get; set; }
+            public string ReportType { get; set; }
+            public string ReportFields { get; set; } //stringified json object based on report type fields with additional value parameter
+            public long CompanyId { get; set; }
+            public string CompanyName { get; set; }
+            public long SiteId { get; set; }
+            public string SiteName { get; set; }
+            public double CompletionPercentage { get; set; }
+            public bool RequireImages { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, long>
@@ -38,19 +47,21 @@ namespace PikeSafetyWebApp.Application.Reports
             {
                 var currentUser = await userManager.FindByIdAsync(userAccessor.GetCurrentUserId());
 
-                var doesTitleExist = CheckExistsByTitle(request.Report.Title);
+                var doesTitleExist = CheckExistsByTitle(request.Title);
                 if (doesTitleExist) throw new RestException(HttpStatusCode.BadRequest, new { Name = "Report title already exists." });
 
                 var newReport = new Report
                 {
-                    Title = request.Report.Title,
-                    CompanyName = request.Report.CompanyName,
-                    CompanyId = request.Report.CompanyId,
-                    SiteId = request.Report.SiteId,
-                    SiteName = request.Report.SiteName,
-                    ReportTypeId = request.Report.ReportTypeId,
-                    ReportType = request.Report.ReportType,
-                    ReportFields = request.Report.ReportFields,
+                    Title = request.Title,
+                    CompanyName = request.CompanyName,
+                    CompanyId = request.CompanyId,
+                    SiteId = request.SiteId,
+                    SiteName = request.SiteName,
+                    ReportTypeId = request.ReportTypeId,
+                    ReportType = request.ReportType,
+                    ReportFields = request.ReportFields,
+                    CompletionPercentage = request.CompletionPercentage,
+                    RequireImages = request.RequireImages,
                     IsActive = true,
                     CreatedOn = DateTime.UtcNow,
                     CreatedBy = currentUser.FullName,
