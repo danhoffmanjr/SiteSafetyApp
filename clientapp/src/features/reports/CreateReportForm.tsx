@@ -15,7 +15,6 @@ import { IImage } from "../../app/models/image";
 import { toast } from "react-toastify";
 import AddImagesField from "../../app/common/form/AddImagesField";
 import AddImageWithCropperField from "../../app/common/form/AddImageWithCropperField";
-import { runInAction } from "mobx";
 
 interface IProps {
   report: IReportFormValues;
@@ -24,11 +23,12 @@ interface IProps {
 const CreateReportForm = ({ report }: IProps) => {
   const rootStore = useContext(RootStoreContext);
   const { setReportFieldsFromForm, isSubmitting, createReport } = rootStore.reportStore;
-  const { loadCompanies, companySelectOptions, loadingCompanies, getCompany } = rootStore.companyStore;
-  const { siteSelectOptions, loadSites, loadingSites, getSite } = rootStore.siteStore;
+  const { loadCompanies, companySelectOptions, loadingCompanies, getCompany, getSiteOptionsByCompanyId } = rootStore.companyStore;
+  const { getSite } = rootStore.siteStore;
   const { reportTypeSelectOptions, loadReportTypes, loadingReportTypes, getReportType } = rootStore.reportTypeStore;
   const { removeImage, removeAllImages, imageRegistry } = rootStore.imageStore;
 
+  const [siteOptions, setSiteOptions] = useState<ISelectOptions[]>([]);
   const [submitErrors, setSubmitErrors] = useState<AxiosResponse>();
   const [reportFields, setReportFields] = useState<IReportField[]>(report.reportFields);
   const [images, setImages] = useState<Map<string, Blob>>();
@@ -48,12 +48,6 @@ const CreateReportForm = ({ report }: IProps) => {
       loadCompanies();
     }
   }, [companySelectOptions, loadCompanies]);
-
-  useEffect(() => {
-    if (siteSelectOptions.length < 1) {
-      loadSites();
-    }
-  }, [siteSelectOptions, loadSites]);
 
   useEffect(() => {
     if (reportTypeSelectOptions.length < 1) {
@@ -82,6 +76,17 @@ const CreateReportForm = ({ report }: IProps) => {
       setValue("requireImages", false);
     }
   }, [images?.size]);
+
+  const handleCompanyChange = (value: ISelectOptions) => {
+    if (value !== null) {
+      let id = parseInt(value.value.toString());
+      let options = getSiteOptionsByCompanyId(id);
+      setSiteOptions(options);
+      setValue("siteId", "");
+    } else {
+      setSiteOptions([]);
+    }
+  };
 
   const { handleSubmit, register, errors, formState, control, setValue } = useForm<IReportFormValues>({
     mode: "all",
@@ -143,7 +148,7 @@ const CreateReportForm = ({ report }: IProps) => {
 
   return (
     <Segment>
-      {(loadingCompanies || loadingSites || loadingReportTypes) && <Loader content="Loading options..." active />}
+      {(loadingCompanies || loadingReportTypes) && <Loader content="Loading options..." active />}
       <Header as="h3" content={report.id === "" ? "Create Report" : `${report.title}`} />
       <Form onSubmit={handleSubmit(onSubmit)} error>
         <Form.Group widths="equal">
@@ -160,6 +165,7 @@ const CreateReportForm = ({ report }: IProps) => {
                   onChange={(value) => {
                     onChange(value);
                     setValue(name, parseInt(value.value));
+                    handleCompanyChange(value);
                   }}
                   value={value?.value}
                   name={name}
@@ -184,7 +190,7 @@ const CreateReportForm = ({ report }: IProps) => {
               rules={{ required: "Site is Required*" }}
               render={({ onChange, name, value }) => (
                 <Select
-                  options={siteSelectOptions}
+                  options={siteOptions}
                   onChange={(value) => {
                     onChange(value);
                     setValue(name, value.value);

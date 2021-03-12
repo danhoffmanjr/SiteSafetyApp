@@ -48,10 +48,9 @@ const ImagesDropzoneButton = ({ setFiles }: Props) => {
         <p>Drop the images here ...</p>
       ) : (
         <>
-          <Button icon labelPosition="left" size="small">
-            <Icon name="upload" />
-            Drag 'n' drop folder or images here, or click to select image
-          </Button>
+          <button type="button" className="ui small icon left labeled button">
+            <i aria-hidden="true" className="icon upload"></i>Drag 'n' drop folder or images here, or click to select image
+          </button>
         </>
       )}
     </div>

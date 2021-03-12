@@ -54,6 +54,12 @@ export default class SiteStore {
   }
 
   @action getSite = (id: number) => {
+    if (this.sitesRegistry.size < 1) {
+      this.loadSites();
+      if (this.sitesRegistry.size > 0) {
+        this.getSite(id);
+      }
+    }
     return this.sitesRegistry.get(id);
   };
 
