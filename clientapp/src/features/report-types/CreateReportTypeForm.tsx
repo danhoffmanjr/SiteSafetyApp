@@ -10,6 +10,27 @@ import { observer } from "mobx-react-lite";
 import ReportTypeFormPreviewer from "./ReportTypeFormPreviewer";
 import { IReportTypeFormValues } from "../../app/models/reportTypeFormValues";
 
+const styles = {
+  hide: {
+    display: "none",
+  },
+  show: {
+    display: "inherit",
+  },
+};
+
+const findmax = (array: string[]) => {
+  let fieldIds = array.map(Number);
+  let max = 0;
+
+  for (let i = 0; i < array.length; i++) {
+    if (fieldIds[i] > max) {
+      max = fieldIds[i];
+    }
+  }
+  return max;
+};
+
 const CreateReportTypeForm = ({
   startingState = {
     id: 0,
@@ -53,20 +74,6 @@ const CreateReportTypeForm = ({
     });
   };
 
-  const findmax = (array: string[]) => {
-    var fieldIds = array.map(Number),
-      max = 0,
-      len = array.length,
-      counter;
-
-    for (counter = 0; counter < len; counter++) {
-      if (fieldIds[counter] > max) {
-        max = fieldIds[counter];
-      }
-    }
-    return max;
-  };
-
   const toggleForm = () => {
     setShowAddFieldsForm(!showAddFieldsForm);
   };
@@ -74,15 +81,6 @@ const CreateReportTypeForm = ({
   const getFieldType = (name: string) => {
     if (name === undefined || name === "") return "Text" as keyof typeof fieldTypes;
     return name as keyof typeof fieldTypes;
-  };
-
-  const styles = {
-    hide: {
-      display: "none",
-    },
-    show: {
-      display: "inherit",
-    },
   };
 
   return (

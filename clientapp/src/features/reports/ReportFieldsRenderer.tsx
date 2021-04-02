@@ -6,10 +6,11 @@ import { IReportField } from "../../app/models/reportField";
 import { IReportFormValues } from "../../app/models/reportFormValues";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import { observer } from "mobx-react-lite";
+import { IReport } from "../../app/models/report";
 
 interface Props {
   reportTypeFields: IReportField[];
-  control: Control<IReportFormValues>;
+  control: Control<IReportFormValues> | Control<Partial<IReport>>;
   register: any;
   setValue: any;
   errors: DeepMap<IReportFormValues, FieldError>;

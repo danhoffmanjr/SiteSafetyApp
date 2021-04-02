@@ -266,6 +266,7 @@ const CreateReportForm = ({ report }: IProps) => {
           <label>Report Images</label>
           <input type="hidden" name="requireImages" ref={register({ required: requireImages })} defaultValue={images && images.size > 0 ? "that's a texas size 10-4 good buddy" : ""} />
         </Form.Field>
+        {/* Extract to own component */}
         <Menu stackable attached="top" style={{ marginTop: 0 }} size="small">
           <Menu.Item>
             <Icon name="photo" /> Manage Images
